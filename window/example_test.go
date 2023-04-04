@@ -7,6 +7,7 @@ import (
 	"github.com/faiface/pixel/imdraw"
 	"github.com/faiface/pixel/pixelgl"
 	"github.com/mlange-42/arche-model/model"
+	"github.com/mlange-42/arche-model/resource"
 	"github.com/mlange-42/arche-model/system"
 	"github.com/mlange-42/arche-pixel/window"
 	"github.com/mlange-42/arche/ecs"
@@ -53,8 +54,8 @@ func (d *RectDrawer) Initialize(w *ecs.World, win *pixelgl.Window) {
 // Draw the RectDrawer's stuff.
 func (d *RectDrawer) Draw(w *ecs.World, win *pixelgl.Window) {
 	// Get a resource from the world.
-	time := ecs.GetResource[model.Time](w)
-	offset := float64(time.Tick)
+	tick := ecs.GetResource[resource.Tick](w)
+	offset := float64(tick.Tick)
 
 	// Create a white rectangle that moves with progressing model tick.
 	d.dr.Color = color.White

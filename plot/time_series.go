@@ -8,7 +8,6 @@ import (
 	"github.com/mlange-42/arche-model/model"
 	"github.com/mlange-42/arche-pixel/window"
 	"github.com/mlange-42/arche/ecs"
-	"github.com/mlange-42/arche/generic"
 	"golang.org/x/image/colornames"
 	"gonum.org/v1/plot"
 	"gonum.org/v1/plot/plotter"
@@ -27,19 +26,22 @@ var defaultColors = []color.Color{
 }
 
 // TimeSeries plot reporter.
+//
+// If the world contains a resource of type [github.com/mlange-42/arche-model/resource.Termination],
+// the model is terminated when the window is closed.
 type TimeSeries struct {
 	Bounds         window.Bounds
 	Observer       model.Observer
 	UpdateInterval int
 	DrawInterval   int
 	window.Window
-	drawer  timeSeriesDrawer
-	timeRes generic.Resource[model.Time]
+	drawer timeSeriesDrawer
+	step   int64
 }
 
 // Initialize the system.
 func (s *TimeSeries) Initialize(w *ecs.World) {
-	s.timeRes = generic.NewResource[model.Time](w)
+	s.step = 0
 }
 
 // InitializeUI the system.
@@ -57,13 +59,11 @@ func (s *TimeSeries) InitializeUI(w *ecs.World) {
 
 // Update the system.
 func (s *TimeSeries) Update(w *ecs.World) {
-	time := s.timeRes.Get()
-
-	if s.UpdateInterval > 1 && time.Tick%int64(s.UpdateInterval) != 0 {
-		return
+	if s.UpdateInterval <= 1 || s.step%int64(s.UpdateInterval) == 0 {
+		s.Observer.Update(w)
+		s.drawer.append(float64(s.step), s.Observer.Values(w))
 	}
-	s.Observer.Update(w)
-	s.drawer.append(float64(time.Tick), s.Observer.Values(w))
+	s.step++
 }
 
 // Finalize the system.

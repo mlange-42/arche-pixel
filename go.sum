@@ -46,8 +46,12 @@ github.com/jung-kurt/gofpdf v1.0.0/go.mod h1:7Id9E/uU8ce6rXgefFLlgrJj/GYY22cpxn+
 github.com/kisielk/gotool v1.0.0/go.mod h1:XhKaO+MFFWcvkIS/tQcRk01m1F5IRFswLeQ+oQHNcck=
 github.com/mlange-42/arche v0.6.0 h1:xF/jlJeSjX1Yt7JdiGcPIS0q20ATqwbegU5cIP0/j4g=
 github.com/mlange-42/arche v0.6.0/go.mod h1:cgOiMHWCbNAb5L5mCihS2yzdk1Zll1IoBJL+3wVm0AM=
+github.com/mlange-42/arche v0.6.1 h1:MA0VTHvlGxw44MRfj8qbHLnB5QQFAXueGYRiQgLGPVc=
+github.com/mlange-42/arche v0.6.1/go.mod h1:cgOiMHWCbNAb5L5mCihS2yzdk1Zll1IoBJL+3wVm0AM=
 github.com/mlange-42/arche-model v0.0.1 h1:jcJLHC1Zfka/qDasLYIvarmznnhkaa35rmFTm+VbzwY=
 github.com/mlange-42/arche-model v0.0.1/go.mod h1:L0raAVjpLe7LpDuSCkbFwZ2p2uNkwE63bX3DBRYvwG8=
+github.com/mlange-42/arche-model v0.0.2 h1:o1ijU+3Md0mYPq9x9NOXsBk7k7JPnQ6eovEm7n4inqs=
+github.com/mlange-42/arche-model v0.0.2/go.mod h1:/qrG4sg+rUgwcxMQ7i6R8+K507SLm2QKlQpKs9ggYs4=
 github.com/phpdave11/gofpdf v1.4.2/go.mod h1:zpO6xFn9yxo3YLyMvW8HcKWVdbNqgIfOOp2dXMnm1mY=
 github.com/phpdave11/gofpdi v1.0.12/go.mod h1:vBmVV0Do6hSBHC8uKUQ71JGW+ZGQq74llk/7bXwjDoI=
 github.com/phpdave11/gofpdi v1.0.13/go.mod h1:vBmVV0Do6hSBHC8uKUQ71JGW+ZGQq74llk/7bXwjDoI=
