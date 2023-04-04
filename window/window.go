@@ -1,3 +1,4 @@
+// Package window provides an OpenGL window system for free drawing.
 package window
 
 import (
@@ -25,13 +26,17 @@ func B(x, y, w, h int) Bounds {
 	return Bounds{x, y, w, h}
 }
 
-// Drawer interface
+// Drawer interface.
+//
+// See the example for [window] package.
 type Drawer interface {
 	Initialize(w *ecs.World, win *pixelgl.Window)
 	Draw(w *ecs.World, win *pixelgl.Window)
 }
 
 // Window provides an OpenGL window for drawing.
+//
+// See the example for [window] package.
 type Window struct {
 	Bounds       Bounds
 	DrawInterval int
