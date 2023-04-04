@@ -1,4 +1,4 @@
-# Arche pixel
+# Arche Pixel
 
 [![Test status](https://img.shields.io/github/actions/workflow/status/mlange-42/arche-pixel/tests.yml?branch=main&label=Tests&logo=github)](https://github.com/mlange-42/arche-pixel/actions/workflows/tests.yml)
 [![Go Reference](https://pkg.go.dev/badge/github.com/mlange-42/arche-pixel.svg)](https://pkg.go.dev/github.com/mlange-42/arche-pixel)
@@ -19,6 +19,12 @@ The dependencies of [go-gl/gl](https://github.com/go-gl/gl) and [go-gl/glfw](htt
 
 - `libgl1-mesa-dev`
 - `xorg-dev`
+
+## Usage
+
+See the [API docs](https://pkg.go.dev/github.com/mlange-42/arche-pixel) for details and examples.
+
+[![Go Reference](https://pkg.go.dev/badge/github.com/mlange-42/arche-pixel.svg)](https://pkg.go.dev/github.com/mlange-42/arche-pixel)
 
 ## License
 
