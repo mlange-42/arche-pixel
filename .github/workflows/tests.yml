@@ -55,6 +55,7 @@ jobs:
           sudo apt-get install -y libgl1-mesa-dev xorg-dev
           go get .
           go install honnef.co/go/tools/cmd/staticcheck@latest
+          go install github.com/gordonklaus/ineffassign@latest
       - name: Check format
         run: |
           if gofmt -e -l . >&1 | grep '^'; then
@@ -64,3 +65,5 @@ jobs:
         run: go vet ./...
       - name: Lint with staticcheck
         run: staticcheck ./...
+      - name: Lint with ineffassign
+        run: ineffassign ./...

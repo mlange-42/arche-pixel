@@ -1,6 +1,7 @@
 # Arche Pixel
 
 [![Test status](https://img.shields.io/github/actions/workflow/status/mlange-42/arche-pixel/tests.yml?branch=main&label=Tests&logo=github)](https://github.com/mlange-42/arche-pixel/actions/workflows/tests.yml)
+[![Go Report Card](https://goreportcard.com/badge/github.com/mlange-42/arche-pixel)](https://goreportcard.com/report/github.com/mlange-42/arche-pixel)
 [![Go Reference](https://pkg.go.dev/badge/github.com/mlange-42/arche-pixel.svg)](https://pkg.go.dev/github.com/mlange-42/arche-pixel)
 [![GitHub](https://img.shields.io/badge/github-repo-blue?logo=github)](https://github.com/mlange-42/arche-pixel)
 [![MIT license](https://img.shields.io/github/license/mlange-42/arche-pixel)](https://github.com/mlange-42/arche-pixel/blob/main/LICENSE)
