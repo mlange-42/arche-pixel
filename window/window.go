@@ -1,4 +1,3 @@
-// Package window provides an OpenGL window system for free drawing.
 package window
 
 import (
@@ -7,7 +6,7 @@ import (
 
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
-	"github.com/mlange-42/arche-model/model"
+	"github.com/mlange-42/arche-model/resource"
 	"github.com/mlange-42/arche/ecs"
 	"github.com/mlange-42/arche/generic"
 	"golang.org/x/image/colornames"
@@ -36,6 +35,9 @@ type Drawer interface {
 
 // Window provides an OpenGL window for drawing.
 //
+// If the world contains a resource of type [github.com/mlange-42/arche-model/resource/Termination],
+// the model is terminated when the window is closed.
+//
 // See the example for [window] package.
 type Window struct {
 	Bounds       Bounds
@@ -43,7 +45,8 @@ type Window struct {
 	window       *pixelgl.Window
 	drawers      []Drawer
 	step         int
-	timeRes      generic.Resource[model.Time]
+	isClosed     bool
+	termRes      generic.Resource[resource.Termination]
 }
 
 // Add adds a drawer
@@ -83,14 +86,22 @@ func (s *Window) InitializeUI(w *ecs.World) {
 	for _, d := range s.drawers {
 		d.Initialize(w, s.window)
 	}
-	s.timeRes = generic.NewResource[model.Time](w)
+
+	s.termRes = generic.NewResource[resource.Termination](w)
+	s.step = 0
+	s.isClosed = false
 }
 
 // UpdateUI the system
 func (s *Window) UpdateUI(w *ecs.World) {
 	if s.window.Closed() {
-		time := s.timeRes.Get()
-		time.Finished = true
+		if !s.isClosed {
+			term := s.termRes.Get()
+			if term != nil {
+				term.Terminate = true
+			}
+			s.isClosed = true
+		}
 		return
 	}
 	if s.DrawInterval <= 1 || s.step%s.DrawInterval == 0 {
