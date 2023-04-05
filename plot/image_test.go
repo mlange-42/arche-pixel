@@ -22,8 +22,8 @@ func ExampleImage() {
 	// Create an image plot.
 	// See below for the implementation of the MatrixObserver.
 	pl := plot.Image{
-		Observer: &MatrixObserver{},
 		Scale:    4,
+		Observer: &MatrixObserver{},
 		Colors:   colorgrad.Inferno(),
 		Min:      -2,
 		Max:      2,

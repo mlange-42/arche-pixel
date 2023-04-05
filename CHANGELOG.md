@@ -8,7 +8,8 @@
 
 ### Features
 
-* Adds `Image` plot for plotting grads and matrices (#8)
+* Adds `Image` plot for plotting grids and matrices (#8)
+* Adds `ImageRGB` plot for plotting multi-channel grids and matrices (#8)
 * Additional drawers can be added to all plots, and draw over the plot's drawing (#8)
 
 ## [[v0.0.2]](https://github.com/mlange-42/arche-pixel/compare/v0.0.1...v0.0.2)

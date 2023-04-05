@@ -17,8 +17,8 @@ import (
 // the model is terminated when the window is closed.
 type Image struct {
 	Bounds         window.Bounds      // Window bounds.
-	Observer       observer.Matrix    // The observer.
 	Scale          float64            // Spatial scaling: cell size in screen pixels.
+	Observer       observer.Matrix    // The observer.
 	Colors         colorgrad.Gradient // Colors for mapping values.
 	Min            float64            // Minimum value for color mapping.
 	Max            float64            // Maximum value for color mapping. Is set to 1.0 if both Min and Max are zero.
