@@ -18,9 +18,10 @@ func ExampleTimeSeries() {
 	m.Tps = 30
 	m.Fps = 0
 
-	// Create a plot.
+	// Create a time series plot.
+	// See below for the implementation of the RowObserver.
 	pl := plot.TimeSeries{
-		Observer: &ExampleObserver{},
+		Observer: &RowObserver{},
 	}
 	// Add the plot as UI system.
 	m.AddUISystem(&pl)
@@ -37,14 +38,14 @@ func ExampleTimeSeries() {
 	//pixelgl.Run(m.Run)
 }
 
-// ExampleObserver to generate random time series.
-type ExampleObserver struct{}
+// RowObserver to generate random time series.
+type RowObserver struct{}
 
-func (o *ExampleObserver) Initialize(w *ecs.World) {}
-func (o *ExampleObserver) Update(w *ecs.World)     {}
-func (o *ExampleObserver) Header() []string {
+func (o *RowObserver) Initialize(w *ecs.World) {}
+func (o *RowObserver) Update(w *ecs.World)     {}
+func (o *RowObserver) Header() []string {
 	return []string{"A", "B", "C"}
 }
-func (o *ExampleObserver) Values(w *ecs.World) []float64 {
+func (o *RowObserver) Values(w *ecs.World) []float64 {
 	return []float64{rand.Float64(), rand.Float64() + 1, rand.Float64() + 2}
 }
