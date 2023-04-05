@@ -42,19 +42,19 @@ type Drawer interface {
 type Window struct {
 	Bounds       Bounds
 	DrawInterval int
+	Drawers      []Drawer
 	window       *pixelgl.Window
-	drawers      []Drawer
 	step         int
 	isClosed     bool
 	termRes      generic.Resource[resource.Termination]
 }
 
-// Add adds a drawer
-func (s *Window) Add(d Drawer) {
-	s.drawers = append(s.drawers, d)
+// AddDrawer adds a drawer.
+func (s *Window) AddDrawer(d Drawer) {
+	s.Drawers = append(s.Drawers, d)
 }
 
-// InitializeUI the system
+// InitializeUI the system.
 func (s *Window) InitializeUI(w *ecs.World) {
 	if s.Bounds.Width <= 0 {
 		s.Bounds.Width = 1024
@@ -83,7 +83,7 @@ func (s *Window) InitializeUI(w *ecs.World) {
 	if err != nil {
 		panic(err)
 	}
-	for _, d := range s.drawers {
+	for _, d := range s.Drawers {
 		d.Initialize(w, s.window)
 	}
 
@@ -92,7 +92,7 @@ func (s *Window) InitializeUI(w *ecs.World) {
 	s.isClosed = false
 }
 
-// UpdateUI the system
+// UpdateUI the system.
 func (s *Window) UpdateUI(w *ecs.World) {
 	if s.window.Closed() {
 		if !s.isClosed {
@@ -107,7 +107,7 @@ func (s *Window) UpdateUI(w *ecs.World) {
 	if s.DrawInterval <= 1 || s.step%s.DrawInterval == 0 {
 		s.window.Clear(colornames.Black)
 
-		for _, d := range s.drawers {
+		for _, d := range s.Drawers {
 			d.Draw(w, s.window)
 		}
 	}
@@ -119,5 +119,5 @@ func (s *Window) PostUpdateUI(w *ecs.World) {
 	s.window.Update()
 }
 
-// FinalizeUI the system
+// FinalizeUI the system.
 func (s *Window) FinalizeUI(w *ecs.World) {}

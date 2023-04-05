@@ -5,7 +5,7 @@ import (
 
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
-	"github.com/mlange-42/arche-model/model"
+	"github.com/mlange-42/arche-model/observer"
 	"github.com/mlange-42/arche-pixel/window"
 	"github.com/mlange-42/arche/ecs"
 	"golang.org/x/image/colornames"
@@ -31,7 +31,7 @@ var defaultColors = []color.Color{
 // the model is terminated when the window is closed.
 type TimeSeries struct {
 	Bounds         window.Bounds
-	Observer       model.Observer
+	Observer       observer.Row
 	UpdateInterval int
 	DrawInterval   int
 	window.Window
@@ -49,11 +49,11 @@ func (s *TimeSeries) InitializeUI(w *ecs.World) {
 	s.Observer.Initialize(w)
 
 	s.drawer = timeSeriesDrawer{}
-	s.drawer.addSeries(s.Observer.Header(w))
+	s.drawer.addSeries(s.Observer.Header())
 
 	s.Window.DrawInterval = s.DrawInterval
 	s.Window.Bounds = s.Bounds
-	s.Window.Add(&s.drawer)
+	s.Window.Drawers = append([]window.Drawer{&s.drawer}, s.Window.Drawers...)
 	s.Window.InitializeUI(w)
 }
 

@@ -21,10 +21,10 @@ func Example() {
 	m.Tps = 30
 	m.Fps = 0
 
-	// Create a window system.
-	win := window.Window{}
-	// Add a drawer
-	win.Add(&RectDrawer{})
+	// Create a window system with a single drawer.
+	win := window.Window{
+		Drawers: []window.Drawer{&RectDrawer{}},
+	}
 	// Add the window as UI system.
 	m.AddUISystem(&win)
 
