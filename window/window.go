@@ -26,25 +26,24 @@ func B(x, y, w, h int) Bounds {
 }
 
 // Drawer interface.
-//
-// See the example for [window] package.
+// Drawers are used by the [Window] to render information from an Arche model.
 type Drawer interface {
-	Initialize(w *ecs.World, win *pixelgl.Window)
-	Update(w *ecs.World)
-	Draw(w *ecs.World, win *pixelgl.Window)
+	Initialize(w *ecs.World, win *pixelgl.Window) // Initialize the Drawer.
+	Update(w *ecs.World)                          // Update is called by normal system update.
+	Draw(w *ecs.World, win *pixelgl.Window)       // Draw is called by the UI systems update.
 }
 
 // Window provides an OpenGL window for drawing.
+// Drawing is done by one or more [Drawer] instances.
+// Further, window bounds and update and draw intervals van be configured.
 //
 // If the world contains a resource of type [github.com/mlange-42/arche-model/resource/Termination],
 // the model is terminated when the window is closed.
-//
-// See the example for [window] package.
 type Window struct {
-	Bounds         Bounds
-	Drawers        []Drawer
-	UpdateInterval int // Interval for updating the observer, in model ticks.
-	DrawInterval   int // Interval for re-drawing, in UI frames.
+	Bounds         Bounds   // Window bounds (position and size). Optional.
+	Drawers        []Drawer // Drawers in increasing z order.
+	UpdateInterval int      // Interval for updating drawers (and thus potentially observers), in model ticks. Optional.
+	DrawInterval   int      // Interval for re-drawing, in UI frames. Optional.
 	window         *pixelgl.Window
 	updateStep     int64
 	drawStep       int64
@@ -52,17 +51,17 @@ type Window struct {
 	termRes        generic.Resource[resource.Termination]
 }
 
-// AddDrawer adds a drawer.
+// AddDrawer adds a [Drawer] to the window.
 func (s *Window) AddDrawer(d Drawer) {
 	s.Drawers = append(s.Drawers, d)
 }
 
-// Initialize the system.
+// Initialize the window system.
 func (s *Window) Initialize(w *ecs.World) {
 	s.updateStep = 0
 }
 
-// InitializeUI the system.
+// InitializeUI the window system.
 func (s *Window) InitializeUI(w *ecs.World) {
 	if s.Bounds.Width <= 0 {
 		s.Bounds.Width = 1024
@@ -100,7 +99,7 @@ func (s *Window) InitializeUI(w *ecs.World) {
 	s.isClosed = false
 }
 
-// Update the system.
+// Update the window system.
 func (s *Window) Update(w *ecs.World) {
 	if s.isClosed {
 		return
@@ -113,7 +112,7 @@ func (s *Window) Update(w *ecs.World) {
 	s.updateStep++
 }
 
-// UpdateUI the system.
+// UpdateUI the window system.
 func (s *Window) UpdateUI(w *ecs.World) {
 	if s.window.Closed() {
 		if !s.isClosed {
@@ -135,13 +134,13 @@ func (s *Window) UpdateUI(w *ecs.World) {
 	s.drawStep++
 }
 
-// PostUpdateUI updates the GL window.
+// PostUpdateUI updates the underlying GL window.
 func (s *Window) PostUpdateUI(w *ecs.World) {
 	s.window.Update()
 }
 
-// Finalize the system.
+// Finalize the window system.
 func (s *Window) Finalize(w *ecs.World) {}
 
-// FinalizeUI the system.
+// FinalizeUI the window system.
 func (s *Window) FinalizeUI(w *ecs.World) {}

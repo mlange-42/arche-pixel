@@ -11,10 +11,10 @@ import (
 
 // ImageRGB plot drawer.
 type ImageRGB struct {
-	Scale     float64           // Spatial scaling: cell size in screen pixels.
+	Scale     float64           // Spatial scaling: cell size in screen pixels. Optional, default 1.
 	Observers []observer.Matrix // Observers for the red, green and blue channel. Elements can be nil.
-	Min       []float64         // Minimum value for channel color mapping. Default [0, 0, 0].
-	Max       []float64         // Maximum value for channel color mapping. Default [1, 1, 1].
+	Min       []float64         // Minimum value for channel color mapping. Optional, default [0, 0, 0].
+	Max       []float64         // Maximum value for channel color mapping. Optional, default [1, 1, 1].
 	slope     []float64
 	dataLen   int
 	picture   *pixel.PictureData
