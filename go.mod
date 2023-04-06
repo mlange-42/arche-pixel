@@ -6,7 +6,7 @@ require (
 	github.com/faiface/pixel v0.10.0
 	github.com/mazznoer/colorgrad v0.9.1
 	github.com/mlange-42/arche v0.6.1
-	github.com/mlange-42/arche-model v0.0.3-0.20230405195915-b4ffebd0db92
+	github.com/mlange-42/arche-model v0.0.3-0.20230406174659-4b8cc8e3256c
 	golang.org/x/image v0.5.0
 	gonum.org/v1/plot v0.12.0
 )

@@ -6,40 +6,27 @@ import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 	"github.com/mlange-42/arche-model/observer"
-	"github.com/mlange-42/arche-pixel/window"
 	"github.com/mlange-42/arche/ecs"
 )
 
-// ImageRGB plot reporter.
-//
-// If the world contains a resource of type [github.com/mlange-42/arche-model/resource.Termination],
-// the model is terminated when the window is closed.
+// ImageRGB plot drawer.
 type ImageRGB struct {
-	Bounds         window.Bounds     // Window bounds.
-	Scale          float64           // Spatial scaling: cell size in screen pixels.
-	Observers      []observer.Matrix // Observers for the red, green and blue channel. Elements can be nil.
-	Min            []float64         // Minimum value for channel color mapping. Default [0, 0, 0].
-	Max            []float64         // Maximum value for channel color mapping. Default [1, 1, 1].
-	UpdateInterval int               // Interval for updating the observer, in model ticks.
-	DrawInterval   int               // Interval for re-drawing, in UI frames.
-	Drawers        []window.Drawer   // Optional additional drawers for drawing over the image.
-	window         window.Window
-	drawer         rgbImageDrawer
-	step           int64
+	Scale     float64           // Spatial scaling: cell size in screen pixels.
+	Observers []observer.Matrix // Observers for the red, green and blue channel. Elements can be nil.
+	Min       []float64         // Minimum value for channel color mapping. Default [0, 0, 0].
+	Max       []float64         // Maximum value for channel color mapping. Default [1, 1, 1].
+	slope     []float64
+	dataLen   int
+	picture   *pixel.PictureData
 }
 
-// Initialize the system.
-func (s *ImageRGB) Initialize(w *ecs.World) {
-	s.step = 0
-}
-
-// InitializeUI the system.
-func (s *ImageRGB) InitializeUI(w *ecs.World) {
+// Initialize the drawer.
+func (s *ImageRGB) Initialize(w *ecs.World, win *pixelgl.Window) {
 	if len(s.Observers) != 3 {
 		panic("RgbImage plot needs exactly 3 observers")
 	}
 	width, height := -1, -1
-	for i := 0; i < len(s.Observers); i++ {
+	for i := 0; i < 3; i++ {
 		if s.Observers[i] == nil {
 			continue
 		}
@@ -73,93 +60,35 @@ func (s *ImageRGB) InitializeUI(w *ecs.World) {
 		panic("RgbImage plot needs exactly 3 Max values")
 	}
 
-	s.drawer = newRgbImageDrawer(s.Observers, s.Scale, s.Min, s.Max)
-
-	s.window.DrawInterval = s.DrawInterval
-	s.window.Bounds = s.Bounds
-	s.window.Drawers = append([]window.Drawer{&s.drawer}, s.Drawers...)
-	s.window.InitializeUI(w)
-}
-
-// Update the system.
-func (s *ImageRGB) Update(w *ecs.World) {
-	if s.UpdateInterval <= 1 || s.step%int64(s.UpdateInterval) == 0 {
-		for i := 0; i < len(s.Observers); i++ {
-			if s.Observers[i] != nil {
-				s.Observers[i].Update(w)
-			}
-		}
+	s.slope = []float64{
+		1.0 / (s.Max[0] - s.Min[0]),
+		1.0 / (s.Max[1] - s.Min[1]),
+		1.0 / (s.Max[2] - s.Min[2]),
 	}
-	s.step++
-}
 
-// UpdateUI the system.
-func (s *ImageRGB) UpdateUI(w *ecs.World) {
-	s.window.UpdateUI(w)
-}
-
-// PostUpdateUI updates the GL window.
-func (s *ImageRGB) PostUpdateUI(w *ecs.World) {
-	s.window.PostUpdateUI(w)
-}
-
-// Finalize the system.
-func (s *ImageRGB) Finalize(w *ecs.World) {}
-
-// FinalizeUI the system.
-func (s *ImageRGB) FinalizeUI(w *ecs.World) {
-	s.window.FinalizeUI(w)
-}
-
-type rgbImageDrawer struct {
-	observers []observer.Matrix
-	offset    []float64
-	slope     []float64
-	scale     float64
-	dataLen   int
-	picture   *pixel.PictureData
-}
-
-func newRgbImageDrawer(obs []observer.Matrix, scale float64, min, max []float64) rgbImageDrawer {
-	slope := []float64{
-		1.0 / (max[0] - min[0]),
-		1.0 / (max[1] - min[1]),
-		1.0 / (max[2] - min[2]),
-	}
-	return rgbImageDrawer{
-		observers: obs,
-		scale:     scale,
-		offset:    min,
-		slope:     slope,
-	}
-}
-
-// Initialize the system
-func (s *rgbImageDrawer) Initialize(w *ecs.World, win *pixelgl.Window) {
-	width, height := -1, -1
-	for i := 0; i < 3; i++ {
-		if s.observers[i] != nil {
-			width, height = s.observers[i].Dims()
-			break
-		}
-	}
-	if width < 0 && height < 0 {
-		panic("needs an observer for at least one channel")
-	}
 	s.dataLen = width * height
 	s.picture = pixel.MakePictureData(pixel.R(0, 0, float64(width), float64(height)))
 }
 
-// Draw the system
-func (s *rgbImageDrawer) Draw(w *ecs.World, win *pixelgl.Window) {
+// Update the drawer.
+func (s *ImageRGB) Update(w *ecs.World) {
+	for i := 0; i < 3; i++ {
+		if s.Observers[i] != nil {
+			s.Observers[i].Update(w)
+		}
+	}
+}
+
+// Draw the drawer.
+func (s *ImageRGB) Draw(w *ecs.World, win *pixelgl.Window) {
 	cannels := make([][]float64, 3)
 	for i := 0; i < 3; i++ {
-		if s.observers[i] != nil {
-			cannels[i] = s.observers[i].Values(w)
+		if s.Observers[i] != nil {
+			cannels[i] = s.Observers[i].Values(w)
 		}
 	}
 
-	values := append([]float64{}, s.offset...)
+	values := append([]float64{}, s.Min...)
 	for i := 0; i < s.dataLen; i++ {
 		for j := 0; j < 3; j++ {
 			if cannels[j] != nil {
@@ -170,14 +99,14 @@ func (s *rgbImageDrawer) Draw(w *ecs.World, win *pixelgl.Window) {
 	}
 
 	sprite := pixel.NewSprite(s.picture, s.picture.Bounds())
-	sprite.Draw(win, pixel.IM.Moved(pixel.V(s.picture.Rect.W()/2.0, s.picture.Rect.H()/2.0)).Scaled(pixel.Vec{}, s.scale))
+	sprite.Draw(win, pixel.IM.Moved(pixel.V(s.picture.Rect.W()/2.0, s.picture.Rect.H()/2.0)).Scaled(pixel.Vec{}, s.Scale))
 }
 
-func (s *rgbImageDrawer) valuesToColor(r, g, b float64) color.RGBA {
+func (s *ImageRGB) valuesToColor(r, g, b float64) color.RGBA {
 	return color.RGBA{
-		R: norm(r, s.offset[0], s.slope[0]),
-		G: norm(g, s.offset[1], s.slope[1]),
-		B: norm(b, s.offset[2], s.slope[2]),
+		R: norm(r, s.Min[0], s.slope[0]),
+		G: norm(g, s.Min[1], s.slope[1]),
+		B: norm(b, s.Min[2], s.slope[2]),
 		A: 0xff,
 	}
 }

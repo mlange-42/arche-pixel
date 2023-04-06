@@ -7,6 +7,7 @@ import (
 	"github.com/mlange-42/arche-model/observer"
 	"github.com/mlange-42/arche-model/system"
 	"github.com/mlange-42/arche-pixel/plot"
+	"github.com/mlange-42/arche-pixel/window"
 	"github.com/mlange-42/arche/ecs"
 )
 
@@ -21,18 +22,20 @@ func ExampleImageRGB() {
 
 	// Create an RGB image plot.
 	// See below for the implementation of the CallbackMatrixObserver.
-	pl := plot.ImageRGB{
-		Scale: 4,
-		Observers: []observer.Matrix{
-			&CallbackMatrixObserver{Callback: func(i, j int) float64 { return float64(i) / 240 }},
-			&CallbackMatrixObserver{Callback: func(i, j int) float64 { return math.Sin(0.1 * float64(i)) }},
-			&CallbackMatrixObserver{Callback: func(i, j int) float64 { return float64(j) / 160 }},
+	m.AddUISystem(&window.Window{
+		Drawers: []window.Drawer{
+			&plot.ImageRGB{
+				Scale: 4,
+				Observers: []observer.Matrix{
+					&CallbackMatrixObserver{Callback: func(i, j int) float64 { return float64(i) / 240 }},
+					&CallbackMatrixObserver{Callback: func(i, j int) float64 { return math.Sin(0.1 * float64(i)) }},
+					&CallbackMatrixObserver{Callback: func(i, j int) float64 { return float64(j) / 160 }},
+				},
+				Min: []float64{0, 0, 0},
+				Max: []float64{1, 1, 1},
+			},
 		},
-		Min: []float64{0, 0, 0},
-		Max: []float64{1, 1, 1},
-	}
-	// Add the plot as UI system.
-	m.AddUISystem(&pl)
+	})
 
 	// Add a termination system that ends the simulation.
 	m.AddSystem(&system.FixedTermination{
