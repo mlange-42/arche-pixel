@@ -34,9 +34,9 @@ type TimeSeries struct {
 	Observer       observer.Row
 	UpdateInterval int
 	DrawInterval   int
-	window.Window
-	drawer timeSeriesDrawer
-	step   int64
+	window         window.Window
+	drawer         timeSeriesDrawer
+	step           int64
 }
 
 // Initialize the system.
@@ -51,10 +51,10 @@ func (s *TimeSeries) InitializeUI(w *ecs.World) {
 	s.drawer = timeSeriesDrawer{}
 	s.drawer.addSeries(s.Observer.Header())
 
-	s.Window.DrawInterval = s.DrawInterval
-	s.Window.Bounds = s.Bounds
-	s.Window.Drawers = append([]window.Drawer{&s.drawer}, s.Window.Drawers...)
-	s.Window.InitializeUI(w)
+	s.window.DrawInterval = s.DrawInterval
+	s.window.Bounds = s.Bounds
+	s.window.Drawers = append([]window.Drawer{&s.drawer}, s.window.Drawers...)
+	s.window.InitializeUI(w)
 }
 
 // Update the system.
@@ -66,8 +66,23 @@ func (s *TimeSeries) Update(w *ecs.World) {
 	s.step++
 }
 
+// UpdateUI the system.
+func (s *TimeSeries) UpdateUI(w *ecs.World) {
+	s.window.UpdateUI(w)
+}
+
+// PostUpdateUI updates the GL window.
+func (s *TimeSeries) PostUpdateUI(w *ecs.World) {
+	s.window.PostUpdateUI(w)
+}
+
 // Finalize the system.
 func (s *TimeSeries) Finalize(w *ecs.World) {}
+
+// FinalizeUI the system.
+func (s *TimeSeries) FinalizeUI(w *ecs.World) {
+	s.window.FinalizeUI(w)
+}
 
 type timeSeriesDrawer struct {
 	headers []string
