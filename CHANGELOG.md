@@ -7,6 +7,11 @@
 * Renamed `Window.Add` to `Window.AddDrawer` (#8)
 * `Drawer` interface has method `Update(w *ecs.World)` (#8)
 * All plots are `Drawer` instead of `UISystem`, and are added to a `Window` (#8)
+* Upgrade to `arche-model` v0.0.3 (#9)
+
+### Documentation
+
+* Add separate examples for `Window` and `Drawer` (#9)
 
 ### Features
 

@@ -12,11 +12,11 @@ import (
 
 // Image plot drawer.
 type Image struct {
-	Scale    float64            // Spatial scaling: cell size in screen pixels.
+	Scale    float64            // Spatial scaling: cell size in screen pixels. Optional, default 1.
 	Observer observer.Matrix    // Observer providing 2D matrix or grid data.
 	Colors   colorgrad.Gradient // Colors for mapping values.
-	Min      float64            // Minimum value for color mapping.
-	Max      float64            // Maximum value for color mapping. Is set to 1.0 if both Min and Max are zero.
+	Min      float64            // Minimum value for color mapping. Optional.
+	Max      float64            // Maximum value for color mapping. Optional. Is set to 1.0 if both Min and Max are zero.
 	slope    float64
 	picture  *pixel.PictureData
 }
