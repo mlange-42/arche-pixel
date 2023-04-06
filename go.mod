@@ -4,8 +4,9 @@ go 1.20
 
 require (
 	github.com/faiface/pixel v0.10.0
+	github.com/mazznoer/colorgrad v0.9.1
 	github.com/mlange-42/arche v0.6.1
-	github.com/mlange-42/arche-model v0.0.2
+	github.com/mlange-42/arche-model v0.0.3-0.20230406174659-4b8cc8e3256c
 	golang.org/x/image v0.5.0
 	gonum.org/v1/plot v0.12.0
 )
@@ -22,6 +23,8 @@ require (
 	github.com/go-latex/latex v0.0.0-20210823091927-c0d11ff05a81 // indirect
 	github.com/go-pdf/fpdf v0.6.0 // indirect
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0 // indirect
+	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect
+	github.com/mazznoer/csscolorparser v0.1.2 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	golang.org/x/exp v0.0.0-20230213192124-5e25df0256eb // indirect
 	golang.org/x/text v0.7.0 // indirect

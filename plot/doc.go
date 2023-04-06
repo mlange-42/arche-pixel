@@ -1,2 +1,2 @@
-// Package plot provides live plotting systems.
+// Package plot provides live plotting drawers.
 package plot

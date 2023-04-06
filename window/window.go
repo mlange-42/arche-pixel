@@ -30,6 +30,7 @@ func B(x, y, w, h int) Bounds {
 // See the example for [window] package.
 type Drawer interface {
 	Initialize(w *ecs.World, win *pixelgl.Window)
+	Update(w *ecs.World)
 	Draw(w *ecs.World, win *pixelgl.Window)
 }
 
@@ -40,21 +41,28 @@ type Drawer interface {
 //
 // See the example for [window] package.
 type Window struct {
-	Bounds       Bounds
-	DrawInterval int
-	window       *pixelgl.Window
-	drawers      []Drawer
-	step         int
-	isClosed     bool
-	termRes      generic.Resource[resource.Termination]
+	Bounds         Bounds
+	Drawers        []Drawer
+	UpdateInterval int // Interval for updating the observer, in model ticks.
+	DrawInterval   int // Interval for re-drawing, in UI frames.
+	window         *pixelgl.Window
+	updateStep     int64
+	drawStep       int64
+	isClosed       bool
+	termRes        generic.Resource[resource.Termination]
 }
 
-// Add adds a drawer
-func (s *Window) Add(d Drawer) {
-	s.drawers = append(s.drawers, d)
+// AddDrawer adds a drawer.
+func (s *Window) AddDrawer(d Drawer) {
+	s.Drawers = append(s.Drawers, d)
 }
 
-// InitializeUI the system
+// Initialize the system.
+func (s *Window) Initialize(w *ecs.World) {
+	s.updateStep = 0
+}
+
+// InitializeUI the system.
 func (s *Window) InitializeUI(w *ecs.World) {
 	if s.Bounds.Width <= 0 {
 		s.Bounds.Width = 1024
@@ -83,16 +91,29 @@ func (s *Window) InitializeUI(w *ecs.World) {
 	if err != nil {
 		panic(err)
 	}
-	for _, d := range s.drawers {
+	for _, d := range s.Drawers {
 		d.Initialize(w, s.window)
 	}
 
 	s.termRes = generic.NewResource[resource.Termination](w)
-	s.step = 0
+	s.drawStep = 0
 	s.isClosed = false
 }
 
-// UpdateUI the system
+// Update the system.
+func (s *Window) Update(w *ecs.World) {
+	if s.isClosed {
+		return
+	}
+	if s.UpdateInterval <= 1 || s.updateStep%int64(s.UpdateInterval) == 0 {
+		for _, d := range s.Drawers {
+			d.Update(w)
+		}
+	}
+	s.updateStep++
+}
+
+// UpdateUI the system.
 func (s *Window) UpdateUI(w *ecs.World) {
 	if s.window.Closed() {
 		if !s.isClosed {
@@ -104,14 +125,14 @@ func (s *Window) UpdateUI(w *ecs.World) {
 		}
 		return
 	}
-	if s.DrawInterval <= 1 || s.step%s.DrawInterval == 0 {
+	if s.DrawInterval <= 1 || s.drawStep%int64(s.DrawInterval) == 0 {
 		s.window.Clear(colornames.Black)
 
-		for _, d := range s.drawers {
+		for _, d := range s.Drawers {
 			d.Draw(w, s.window)
 		}
 	}
-	s.step++
+	s.drawStep++
 }
 
 // PostUpdateUI updates the GL window.
@@ -119,5 +140,8 @@ func (s *Window) PostUpdateUI(w *ecs.World) {
 	s.window.Update()
 }
 
-// FinalizeUI the system
+// Finalize the system.
+func (s *Window) Finalize(w *ecs.World) {}
+
+// FinalizeUI the system.
 func (s *Window) FinalizeUI(w *ecs.World) {}

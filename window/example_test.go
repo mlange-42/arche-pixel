@@ -21,10 +21,10 @@ func Example() {
 	m.Tps = 30
 	m.Fps = 0
 
-	// Create a window system.
-	win := window.Window{}
-	// Add a drawer
-	win.Add(&RectDrawer{})
+	// Create a window system with a single drawer.
+	win := window.Window{
+		Drawers: []window.Drawer{&RectDrawer{}},
+	}
 	// Add the window as UI system.
 	m.AddUISystem(&win)
 
@@ -50,6 +50,9 @@ func (d *RectDrawer) Initialize(w *ecs.World, win *pixelgl.Window) {
 	// Create a drawer from the Pixel engine.
 	d.dr = *imdraw.New(nil)
 }
+
+// Update the RectDrawer (does nothing).
+func (d *RectDrawer) Update(w *ecs.World) {}
 
 // Draw the RectDrawer's stuff.
 func (d *RectDrawer) Draw(w *ecs.World, win *pixelgl.Window) {
