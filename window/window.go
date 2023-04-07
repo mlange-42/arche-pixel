@@ -70,9 +70,10 @@ func (s *Window) InitializeUI(w *ecs.World) {
 		s.Bounds.Height = 768
 	}
 	cfg := pixelgl.WindowConfig{
-		Title:    "Arche",
-		Bounds:   pixel.R(0, 0, float64(s.Bounds.Width), float64(s.Bounds.Height)),
-		Position: pixel.V(float64(s.Bounds.X), float64(s.Bounds.Y)),
+		Title:     "Arche",
+		Bounds:    pixel.R(0, 0, float64(s.Bounds.Width), float64(s.Bounds.Height)),
+		Position:  pixel.V(float64(s.Bounds.X), float64(s.Bounds.Y)),
+		Resizable: true,
 	}
 
 	defer func() {

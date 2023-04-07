@@ -53,10 +53,7 @@ func (s *TimeSeries) Initialize(w *ecs.World, win *pixelgl.Window) {
 	s.headers = s.Observer.Header()
 	s.series = make([]plotter.XYs, len(s.headers))
 
-	width := 100.0
-	c := vgimg.New(vg.Points(width), vg.Points(width))
-	img := c.Image()
-	s.scale = width / float64(img.Bounds().Dx())
+	s.scale = calcScaleCorrection()
 }
 
 // Update the drawer.

@@ -9,14 +9,16 @@
 * All plots are `Drawer` instead of `UISystem`, and are added to a `Window` (#8)
 * Upgrade to `arche-model` v0.0.3 (#9)
 
-### Documentation
-
-* Add separate examples for `Window` and `Drawer` (#9)
-
 ### Features
 
 * Adds `Image` plot for plotting grids and matrices (#8)
 * Adds `ImageRGB` plot for plotting multi-channel grids and matrices (#8)
+* `WorldStats` drawer for visualizing world and performance statistics (#10)
+* Windows are resizable (#10)
+
+### Documentation
+
+* Add separate examples for `Window` and `Drawer` (#9)
 
 ## [[v0.0.2]](https://github.com/mlange-42/arche-pixel/compare/v0.0.1...v0.0.2)
 
