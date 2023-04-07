@@ -11,11 +11,9 @@ import (
 	"github.com/faiface/pixel/imdraw"
 	"github.com/faiface/pixel/pixelgl"
 	"github.com/faiface/pixel/text"
-	"github.com/mlange-42/arche-model/resource"
 	"github.com/mlange-42/arche-pixel/window"
 	"github.com/mlange-42/arche/ecs"
 	"github.com/mlange-42/arche/ecs/stats"
-	"github.com/mlange-42/arche/generic"
 	"golang.org/x/image/font/basicfont"
 )
 
@@ -51,13 +49,14 @@ type WorldStats struct {
 	HideArchetypes bool          // Hides archetype stats
 	scale          float64
 	drawer         imdraw.IMDraw
-	tickRes        generic.Resource[resource.Tick]
 	summary        *text.Text
 	timeSeries     timeSeries
 	frameTimer     frameTimer
 	archetypes     archetypes
 	text           *text.Text
+	startTime      time.Time
 	lastPlotUpdate time.Time
+	step           int64
 }
 
 // Initialize the system
@@ -69,8 +68,8 @@ func (s *WorldStats) Initialize(w *ecs.World, win *pixelgl.Window) {
 		s.SampleInterval = time.Second
 	}
 	s.lastPlotUpdate = time.Now()
+	s.startTime = s.lastPlotUpdate
 
-	s.tickRes = generic.NewResource[resource.Tick](w)
 	s.drawer = *imdraw.New(nil)
 
 	s.scale = calcScaleCorrection()
@@ -88,37 +87,35 @@ func (s *WorldStats) Initialize(w *ecs.World, win *pixelgl.Window) {
 
 	s.text = text.New(px.V(0, 0), font)
 	s.text.Color = color.RGBA{200, 200, 200, 255}
+
+	s.step = 0
 }
 
 // Update the drawer.
 func (s *WorldStats) Update(w *ecs.World) {
 	t := time.Now()
-	if s.tickRes.Has() {
-		tick := s.tickRes.Get().Tick
-		s.frameTimer.Update(tick, t)
-	}
+	s.frameTimer.Update(s.step, t)
+
 	if !s.HidePlots && t.Sub(s.lastPlotUpdate) >= s.SampleInterval {
 		stats := w.Stats()
 		s.archetypes.Update(stats)
 		s.timeSeries.append(stats.Entities.Used, stats.Entities.Total, stats.Memory, int(s.frameTimer.FrameTime().Nanoseconds()))
 		s.lastPlotUpdate = t
 	}
+	s.step++
 }
 
 // Draw the system
 func (s *WorldStats) Draw(w *ecs.World, win *pixelgl.Window) {
-	var tick int64 = -1
-	if s.tickRes.Has() {
-		tick = s.tickRes.Get().Tick
-	}
 	stats := w.Stats()
 	s.archetypes.Update(stats)
 
 	s.summary.Clear()
 	mem, units := toMemText(stats.Memory)
 	fmt.Fprintf(
-		s.summary, "Tick: %7d  |  Entities: %7d  |  Comp: %3d  |  Arch: %3d  |  Mem: %6.1f %s  |  TPS: %6.1f | TPT: %6.2f ms",
-		tick, stats.Entities.Used, stats.ComponentCount, len(stats.Archetypes), mem, units, s.frameTimer.FPS(), float64(s.frameTimer.FrameTime().Microseconds())/1000,
+		s.summary, "Tick: %7d  |  Entities: %7d  |  Comp: %3d  |  Arch: %3d  |  Mem: %6.1f %s  |  TPS: %6.1f | TPT: %6.2f ms | Total: %s",
+		s.step, stats.Entities.Used, stats.ComponentCount, len(stats.Archetypes), mem, units, s.frameTimer.FPS(),
+		float64(s.frameTimer.FrameTime().Microseconds())/1000, time.Now().Sub(s.startTime).Round(time.Second),
 	)
 
 	numArch := len(stats.Archetypes)
@@ -157,7 +154,7 @@ func (s *WorldStats) Draw(w *ecs.World, win *pixelgl.Window) {
 		x0 += math.Ceil(plotWidth + 10)
 	}
 
-	archHeight := (y0 - 10) / float64(numArch+1)
+	archHeight := math.Ceil((y0 - 10) / float64(numArch+1))
 	if !s.HideArchetypes {
 		if archHeight >= 8 {
 			archWidth := width - x0 - 10
@@ -165,11 +162,11 @@ func (s *WorldStats) Draw(w *ecs.World, win *pixelgl.Window) {
 				archHeight = 20
 			}
 			s.drawArchetypeScales(
-				win, x0, y0-math.Ceil(archHeight), archWidth, archHeight, maxCapacity,
+				win, x0, y0-archHeight, archWidth, archHeight, maxCapacity,
 			)
 			for i := 0; i < numArch; i++ {
 				s.drawArchetype(
-					win, x0, y0-math.Ceil(float64(i+2)*archHeight), archWidth, archHeight,
+					win, x0, y0-float64(i+2)*archHeight, archWidth, archHeight,
 					maxCapacity, &stats.Archetypes[i], s.archetypes.Components[i],
 				)
 			}
@@ -207,7 +204,7 @@ func (s *WorldStats) drawArchetypeScales(win *pixelgl.Window, x, y, w, h float64
 		val := i * int(step)
 		s.text.Clear()
 		fmt.Fprintf(s.text, "%d", val)
-		s.text.Draw(win, px.IM.Moved(px.V(x+xi*drawStep-s.text.Bounds().W()/2, y+10)))
+		s.text.Draw(win, px.IM.Moved(px.V(math.Floor(x+xi*drawStep-s.text.Bounds().W()/2), y+10)))
 	}
 }
 
@@ -217,12 +214,14 @@ func (s *WorldStats) drawArchetype(win *pixelgl.Window, x, y, w, h float64, max 
 	cap := float64(arch.Capacity) / float64(max)
 	cnt := float64(arch.Size) / float64(max)
 
-	dr.Color = color.RGBA{160, 40, 40, 255}
+	//dr.Color = color.RGBA{160, 40, 40, 255}
+	dr.Color = color.RGBA{0, 120, 40, 255}
 	dr.Push(px.V(x, y), px.V(x+w*cnt, y+h))
 	dr.Rectangle(0)
 	dr.Reset()
 
-	dr.Color = color.RGBA{40, 40, 160, 255}
+	//dr.Color = color.RGBA{40, 40, 160, 255}
+	dr.Color = color.RGBA{20, 60, 25, 255}
 	dr.Push(px.V(x+w*cnt, y), px.V(x+w*cap, y+h))
 	dr.Rectangle(0)
 	dr.Reset()
