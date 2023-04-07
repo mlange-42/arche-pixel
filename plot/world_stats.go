@@ -87,6 +87,7 @@ func (s *WorldStats) Initialize(w *ecs.World, win *pixelgl.Window) {
 	fmt.Fprintf(s.timeSeries.Text[tsFrameTime], "TPT")
 
 	s.text = text.New(px.V(0, 0), font)
+	s.text.Color = color.RGBA{200, 200, 200, 255}
 }
 
 // Update the drawer.
@@ -156,16 +157,19 @@ func (s *WorldStats) Draw(w *ecs.World, win *pixelgl.Window) {
 		x0 += math.Ceil(plotWidth + 10)
 	}
 
-	archHeight := (y0 - 10) / float64(numArch)
+	archHeight := (y0 - 10) / float64(numArch+1)
 	if !s.HideArchetypes {
-		if archHeight >= 5 {
+		if archHeight >= 8 {
 			archWidth := width - x0 - 10
 			if archHeight > 20 {
 				archHeight = 20
 			}
+			s.drawArchetypeScales(
+				win, x0, y0-math.Ceil(archHeight), archWidth, archHeight, maxCapacity,
+			)
 			for i := 0; i < numArch; i++ {
 				s.drawArchetype(
-					win, x0, y0-math.Ceil(float64(i+1)*archHeight), archWidth, archHeight,
+					win, x0, y0-math.Ceil(float64(i+2)*archHeight), archWidth, archHeight,
 					maxCapacity, &stats.Archetypes[i], s.archetypes.Components[i],
 				)
 			}
@@ -178,6 +182,33 @@ func (s *WorldStats) Draw(w *ecs.World, win *pixelgl.Window) {
 
 	dr.Draw(win)
 	dr.Clear()
+}
+
+func (s *WorldStats) drawArchetypeScales(win *pixelgl.Window, x, y, w, h float64, max int) {
+	dr := &s.drawer
+	step := calcTicksStep(float64(max), 8)
+	if step < 1 {
+		return
+	}
+	drawStep := w * step / float64(max)
+
+	dr.Color = color.RGBA{140, 140, 140, 255}
+	dr.Push(px.V(x, y+2), px.V(x+w, y+2))
+	dr.Line(1)
+	dr.Reset()
+
+	steps := int(float64(max) / step)
+	for i := 0; i <= steps; i++ {
+		xi := float64(i)
+		dr.Push(px.V(x+xi*drawStep, y+2), px.V(x+xi*drawStep, y+7))
+		dr.Line(1)
+		dr.Reset()
+
+		val := i * int(step)
+		s.text.Clear()
+		fmt.Fprintf(s.text, "%d", val)
+		s.text.Draw(win, px.IM.Moved(px.V(x+xi*drawStep-s.text.Bounds().W()/2, y+10)))
+	}
 }
 
 func (s *WorldStats) drawArchetype(win *pixelgl.Window, x, y, w, h float64, max int, arch *stats.ArchetypeStats, text *text.Text) {

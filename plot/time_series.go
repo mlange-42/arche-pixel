@@ -28,14 +28,15 @@ var defaultColors = []color.Color{
 
 // TimeSeries plot drawer.
 //
-// If the world contains a resource of type [github.com/mlange-42/arche-model/resource.Termination],
-// the model is terminated when the window is closed.
+// Expects a world resource of type [github.com/mlange-42/arche-model/resource.Tick].
 type TimeSeries struct {
-	Observer observer.Row // Observer providing a data row per update.
-	headers  []string
-	series   []plotter.XYs
-	scale    float64
-	tickRes  generic.Resource[resource.Tick]
+	Observer       observer.Row // Observer providing a data row per update.
+	UpdateInterval int          // Interval for updating the observer, in model ticks. Optional.
+
+	headers []string
+	series  []plotter.XYs
+	scale   float64
+	tickRes generic.Resource[resource.Tick]
 }
 
 func (s *TimeSeries) append(x float64, values []float64) {
@@ -60,8 +61,10 @@ func (s *TimeSeries) Initialize(w *ecs.World, win *pixelgl.Window) {
 func (s *TimeSeries) Update(w *ecs.World) {
 	tick := s.tickRes.Get().Tick
 
-	s.Observer.Update(w)
-	s.append(float64(tick), s.Observer.Values(w))
+	if s.UpdateInterval <= 1 || tick%int64(s.UpdateInterval) == 0 {
+		s.Observer.Update(w)
+		s.append(float64(tick), s.Observer.Values(w))
+	}
 }
 
 // Draw the drawer.
