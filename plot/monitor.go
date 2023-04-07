@@ -29,11 +29,11 @@ const (
 
 var font = text.NewAtlas(basicfont.Face7x13, text.ASCII)
 
-// NewWorldStatsWindow creates a window with [WorldStats] drawer, for immediate use as a system.
-func NewWorldStatsWindow(drawInterval int) *window.Window {
+// NewMonitorWindow creates a window with [Monitor] drawer, for immediate use as a system.
+func NewMonitorWindow(drawInterval int) *window.Window {
 	return &window.Window{
 		Drawers: []window.Drawer{
-			&WorldStats{
+			&Monitor{
 				SampleInterval: time.Second / 2,
 			},
 		},
@@ -41,8 +41,8 @@ func NewWorldStatsWindow(drawInterval int) *window.Window {
 	}
 }
 
-// WorldStats visualizes statistics of the ECS world.
-type WorldStats struct {
+// Monitor drawer for visualizing world and performance statistics.
+type Monitor struct {
 	PlotCapacity   int           // Number of values in time series plots. Optional, default 300.
 	SampleInterval time.Duration // Approx. time between measurements for time series plots. Optional, default 1 second.
 	HidePlots      bool          // Hides time series plots
@@ -60,7 +60,7 @@ type WorldStats struct {
 }
 
 // Initialize the system
-func (s *WorldStats) Initialize(w *ecs.World, win *pixelgl.Window) {
+func (s *Monitor) Initialize(w *ecs.World, win *pixelgl.Window) {
 	if s.PlotCapacity <= 0 {
 		s.PlotCapacity = 300
 	}
@@ -92,7 +92,7 @@ func (s *WorldStats) Initialize(w *ecs.World, win *pixelgl.Window) {
 }
 
 // Update the drawer.
-func (s *WorldStats) Update(w *ecs.World) {
+func (s *Monitor) Update(w *ecs.World) {
 	t := time.Now()
 	s.frameTimer.Update(s.step, t)
 
@@ -106,7 +106,7 @@ func (s *WorldStats) Update(w *ecs.World) {
 }
 
 // Draw the system
-func (s *WorldStats) Draw(w *ecs.World, win *pixelgl.Window) {
+func (s *Monitor) Draw(w *ecs.World, win *pixelgl.Window) {
 	stats := w.Stats()
 	s.archetypes.Update(stats)
 
@@ -115,7 +115,7 @@ func (s *WorldStats) Draw(w *ecs.World, win *pixelgl.Window) {
 	fmt.Fprintf(
 		s.summary, "Tick: %7d  |  Entities: %7d  |  Comp: %3d  |  Arch: %3d  |  Mem: %6.1f %s  |  TPS: %6.1f | TPT: %6.2f ms | Total: %s",
 		s.step, stats.Entities.Used, stats.ComponentCount, len(stats.Archetypes), mem, units, s.frameTimer.FPS(),
-		float64(s.frameTimer.FrameTime().Microseconds())/1000, time.Now().Sub(s.startTime).Round(time.Second),
+		float64(s.frameTimer.FrameTime().Microseconds())/1000, time.Since(s.startTime).Round(time.Second),
 	)
 
 	numArch := len(stats.Archetypes)
@@ -181,7 +181,7 @@ func (s *WorldStats) Draw(w *ecs.World, win *pixelgl.Window) {
 	dr.Clear()
 }
 
-func (s *WorldStats) drawArchetypeScales(win *pixelgl.Window, x, y, w, h float64, max int) {
+func (s *Monitor) drawArchetypeScales(win *pixelgl.Window, x, y, w, h float64, max int) {
 	dr := &s.drawer
 	step := calcTicksStep(float64(max), 8)
 	if step < 1 {
@@ -208,7 +208,7 @@ func (s *WorldStats) drawArchetypeScales(win *pixelgl.Window, x, y, w, h float64
 	}
 }
 
-func (s *WorldStats) drawArchetype(win *pixelgl.Window, x, y, w, h float64, max int, arch *stats.ArchetypeStats, text *text.Text) {
+func (s *Monitor) drawArchetype(win *pixelgl.Window, x, y, w, h float64, max int, arch *stats.ArchetypeStats, text *text.Text) {
 	dr := &s.drawer
 
 	cap := float64(arch.Capacity) / float64(max)
@@ -237,7 +237,7 @@ func (s *WorldStats) drawArchetype(win *pixelgl.Window, x, y, w, h float64, max 
 	text.Draw(win, px.IM.Moved(px.V(x+3, y+3)))
 }
 
-func (s *WorldStats) drawPlot(win *pixelgl.Window, x, y, w, h float64, series ...timeSeriesType) {
+func (s *Monitor) drawPlot(win *pixelgl.Window, x, y, w, h float64, series ...timeSeriesType) {
 	dr := &s.drawer
 
 	dr.Color = color.RGBA{0, 25, 10, 255}

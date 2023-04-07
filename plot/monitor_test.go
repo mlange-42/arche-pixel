@@ -1,14 +1,13 @@
 package plot_test
 
 import (
-	"github.com/faiface/pixel/pixelgl"
 	"github.com/mlange-42/arche-model/model"
 	"github.com/mlange-42/arche-model/system"
 	"github.com/mlange-42/arche-pixel/plot"
 	"github.com/mlange-42/arche-pixel/window"
 )
 
-func ExampleWorldStats() {
+func ExampleMonitor() {
 	// Create a new model.
 	m := model.New()
 
@@ -16,10 +15,10 @@ func ExampleWorldStats() {
 	m.Tps = 30
 	m.Fps = 0
 
-	// Create a window with a WorldStats drawer.
+	// Create a window with a Monitor drawer.
 	m.AddUISystem(&window.Window{
 		Drawers: []window.Drawer{
-			&plot.WorldStats{},
+			&plot.Monitor{},
 		},
 	})
 
@@ -35,7 +34,7 @@ func ExampleWorldStats() {
 	// pixelgl.Run(m.Run)
 }
 
-func ExampleNewWorldStatsWindow() {
+func ExampleNewMonitorWindow() {
 	// Create a new model.
 	m := model.New()
 
@@ -43,8 +42,8 @@ func ExampleNewWorldStatsWindow() {
 	m.Tps = 30
 	m.Fps = 0
 
-	// Create a window with a WorldStats drawer, using the shorthand constructor.
-	m.AddUISystem(plot.NewWorldStatsWindow(10))
+	// Create a window with a Monitor drawer, using the shorthand constructor.
+	m.AddUISystem(plot.NewMonitorWindow(10))
 
 	// Add a termination system that ends the simulation.
 	m.AddSystem(&system.FixedTermination{
@@ -55,6 +54,5 @@ func ExampleNewWorldStatsWindow() {
 	// Due to the use of the OpenGL UI system, the model must be run via [github.com/faiface/pixel/pixelgl].
 	// Uncomment the next line. It is commented out as the CI has no display device to test the model run.
 
-	pixelgl.Run(m.Run)
-	// Output:
+	// pixelgl.Run(m.Run)
 }

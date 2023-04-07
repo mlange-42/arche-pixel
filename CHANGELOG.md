@@ -13,7 +13,7 @@
 
 * Adds `Image` plot for plotting grids and matrices (#8)
 * Adds `ImageRGB` plot for plotting multi-channel grids and matrices (#8)
-* `WorldStats` drawer for visualizing world and performance statistics (#10)
+* `Monitor` drawer for visualizing world and performance statistics (#10)
 * Windows are resizable (#10)
 
 ### Documentation
