@@ -153,7 +153,7 @@ func (s *WorldStats) Draw(w *ecs.World, win *pixelgl.Window) {
 	s.summary.Clear()
 	mem, units := toMemText(stats.Memory)
 	fmt.Fprintf(
-		s.summary, "Tick: %7d  |  Entities: %7d  |  Comp: %3d  |  Arch: %3d  |  Mem: %5.1f %s  |  TPS: %6.1f | TPT: %6.2f ms",
+		s.summary, "Tick: %7d  |  Entities: %7d  |  Comp: %3d  |  Arch: %3d  |  Mem: %6.1f %s  |  TPS: %6.1f | TPT: %6.2f ms",
 		tick, stats.Entities.Used, stats.ComponentCount, len(stats.Archetypes), mem, units, s.frameTimer.FPS(), float64(s.frameTimer.FrameTime().Microseconds())/1000,
 	)
 
@@ -178,8 +178,14 @@ func (s *WorldStats) Draw(w *ecs.World, win *pixelgl.Window) {
 		s.timeSeries.append(stats.Entities.Used, stats.Entities.Total, stats.Memory, int(s.frameTimer.FrameTime().Nanoseconds()))
 
 		plotY0 := y0
-		plotHeight := (height - 20) / 8
-		plotWidth := width * 0.25
+		plotHeight := (height - 60) / 3
+		if plotHeight > 150 {
+			plotHeight = 150
+		}
+		plotWidth := (width - 20) * 0.25
+		if s.HideArchetypes {
+			plotWidth = width - 20
+		}
 		s.drawPlot(win, x0, plotY0-plotHeight, plotWidth, plotHeight, tsEntities, tsEntityCap)
 		plotY0 -= plotHeight + 10
 		s.drawPlot(win, x0, plotY0-plotHeight, plotWidth, plotHeight, tsMemory)
@@ -189,9 +195,9 @@ func (s *WorldStats) Draw(w *ecs.World, win *pixelgl.Window) {
 		x0 += plotWidth + 10
 	}
 
-	archHeight := (y0 - 20) / float64(numArch)
+	archHeight := (y0 - 10) / float64(numArch)
 	if !s.HideArchetypes {
-		if archHeight >= 3 {
+		if archHeight >= 5 {
 			archWidth := width - x0 - 10
 			if archHeight > 30 {
 				archHeight = 30
