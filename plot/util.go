@@ -1,15 +1,33 @@
 package plot
 
 import (
+	"math"
+
 	"gonum.org/v1/plot/vg"
 	"gonum.org/v1/plot/vg/vgimg"
 )
+
+var preferredTicks = []float64{1, 2, 5, 10}
 
 func calcScaleCorrection() float64 {
 	width := 100.0
 	c := vgimg.New(vg.Points(width), vg.Points(width))
 	img := c.Image()
 	return width / float64(img.Bounds().Dx())
+}
+
+func calcTicksStep(max float64, desired int) float64 {
+	steps := float64(desired)
+	approxStep := float64(max) / (steps - 1)
+	stepPower := math.Pow(10, -math.Floor(math.Log10(approxStep)))
+	normalizedStep := approxStep * stepPower
+	for _, s := range preferredTicks {
+		if s >= normalizedStep {
+			normalizedStep = s
+			break
+		}
+	}
+	return normalizedStep / stepPower
 }
 
 type ringBuffer[T any] struct {
