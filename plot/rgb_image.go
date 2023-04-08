@@ -98,7 +98,7 @@ func (i *ImageRGB) Draw(w *ecs.World, win *pixelgl.Window) {
 
 	scale := i.Scale
 	if i.Scale <= 0 {
-		scale = window.CalcScale(win, i.picture.Rect.W(), i.picture.Rect.H())
+		scale = window.Scale(win, i.picture.Rect.W(), i.picture.Rect.H())
 	}
 
 	sprite := pixel.NewSprite(i.picture, i.picture.Bounds())
