@@ -22,42 +22,42 @@ type Image struct {
 }
 
 // Initialize the system
-func (s *Image) Initialize(w *ecs.World, win *pixelgl.Window) {
-	s.Observer.Initialize(w)
+func (i *Image) Initialize(w *ecs.World, win *pixelgl.Window) {
+	i.Observer.Initialize(w)
 
-	if s.Scale <= 0 {
-		s.Scale = 1
+	if i.Scale <= 0 {
+		i.Scale = 1
 	}
-	if s.Min == 0 && s.Max == 0 {
-		s.Max = 1
+	if i.Min == 0 && i.Max == 0 {
+		i.Max = 1
 	}
 
-	s.slope = 1.0 / (s.Max - s.Min)
+	i.slope = 1.0 / (i.Max - i.Min)
 
-	width, height := s.Observer.Dims()
-	s.picture = pixel.MakePictureData(pixel.R(0, 0, float64(width), float64(height)))
+	width, height := i.Observer.Dims()
+	i.picture = pixel.MakePictureData(pixel.R(0, 0, float64(width), float64(height)))
 }
 
 // Update the drawer.
-func (s *Image) Update(w *ecs.World) {
-	s.Observer.Update(w)
+func (i *Image) Update(w *ecs.World) {
+	i.Observer.Update(w)
 }
 
 // Draw the system
-func (s *Image) Draw(w *ecs.World, win *pixelgl.Window) {
-	values := s.Observer.Values(w)
+func (i *Image) Draw(w *ecs.World, win *pixelgl.Window) {
+	values := i.Observer.Values(w)
 
 	length := len(values)
-	for i := 0; i < length; i++ {
-		s.picture.Pix[i] = s.valueToColor(values[i])
+	for j := 0; j < length; j++ {
+		i.picture.Pix[j] = i.valueToColor(values[j])
 	}
 
-	sprite := pixel.NewSprite(s.picture, s.picture.Bounds())
-	sprite.Draw(win, pixel.IM.Moved(pixel.V(s.picture.Rect.W()/2.0, s.picture.Rect.H()/2.0)).Scaled(pixel.Vec{}, s.Scale))
+	sprite := pixel.NewSprite(i.picture, i.picture.Bounds())
+	sprite.Draw(win, pixel.IM.Moved(pixel.V(i.picture.Rect.W()/2.0, i.picture.Rect.H()/2.0)).Scaled(pixel.Vec{}, i.Scale))
 }
 
-func (s *Image) valueToColor(v float64) color.RGBA {
-	c := s.Colors.At((v - s.Min) * s.slope)
+func (i *Image) valueToColor(v float64) color.RGBA {
+	c := i.Colors.At((v - i.Min) * i.slope)
 	return color.RGBA{
 		R: uint8(c.R * 255),
 		G: uint8(c.G * 255),

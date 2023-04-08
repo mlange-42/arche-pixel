@@ -15,6 +15,7 @@
 * Adds `ImageRGB` plot for plotting multi-channel grids and matrices (#8)
 * `Monitor` drawer for visualizing world and performance statistics (#10)
 * Windows are resizable (#10)
+* Window title can be set at construction time (#11)
 
 ### Documentation
 

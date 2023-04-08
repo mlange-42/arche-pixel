@@ -21,17 +21,17 @@ type ImageRGB struct {
 }
 
 // Initialize the drawer.
-func (s *ImageRGB) Initialize(w *ecs.World, win *pixelgl.Window) {
-	if len(s.Observers) != 3 {
+func (i *ImageRGB) Initialize(w *ecs.World, win *pixelgl.Window) {
+	if len(i.Observers) != 3 {
 		panic("RgbImage plot needs exactly 3 observers")
 	}
 	width, height := -1, -1
-	for i := 0; i < 3; i++ {
-		if s.Observers[i] == nil {
+	for j := 0; j < 3; j++ {
+		if i.Observers[j] == nil {
 			continue
 		}
-		s.Observers[i].Initialize(w)
-		wi, he := s.Observers[i].Dims()
+		i.Observers[j].Initialize(w)
+		wi, he := i.Observers[j].Dims()
 		if width >= 0 && width != wi {
 			panic("observers differ in matrix width")
 		}
@@ -44,69 +44,69 @@ func (s *ImageRGB) Initialize(w *ecs.World, win *pixelgl.Window) {
 		panic("needs an observer for at least one channel")
 	}
 
-	if s.Scale <= 0 {
-		s.Scale = 1
+	if i.Scale <= 0 {
+		i.Scale = 1
 	}
-	if s.Min == nil {
-		s.Min = []float64{0, 0, 0}
+	if i.Min == nil {
+		i.Min = []float64{0, 0, 0}
 	}
-	if s.Max == nil {
-		s.Max = []float64{1, 1, 1}
+	if i.Max == nil {
+		i.Max = []float64{1, 1, 1}
 	}
-	if len(s.Min) != 3 {
+	if len(i.Min) != 3 {
 		panic("RgbImage plot needs exactly 3 Min values")
 	}
-	if len(s.Max) != 3 {
+	if len(i.Max) != 3 {
 		panic("RgbImage plot needs exactly 3 Max values")
 	}
 
-	s.slope = []float64{
-		1.0 / (s.Max[0] - s.Min[0]),
-		1.0 / (s.Max[1] - s.Min[1]),
-		1.0 / (s.Max[2] - s.Min[2]),
+	i.slope = []float64{
+		1.0 / (i.Max[0] - i.Min[0]),
+		1.0 / (i.Max[1] - i.Min[1]),
+		1.0 / (i.Max[2] - i.Min[2]),
 	}
 
-	s.dataLen = width * height
-	s.picture = pixel.MakePictureData(pixel.R(0, 0, float64(width), float64(height)))
+	i.dataLen = width * height
+	i.picture = pixel.MakePictureData(pixel.R(0, 0, float64(width), float64(height)))
 }
 
 // Update the drawer.
-func (s *ImageRGB) Update(w *ecs.World) {
-	for i := 0; i < 3; i++ {
-		if s.Observers[i] != nil {
-			s.Observers[i].Update(w)
+func (i *ImageRGB) Update(w *ecs.World) {
+	for j := 0; j < 3; j++ {
+		if i.Observers[j] != nil {
+			i.Observers[j].Update(w)
 		}
 	}
 }
 
 // Draw the drawer.
-func (s *ImageRGB) Draw(w *ecs.World, win *pixelgl.Window) {
+func (i *ImageRGB) Draw(w *ecs.World, win *pixelgl.Window) {
 	cannels := make([][]float64, 3)
-	for i := 0; i < 3; i++ {
-		if s.Observers[i] != nil {
-			cannels[i] = s.Observers[i].Values(w)
+	for j := 0; j < 3; j++ {
+		if i.Observers[j] != nil {
+			cannels[j] = i.Observers[j].Values(w)
 		}
 	}
 
-	values := append([]float64{}, s.Min...)
-	for i := 0; i < s.dataLen; i++ {
-		for j := 0; j < 3; j++ {
-			if cannels[j] != nil {
-				values[j] = cannels[j][i]
+	values := append([]float64{}, i.Min...)
+	for j := 0; j < i.dataLen; j++ {
+		for k := 0; k < 3; k++ {
+			if cannels[k] != nil {
+				values[k] = cannels[k][j]
 			}
 		}
-		s.picture.Pix[i] = s.valuesToColor(values[0], values[1], values[2])
+		i.picture.Pix[j] = i.valuesToColor(values[0], values[1], values[2])
 	}
 
-	sprite := pixel.NewSprite(s.picture, s.picture.Bounds())
-	sprite.Draw(win, pixel.IM.Moved(pixel.V(s.picture.Rect.W()/2.0, s.picture.Rect.H()/2.0)).Scaled(pixel.Vec{}, s.Scale))
+	sprite := pixel.NewSprite(i.picture, i.picture.Bounds())
+	sprite.Draw(win, pixel.IM.Moved(pixel.V(i.picture.Rect.W()/2.0, i.picture.Rect.H()/2.0)).Scaled(pixel.Vec{}, i.Scale))
 }
 
-func (s *ImageRGB) valuesToColor(r, g, b float64) color.RGBA {
+func (i *ImageRGB) valuesToColor(r, g, b float64) color.RGBA {
 	return color.RGBA{
-		R: norm(r, s.Min[0], s.slope[0]),
-		G: norm(g, s.Min[1], s.slope[1]),
-		B: norm(b, s.Min[2], s.slope[2]),
+		R: norm(r, i.Min[0], i.slope[0]),
+		G: norm(g, i.Min[1], i.slope[1]),
+		B: norm(b, i.Min[2], i.slope[2]),
 		A: 0xff,
 	}
 }

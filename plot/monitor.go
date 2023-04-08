@@ -58,62 +58,62 @@ type Monitor struct {
 }
 
 // Initialize the system
-func (s *Monitor) Initialize(w *ecs.World, win *pixelgl.Window) {
-	if s.PlotCapacity <= 0 {
-		s.PlotCapacity = 300
+func (m *Monitor) Initialize(w *ecs.World, win *pixelgl.Window) {
+	if m.PlotCapacity <= 0 {
+		m.PlotCapacity = 300
 	}
-	if s.SampleInterval <= 0 {
-		s.SampleInterval = time.Second
+	if m.SampleInterval <= 0 {
+		m.SampleInterval = time.Second
 	}
-	s.lastPlotUpdate = time.Now()
-	s.startTime = s.lastPlotUpdate
+	m.lastPlotUpdate = time.Now()
+	m.startTime = m.lastPlotUpdate
 
-	s.drawer = *imdraw.New(nil)
+	m.drawer = *imdraw.New(nil)
 
-	s.scale = calcScaleCorrection()
+	m.scale = calcScaleCorrection()
 
-	s.summary = text.New(px.V(0, 0), font)
+	m.summary = text.New(px.V(0, 0), font)
 
-	s.timeSeries = newTimeSeries(s.PlotCapacity)
-	for i := 0; i < len(s.timeSeries.Text); i++ {
-		s.timeSeries.Text[i] = text.New(px.V(0, 0), font)
+	m.timeSeries = newTimeSeries(m.PlotCapacity)
+	for i := 0; i < len(m.timeSeries.Text); i++ {
+		m.timeSeries.Text[i] = text.New(px.V(0, 0), font)
 	}
-	fmt.Fprintf(s.timeSeries.Text[tsEntities], "Entities")
-	fmt.Fprintf(s.timeSeries.Text[tsEntityCap], "Capacity")
-	fmt.Fprintf(s.timeSeries.Text[tsMemory], "Memory")
-	fmt.Fprintf(s.timeSeries.Text[tsFrameTime], "TPT")
+	fmt.Fprintf(m.timeSeries.Text[tsEntities], "Entities")
+	fmt.Fprintf(m.timeSeries.Text[tsEntityCap], "Capacity")
+	fmt.Fprintf(m.timeSeries.Text[tsMemory], "Memory")
+	fmt.Fprintf(m.timeSeries.Text[tsFrameTime], "TPT")
 
-	s.text = text.New(px.V(0, 0), font)
-	s.text.Color = color.RGBA{200, 200, 200, 255}
+	m.text = text.New(px.V(0, 0), font)
+	m.text.Color = color.RGBA{200, 200, 200, 255}
 
-	s.step = 0
+	m.step = 0
 }
 
 // Update the drawer.
-func (s *Monitor) Update(w *ecs.World) {
+func (m *Monitor) Update(w *ecs.World) {
 	t := time.Now()
-	s.frameTimer.Update(s.step, t)
+	m.frameTimer.Update(m.step, t)
 
-	if !s.HidePlots && t.Sub(s.lastPlotUpdate) >= s.SampleInterval {
+	if !m.HidePlots && t.Sub(m.lastPlotUpdate) >= m.SampleInterval {
 		stats := w.Stats()
-		s.archetypes.Update(stats)
-		s.timeSeries.append(stats.Entities.Used, stats.Entities.Total, stats.Memory, int(s.frameTimer.FrameTime().Nanoseconds()))
-		s.lastPlotUpdate = t
+		m.archetypes.Update(stats)
+		m.timeSeries.append(stats.Entities.Used, stats.Entities.Total, stats.Memory, int(m.frameTimer.FrameTime().Nanoseconds()))
+		m.lastPlotUpdate = t
 	}
-	s.step++
+	m.step++
 }
 
 // Draw the system
-func (s *Monitor) Draw(w *ecs.World, win *pixelgl.Window) {
+func (m *Monitor) Draw(w *ecs.World, win *pixelgl.Window) {
 	stats := w.Stats()
-	s.archetypes.Update(stats)
+	m.archetypes.Update(stats)
 
-	s.summary.Clear()
+	m.summary.Clear()
 	mem, units := toMemText(stats.Memory)
 	fmt.Fprintf(
-		s.summary, "Tick: %7d  |  Entities: %7d  |  Comp: %3d  |  Arch: %3d  |  Mem: %6.1f %s  |  TPS: %6.1f | TPT: %6.2f ms | Total: %s",
-		s.step, stats.Entities.Used, stats.ComponentCount, len(stats.Archetypes), mem, units, s.frameTimer.FPS(),
-		float64(s.frameTimer.FrameTime().Microseconds())/1000, time.Since(s.startTime).Round(time.Second),
+		m.summary, "Tick: %7d  |  Entities: %7d  |  Comp: %3d  |  Arch: %3d  |  Mem: %6.1f %s  |  TPS: %6.1f | TPT: %6.2f ms | Total: %s",
+		m.step, stats.Entities.Used, stats.ComponentCount, len(stats.Archetypes), mem, units, m.frameTimer.FPS(),
+		float64(m.frameTimer.FrameTime().Microseconds())/1000, time.Since(m.startTime).Round(time.Second),
 	)
 
 	numArch := len(stats.Archetypes)
@@ -124,54 +124,54 @@ func (s *Monitor) Draw(w *ecs.World, win *pixelgl.Window) {
 			maxCapacity = cap
 		}
 	}
-	dr := &s.drawer
+	dr := &m.drawer
 	width := win.Canvas().Bounds().W()
 	height := win.Canvas().Bounds().H()
 	x0 := 10.0
 	y0 := height - 20.0
 
-	s.summary.Draw(win, px.IM.Moved(px.V(x0, y0)))
+	m.summary.Draw(win, px.IM.Moved(px.V(x0, y0)))
 	y0 -= 10
 
-	if !s.HidePlots {
+	if !m.HidePlots {
 		plotY0 := y0
 		plotHeight := (height - 60) / 3
 		if plotHeight > 150 {
 			plotHeight = 150
 		}
 		plotWidth := (width - 20) * 0.25
-		if s.HideArchetypes {
+		if m.HideArchetypes {
 			plotWidth = width - 20
 		}
-		s.drawPlot(win, x0, plotY0-plotHeight, plotWidth, plotHeight, tsEntities, tsEntityCap)
+		m.drawPlot(win, x0, plotY0-plotHeight, plotWidth, plotHeight, tsEntities, tsEntityCap)
 		plotY0 -= plotHeight + 10
-		s.drawPlot(win, x0, plotY0-plotHeight, plotWidth, plotHeight, tsMemory)
+		m.drawPlot(win, x0, plotY0-plotHeight, plotWidth, plotHeight, tsMemory)
 		plotY0 -= plotHeight + 10
-		s.drawPlot(win, x0, plotY0-plotHeight, plotWidth, plotHeight, tsFrameTime)
+		m.drawPlot(win, x0, plotY0-plotHeight, plotWidth, plotHeight, tsFrameTime)
 
 		x0 += math.Ceil(plotWidth + 10)
 	}
 
 	archHeight := math.Ceil((y0 - 10) / float64(numArch+1))
-	if !s.HideArchetypes {
+	if !m.HideArchetypes {
 		if archHeight >= 8 {
 			archWidth := width - x0 - 10
 			if archHeight > 20 {
 				archHeight = 20
 			}
-			s.drawArchetypeScales(
+			m.drawArchetypeScales(
 				win, x0, y0-archHeight, archWidth, archHeight, maxCapacity,
 			)
 			for i := 0; i < numArch; i++ {
-				s.drawArchetype(
+				m.drawArchetype(
 					win, x0, y0-float64(i+2)*archHeight, archWidth, archHeight,
-					maxCapacity, &stats.Archetypes[i], s.archetypes.Components[i],
+					maxCapacity, &stats.Archetypes[i], m.archetypes.Components[i],
 				)
 			}
 		} else {
-			s.text.Clear()
-			fmt.Fprintf(s.text, "Too many archetypes")
-			s.text.Draw(win, px.IM.Moved(px.V(x0, y0-10)))
+			m.text.Clear()
+			fmt.Fprintf(m.text, "Too many archetypes")
+			m.text.Draw(win, px.IM.Moved(px.V(x0, y0-10)))
 		}
 	}
 
@@ -179,8 +179,8 @@ func (s *Monitor) Draw(w *ecs.World, win *pixelgl.Window) {
 	dr.Clear()
 }
 
-func (s *Monitor) drawArchetypeScales(win *pixelgl.Window, x, y, w, h float64, max int) {
-	dr := &s.drawer
+func (m *Monitor) drawArchetypeScales(win *pixelgl.Window, x, y, w, h float64, max int) {
+	dr := &m.drawer
 	step := calcTicksStep(float64(max), 8)
 	if step < 1 {
 		return
@@ -200,14 +200,14 @@ func (s *Monitor) drawArchetypeScales(win *pixelgl.Window, x, y, w, h float64, m
 		dr.Reset()
 
 		val := i * int(step)
-		s.text.Clear()
-		fmt.Fprintf(s.text, "%d", val)
-		s.text.Draw(win, px.IM.Moved(px.V(math.Floor(x+xi*drawStep-s.text.Bounds().W()/2), y+10)))
+		m.text.Clear()
+		fmt.Fprintf(m.text, "%d", val)
+		m.text.Draw(win, px.IM.Moved(px.V(math.Floor(x+xi*drawStep-m.text.Bounds().W()/2), y+10)))
 	}
 }
 
-func (s *Monitor) drawArchetype(win *pixelgl.Window, x, y, w, h float64, max int, arch *stats.ArchetypeStats, text *text.Text) {
-	dr := &s.drawer
+func (m *Monitor) drawArchetype(win *pixelgl.Window, x, y, w, h float64, max int, arch *stats.ArchetypeStats, text *text.Text) {
+	dr := &m.drawer
 
 	cap := float64(arch.Capacity) / float64(max)
 	cnt := float64(arch.Size) / float64(max)
@@ -235,8 +235,8 @@ func (s *Monitor) drawArchetype(win *pixelgl.Window, x, y, w, h float64, max int
 	text.Draw(win, px.IM.Moved(px.V(x+3, y+3)))
 }
 
-func (s *Monitor) drawPlot(win *pixelgl.Window, x, y, w, h float64, series ...timeSeriesType) {
-	dr := &s.drawer
+func (m *Monitor) drawPlot(win *pixelgl.Window, x, y, w, h float64, series ...timeSeriesType) {
+	dr := &m.drawer
 
 	dr.Color = color.RGBA{0, 25, 10, 255}
 	dr.Push(px.V(x, y), px.V(x+w, y+h))
@@ -245,7 +245,7 @@ func (s *Monitor) drawPlot(win *pixelgl.Window, x, y, w, h float64, series ...ti
 
 	yMax := 0
 	for _, series := range series {
-		values := s.timeSeries.Values[series]
+		values := m.timeSeries.Values[series]
 		l := values.Len()
 		for i := 0; i < l; i++ {
 			v := values.Get(i)
@@ -257,7 +257,7 @@ func (s *Monitor) drawPlot(win *pixelgl.Window, x, y, w, h float64, series ...ti
 
 	dr.Color = color.White
 	for _, series := range series {
-		values := s.timeSeries.Values[series]
+		values := m.timeSeries.Values[series]
 		numValues := values.Len()
 		if numValues > 0 {
 			xStep := w / float64(numValues-1)
@@ -284,7 +284,7 @@ func (s *Monitor) drawPlot(win *pixelgl.Window, x, y, w, h float64, series ...ti
 	dr.Clear()
 
 	if len(series) > 0 {
-		text := s.timeSeries.Text[series[0]]
+		text := m.timeSeries.Text[series[0]]
 		text.Draw(win, px.IM.Moved(px.V(x+w-text.Bounds().W()-3, y+3)))
 	}
 }
