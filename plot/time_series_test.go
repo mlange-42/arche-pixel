@@ -21,13 +21,10 @@ func ExampleTimeSeries() {
 
 	// Create a time series plot.
 	// See below for the implementation of the RowObserver.
-	m.AddUISystem(&window.Window{
-		Drawers: []window.Drawer{
-			&plot.TimeSeries{
-				Observer: &RowObserver{},
-			},
-		},
-	})
+	m.AddUISystem((&window.Window{}).
+		With(&plot.TimeSeries{
+			Observer: &RowObserver{},
+		}))
 
 	// Add a termination system that ends the simulation.
 	m.AddSystem(&system.FixedTermination{

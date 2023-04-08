@@ -16,11 +16,8 @@ func ExampleMonitor() {
 	m.Fps = 0
 
 	// Create a window with a Monitor drawer.
-	m.AddUISystem(&window.Window{
-		Drawers: []window.Drawer{
-			&plot.Monitor{},
-		},
-	})
+	m.AddUISystem((&window.Window{}).
+		With(&plot.Monitor{}))
 
 	// Add a termination system that ends the simulation.
 	m.AddSystem(&system.FixedTermination{

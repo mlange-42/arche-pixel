@@ -22,17 +22,15 @@ func ExampleImage() {
 
 	// Create an image plot.
 	// See below for the implementation of the MatrixObserver.
-	m.AddUISystem(&window.Window{
-		Drawers: []window.Drawer{
-			&plot.Image{
+	m.AddUISystem(
+		(&window.Window{}).
+			With(&plot.Image{
 				Scale:    4,
 				Observer: &MatrixObserver{},
 				Colors:   colorgrad.Inferno(),
 				Min:      -2,
 				Max:      2,
-			},
-		},
-	})
+			}))
 
 	// Add a termination system that ends the simulation.
 	m.AddSystem(&system.FixedTermination{

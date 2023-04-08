@@ -4,7 +4,7 @@
 
 ### Breaking changes
 
-* Renamed `Window.Add` to `Window.AddDrawer` (#8)
+* Renamed `Window.Add` to `Window.With`, taking drawer VarArgs and allows for chaining (#8, #11)
 * `Drawer` interface has method `Update(w *ecs.World)` (#8)
 * All plots are `Drawer` instead of `UISystem`, and are added to a `Window` (#8)
 * Upgrade to `arche-model` v0.0.4 (#9, #10)
@@ -15,6 +15,7 @@
 * Adds `ImageRGB` plot for plotting multi-channel grids and matrices (#8)
 * `Monitor` drawer for visualizing world and performance statistics (#10)
 * Windows are resizable (#10)
+* Window title can be set at construction time (#11)
 
 ### Documentation
 

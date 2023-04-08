@@ -35,38 +35,38 @@ type TimeSeries struct {
 	step    int64
 }
 
-func (s *TimeSeries) append(x float64, values []float64) {
-	for i := 0; i < len(s.series); i++ {
-		s.series[i] = append(s.series[i], plotter.XY{X: x, Y: values[i]})
+func (t *TimeSeries) append(x float64, values []float64) {
+	for i := 0; i < len(t.series); i++ {
+		t.series[i] = append(t.series[i], plotter.XY{X: x, Y: values[i]})
 	}
 }
 
 // Initialize the drawer.
-func (s *TimeSeries) Initialize(w *ecs.World, win *pixelgl.Window) {
-	s.Observer.Initialize(w)
+func (t *TimeSeries) Initialize(w *ecs.World, win *pixelgl.Window) {
+	t.Observer.Initialize(w)
 
-	s.headers = s.Observer.Header()
-	s.series = make([]plotter.XYs, len(s.headers))
+	t.headers = t.Observer.Header()
+	t.series = make([]plotter.XYs, len(t.headers))
 
-	s.scale = calcScaleCorrection()
-	s.step = 0
+	t.scale = calcScaleCorrection()
+	t.step = 0
 }
 
 // Update the drawer.
-func (s *TimeSeries) Update(w *ecs.World) {
-	if s.UpdateInterval <= 1 || s.step%int64(s.UpdateInterval) == 0 {
-		s.Observer.Update(w)
-		s.append(float64(s.step), s.Observer.Values(w))
+func (t *TimeSeries) Update(w *ecs.World) {
+	if t.UpdateInterval <= 1 || t.step%int64(t.UpdateInterval) == 0 {
+		t.Observer.Update(w)
+		t.append(float64(t.step), t.Observer.Values(w))
 	}
-	s.step++
+	t.step++
 }
 
 // Draw the drawer.
-func (s *TimeSeries) Draw(w *ecs.World, win *pixelgl.Window) {
+func (t *TimeSeries) Draw(w *ecs.World, win *pixelgl.Window) {
 	width := win.Canvas().Bounds().W()
 	height := win.Canvas().Bounds().H()
 
-	c := vgimg.New(vg.Points(width*s.scale)-10, vg.Points(height*s.scale)-10)
+	c := vgimg.New(vg.Points(width*t.scale)-10, vg.Points(height*t.scale)-10)
 
 	p := plot.New()
 	p.X.Tick.Label.Font.Size = 12
@@ -74,14 +74,14 @@ func (s *TimeSeries) Draw(w *ecs.World, win *pixelgl.Window) {
 
 	p.Legend = plot.NewLegend()
 
-	for i := 0; i < len(s.series); i++ {
-		lines, err := plotter.NewLine(s.series[i])
+	for i := 0; i < len(t.series); i++ {
+		lines, err := plotter.NewLine(t.series[i])
 		if err != nil {
 			panic(err)
 		}
 		lines.Color = defaultColors[i%len(defaultColors)]
 		p.Add(lines)
-		p.Legend.Add(s.headers[i], lines)
+		p.Legend.Add(t.headers[i], lines)
 	}
 
 	win.Clear(color.White)

@@ -12,6 +12,14 @@ import (
 	"golang.org/x/image/colornames"
 )
 
+// Drawer interface.
+// Drawers are used by the [Window] to render information from an Arche model.
+type Drawer interface {
+	Initialize(w *ecs.World, win *pixelgl.Window) // Initialize the Drawer.
+	Update(w *ecs.World)                          // Update is called by normal system update.
+	Draw(w *ecs.World, win *pixelgl.Window)       // Draw is called by the UI systems update.
+}
+
 // Bounds define a bounding box for a window.
 type Bounds struct {
 	X      int
@@ -25,14 +33,6 @@ func B(x, y, w, h int) Bounds {
 	return Bounds{x, y, w, h}
 }
 
-// Drawer interface.
-// Drawers are used by the [Window] to render information from an Arche model.
-type Drawer interface {
-	Initialize(w *ecs.World, win *pixelgl.Window) // Initialize the Drawer.
-	Update(w *ecs.World)                          // Update is called by normal system update.
-	Draw(w *ecs.World, win *pixelgl.Window)       // Draw is called by the UI systems update.
-}
-
 // Window provides an OpenGL window for drawing.
 // Drawing is done by one or more [Drawer] instances.
 // Further, window bounds and update and draw intervals van be configured.
@@ -40,6 +40,7 @@ type Drawer interface {
 // If the world contains a resource of type [github.com/mlange-42/arche-model/resource/Termination],
 // the model is terminated when the window is closed.
 type Window struct {
+	Title        string   // Window title. Optional.
 	Bounds       Bounds   // Window bounds (position and size). Optional.
 	Drawers      []Drawer // Drawers in increasing z order.
 	DrawInterval int      // Interval for re-drawing, in UI frames. Optional.
@@ -49,26 +50,30 @@ type Window struct {
 	termRes      generic.Resource[resource.Termination]
 }
 
-// AddDrawer adds a [Drawer] to the window.
-func (s *Window) AddDrawer(d Drawer) {
-	s.Drawers = append(s.Drawers, d)
+// With adds one or more [Drawer] instances to the window.
+func (w *Window) With(drawers ...Drawer) *Window {
+	w.Drawers = append(w.Drawers, drawers...)
+	return w
 }
 
 // Initialize the window system.
-func (s *Window) Initialize(w *ecs.World) {}
+func (w *Window) Initialize(world *ecs.World) {}
 
 // InitializeUI the window system.
-func (s *Window) InitializeUI(w *ecs.World) {
-	if s.Bounds.Width <= 0 {
-		s.Bounds.Width = 1024
+func (w *Window) InitializeUI(world *ecs.World) {
+	if w.Bounds.Width <= 0 {
+		w.Bounds.Width = 1024
 	}
-	if s.Bounds.Height <= 0 {
-		s.Bounds.Height = 768
+	if w.Bounds.Height <= 0 {
+		w.Bounds.Height = 768
+	}
+	if w.Title == "" {
+		w.Title = "Arche"
 	}
 	cfg := pixelgl.WindowConfig{
-		Title:     "Arche",
-		Bounds:    pixel.R(0, 0, float64(s.Bounds.Width), float64(s.Bounds.Height)),
-		Position:  pixel.V(float64(s.Bounds.X), float64(s.Bounds.Y)),
+		Title:     w.Title,
+		Bounds:    pixel.R(0, 0, float64(w.Bounds.Width), float64(w.Bounds.Height)),
+		Position:  pixel.V(float64(w.Bounds.X), float64(w.Bounds.Y)),
 		Resizable: true,
 	}
 
@@ -83,58 +88,58 @@ func (s *Window) InitializeUI(w *ecs.World) {
 	}()
 
 	var err error
-	s.window, err = pixelgl.NewWindow(cfg)
+	w.window, err = pixelgl.NewWindow(cfg)
 	if err != nil {
 		panic(err)
 	}
-	for _, d := range s.Drawers {
-		d.Initialize(w, s.window)
+	for _, d := range w.Drawers {
+		d.Initialize(world, w.window)
 	}
 
-	s.termRes = generic.NewResource[resource.Termination](w)
-	s.drawStep = 0
-	s.isClosed = false
+	w.termRes = generic.NewResource[resource.Termination](world)
+	w.drawStep = 0
+	w.isClosed = false
 }
 
 // Update the window system.
-func (s *Window) Update(w *ecs.World) {
-	if s.isClosed {
+func (w *Window) Update(world *ecs.World) {
+	if w.isClosed {
 		return
 	}
-	for _, d := range s.Drawers {
-		d.Update(w)
+	for _, d := range w.Drawers {
+		d.Update(world)
 	}
 }
 
 // UpdateUI the window system.
-func (s *Window) UpdateUI(w *ecs.World) {
-	if s.window.Closed() {
-		if !s.isClosed {
-			term := s.termRes.Get()
+func (w *Window) UpdateUI(world *ecs.World) {
+	if w.window.Closed() {
+		if !w.isClosed {
+			term := w.termRes.Get()
 			if term != nil {
 				term.Terminate = true
 			}
-			s.isClosed = true
+			w.isClosed = true
 		}
 		return
 	}
-	if s.DrawInterval <= 1 || s.drawStep%int64(s.DrawInterval) == 0 {
-		s.window.Clear(colornames.Black)
+	if w.DrawInterval <= 1 || w.drawStep%int64(w.DrawInterval) == 0 {
+		w.window.Clear(colornames.Black)
 
-		for _, d := range s.Drawers {
-			d.Draw(w, s.window)
+		for _, d := range w.Drawers {
+			d.Draw(world, w.window)
 		}
 	}
-	s.drawStep++
+	w.drawStep++
 }
 
 // PostUpdateUI updates the underlying GL window.
-func (s *Window) PostUpdateUI(w *ecs.World) {
-	s.window.Update()
+func (w *Window) PostUpdateUI(world *ecs.World) {
+	w.window.Update()
 }
 
 // Finalize the window system.
-func (s *Window) Finalize(w *ecs.World) {}
+func (w *Window) Finalize(world *ecs.World) {}
 
 // FinalizeUI the window system.
-func (s *Window) FinalizeUI(w *ecs.World) {}
+func (w *Window) FinalizeUI(world *ecs.World) {}

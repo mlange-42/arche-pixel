@@ -22,20 +22,17 @@ func ExampleImageRGB() {
 
 	// Create an RGB image plot.
 	// See below for the implementation of the CallbackMatrixObserver.
-	m.AddUISystem(&window.Window{
-		Drawers: []window.Drawer{
-			&plot.ImageRGB{
-				Scale: 4,
-				Observers: []observer.Matrix{
-					&CallbackMatrixObserver{Callback: func(i, j int) float64 { return float64(i) / 240 }},
-					&CallbackMatrixObserver{Callback: func(i, j int) float64 { return math.Sin(0.1 * float64(i)) }},
-					&CallbackMatrixObserver{Callback: func(i, j int) float64 { return float64(j) / 160 }},
-				},
-				Min: []float64{0, 0, 0},
-				Max: []float64{1, 1, 1},
+	m.AddUISystem((&window.Window{}).
+		With(&plot.ImageRGB{
+			Scale: 4,
+			Observers: []observer.Matrix{
+				&CallbackMatrixObserver{Callback: func(i, j int) float64 { return float64(i) / 240 }},
+				&CallbackMatrixObserver{Callback: func(i, j int) float64 { return math.Sin(0.1 * float64(i)) }},
+				&CallbackMatrixObserver{Callback: func(i, j int) float64 { return float64(j) / 160 }},
 			},
-		},
-	})
+			Min: []float64{0, 0, 0},
+			Max: []float64{1, 1, 1},
+		}))
 
 	// Add a termination system that ends the simulation.
 	m.AddSystem(&system.FixedTermination{
