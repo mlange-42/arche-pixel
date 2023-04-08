@@ -12,6 +12,8 @@ require (
 	gonum.org/v1/plot v0.12.0
 )
 
+replace github.com/mlange-42/arche-model v0.0.4 => ../arche-model
+
 require (
 	git.sr.ht/~sbinet/gg v0.3.1 // indirect
 	github.com/ajstarks/svgo v0.0.0-20211024235047-1546f124cd8b // indirect

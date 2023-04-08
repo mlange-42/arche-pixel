@@ -3,9 +3,13 @@ package plot
 import (
 	"math"
 
+	"github.com/faiface/pixel/text"
+	"golang.org/x/image/font/basicfont"
 	"gonum.org/v1/plot/vg"
 	"gonum.org/v1/plot/vg/vgimg"
 )
+
+var font = text.NewAtlas(basicfont.Face7x13, text.ASCII)
 
 var preferredTicks = []float64{1, 2, 5, 10}
 
