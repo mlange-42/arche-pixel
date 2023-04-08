@@ -16,6 +16,8 @@
 * `Monitor` drawer for visualizing world and performance statistics (#10)
 * Windows are resizable (#10)
 * Window title can be set at construction time (#11)
+* Adds interface `InputHandler` for handling user input (#12)
+* Adds `Controls` plot and input handler for controlling simulation speed and pause via GUI or keyboard (#12)
 
 ### Documentation
 

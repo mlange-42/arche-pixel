@@ -14,7 +14,6 @@ import (
 	"github.com/mlange-42/arche-pixel/window"
 	"github.com/mlange-42/arche/ecs"
 	"github.com/mlange-42/arche/ecs/stats"
-	"golang.org/x/image/font/basicfont"
 )
 
 type timeSeriesType uint8
@@ -23,20 +22,23 @@ const (
 	tsEntities timeSeriesType = iota
 	tsEntityCap
 	tsMemory
-	tsFrameTime
+	tsTickPerSec
 	tsLast
 )
 
-var font = text.NewAtlas(basicfont.Face7x13, text.ASCII)
-
 // NewMonitorWindow creates a window with [Monitor] drawer, for immediate use as a system.
+//
+// Also adds [Controls] for pausing/resuming the simulation.
 func NewMonitorWindow(drawInterval int) *window.Window {
 	return (&window.Window{
 		Title:        "Monitor",
 		DrawInterval: drawInterval,
-	}).With(&Monitor{
-		SampleInterval: time.Second / 2,
-	})
+	}).With(
+		&Monitor{
+			SampleInterval: time.Second / 3,
+		},
+		&Controls{},
+	)
 }
 
 // Monitor drawer for visualizing world and performance statistics.
@@ -81,7 +83,7 @@ func (m *Monitor) Initialize(w *ecs.World, win *pixelgl.Window) {
 	fmt.Fprintf(m.timeSeries.Text[tsEntities], "Entities")
 	fmt.Fprintf(m.timeSeries.Text[tsEntityCap], "Capacity")
 	fmt.Fprintf(m.timeSeries.Text[tsMemory], "Memory")
-	fmt.Fprintf(m.timeSeries.Text[tsFrameTime], "TPT")
+	fmt.Fprintf(m.timeSeries.Text[tsTickPerSec], "TPS")
 
 	m.text = text.New(px.V(0, 0), font)
 	m.text.Color = color.RGBA{200, 200, 200, 255}
@@ -97,7 +99,10 @@ func (m *Monitor) Update(w *ecs.World) {
 	if !m.HidePlots && t.Sub(m.lastPlotUpdate) >= m.SampleInterval {
 		stats := w.Stats()
 		m.archetypes.Update(stats)
-		m.timeSeries.append(stats.Entities.Used, stats.Entities.Total, stats.Memory, int(m.frameTimer.FrameTime().Nanoseconds()))
+		m.timeSeries.append(
+			stats.Entities.Used, stats.Entities.Total, stats.Memory,
+			int(m.frameTimer.FPS()*1000000),
+		)
 		m.lastPlotUpdate = t
 	}
 	m.step++
@@ -147,7 +152,7 @@ func (m *Monitor) Draw(w *ecs.World, win *pixelgl.Window) {
 		plotY0 -= plotHeight + 10
 		m.drawPlot(win, x0, plotY0-plotHeight, plotWidth, plotHeight, tsMemory)
 		plotY0 -= plotHeight + 10
-		m.drawPlot(win, x0, plotY0-plotHeight, plotWidth, plotHeight, tsFrameTime)
+		m.drawPlot(win, x0, plotY0-plotHeight, plotWidth, plotHeight, tsTickPerSec)
 
 		x0 += math.Ceil(plotWidth + 10)
 	}
@@ -309,11 +314,11 @@ func newTimeSeries(cap int) timeSeries {
 	return ts
 }
 
-func (t *timeSeries) append(entities, entityCap, memory, frameTime int) {
+func (t *timeSeries) append(entities, entityCap, memory, tps int) {
 	t.Values[tsEntities].Add(entities)
 	t.Values[tsEntityCap].Add(entityCap)
 	t.Values[tsMemory].Add(memory)
-	t.Values[tsFrameTime].Add(frameTime)
+	t.Values[tsTickPerSec].Add(tps)
 }
 
 type frameTimer struct {
@@ -344,6 +349,9 @@ func (t *frameTimer) FrameTime() time.Duration {
 }
 
 func (t *frameTimer) FPS() float64 {
+	if t.frameTime == 0 {
+		return 0
+	}
 	return 1.0 / t.frameTime.Seconds()
 }
 
