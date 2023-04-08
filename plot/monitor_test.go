@@ -12,8 +12,8 @@ func ExampleMonitor() {
 	m := model.New()
 
 	// Limit the the simulation speed.
-	m.Tps = 30
-	m.Fps = 0
+	m.TPS = 30
+	m.FPS = 0
 
 	// Create a window with a Monitor drawer.
 	m.AddUISystem((&window.Window{}).
@@ -36,8 +36,8 @@ func ExampleNewMonitorWindow() {
 	m := model.New()
 
 	// Limit the the simulation speed.
-	m.Tps = 30
-	m.Fps = 0
+	m.TPS = 30
+	m.FPS = 0
 
 	// Create a window with a Monitor drawer, using the shorthand constructor.
 	m.AddUISystem(plot.NewMonitorWindow(10))

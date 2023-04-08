@@ -20,7 +20,7 @@ import (
 // Pause and resume the simulation via a button or by pressing SPACE.
 // Manipulate simulation speed (TPS) using buttons or UP/DOWN keys.
 //
-// Expects a world resource of type Systems ([github.com/mlange-42/arche-model/model/Systems]).
+// Expects a world resource of type Systems ([github.com/mlange-42/arche-model/model.Systems]).
 type Controls struct {
 	Scale      float64 // Spatial scaling: cell size in screen pixels. Optional, default 1.
 	drawer     imdraw.IMDraw
@@ -58,11 +58,11 @@ func (c *Controls) Inputs(w *ecs.World, win *pixelgl.Window) {
 		return
 	}
 	if win.JustPressed(pixelgl.KeyUp) {
-		sys.Tps = calcTps(sys.Tps, true)
+		sys.TPS = calcTps(sys.TPS, true)
 		return
 	}
 	if win.JustPressed(pixelgl.KeyDown) {
-		sys.Tps = calcTps(sys.Tps, false)
+		sys.TPS = calcTps(sys.TPS, false)
 		return
 	}
 
@@ -74,9 +74,9 @@ func (c *Controls) Inputs(w *ecs.World, win *pixelgl.Window) {
 		if c.pauseBounds(width, height).Contains(mouse.X, mouse.Y) {
 			sys.Paused = !sys.Paused
 		} else if c.upButton(width, height).Contains(mouse.X, mouse.Y) {
-			sys.Tps = calcTps(sys.Tps, true)
+			sys.TPS = calcTps(sys.TPS, true)
 		} else if c.downButton(width, height).Contains(mouse.X, mouse.Y) {
-			sys.Tps = calcTps(sys.Tps, false)
+			sys.TPS = calcTps(sys.TPS, false)
 		}
 	}
 }
@@ -95,7 +95,7 @@ func (c *Controls) Draw(w *ecs.World, win *pixelgl.Window) {
 
 	c.drawButton(c.upButton(width, height), "+", win)
 	c.drawButton(c.downButton(width, height), "-", win)
-	c.drawButton(c.tpsButton(width, height), fmt.Sprintf("%.0f TPS", sys.Tps), win)
+	c.drawButton(c.tpsButton(width, height), fmt.Sprintf("%.0f TPS", sys.TPS), win)
 }
 
 func (c *Controls) drawButton(b *button, text string, win *pixelgl.Window) {
