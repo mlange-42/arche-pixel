@@ -15,11 +15,10 @@ func Example() {
 	m.Fps = 0
 
 	// Create a window system with a single drawer.
-	win := window.Window{
-		Drawers: []window.Drawer{&RectDrawer{}},
-	}
+	win := (&window.Window{}).
+		With(&RectDrawer{})
 	// Add the window as UI system.
-	m.AddUISystem(&win)
+	m.AddUISystem(win)
 
 	// Add a termination system that ends the simulation.
 	m.AddSystem(&system.FixedTermination{

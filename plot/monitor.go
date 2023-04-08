@@ -31,14 +31,12 @@ var font = text.NewAtlas(basicfont.Face7x13, text.ASCII)
 
 // NewMonitorWindow creates a window with [Monitor] drawer, for immediate use as a system.
 func NewMonitorWindow(drawInterval int) *window.Window {
-	return &window.Window{
-		Drawers: []window.Drawer{
-			&Monitor{
-				SampleInterval: time.Second / 2,
-			},
-		},
+	return (&window.Window{
+		Title:        "Monitor",
 		DrawInterval: drawInterval,
-	}
+	}).With(&Monitor{
+		SampleInterval: time.Second / 2,
+	})
 }
 
 // Monitor drawer for visualizing world and performance statistics.
