@@ -7,12 +7,13 @@ import (
 	"github.com/faiface/pixel/pixelgl"
 	"github.com/mazznoer/colorgrad"
 	"github.com/mlange-42/arche-model/observer"
+	"github.com/mlange-42/arche-pixel/window"
 	"github.com/mlange-42/arche/ecs"
 )
 
 // Image plot drawer.
 type Image struct {
-	Scale    float64            // Spatial scaling: cell size in screen pixels. Optional, default 1.
+	Scale    float64            // Spatial scaling: cell size in screen pixels. Optional, default auto.
 	Observer observer.Matrix    // Observer providing 2D matrix or grid data.
 	Colors   colorgrad.Gradient // Colors for mapping values.
 	Min      float64            // Minimum value for color mapping. Optional.
@@ -25,9 +26,6 @@ type Image struct {
 func (i *Image) Initialize(w *ecs.World, win *pixelgl.Window) {
 	i.Observer.Initialize(w)
 
-	if i.Scale <= 0 {
-		i.Scale = 1
-	}
 	if i.Min == 0 && i.Max == 0 {
 		i.Max = 1
 	}
@@ -52,8 +50,16 @@ func (i *Image) Draw(w *ecs.World, win *pixelgl.Window) {
 		i.picture.Pix[j] = i.valueToColor(values[j])
 	}
 
+	scale := i.Scale
+	if i.Scale <= 0 {
+		scale = window.CalcScale(win, i.picture.Rect.W(), i.picture.Rect.H())
+	}
+
 	sprite := pixel.NewSprite(i.picture, i.picture.Bounds())
-	sprite.Draw(win, pixel.IM.Moved(pixel.V(i.picture.Rect.W()/2.0, i.picture.Rect.H()/2.0)).Scaled(pixel.Vec{}, i.Scale))
+	sprite.Draw(win,
+		pixel.IM.Moved(pixel.V(i.picture.Rect.W()/2.0, i.picture.Rect.H()/2.0)).
+			Scaled(pixel.Vec{}, scale),
+	)
 }
 
 func (i *Image) valueToColor(v float64) color.RGBA {

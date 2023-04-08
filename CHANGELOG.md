@@ -18,6 +18,8 @@
 * Window title can be set at construction time (#11)
 * Adds interface `InputHandler` for handling user input (#12)
 * Adds `Controls` plot and input handler for controlling simulation speed and pause via GUI or keyboard (#12)
+* `Image` and `ImageRGB` auto-scale when no explicit scale is given (#13)
+* Adds Method `window.CalcScale` to calculate scaling like in `Image` and `ImageRGB` (#13)
 
 ### Documentation
 
