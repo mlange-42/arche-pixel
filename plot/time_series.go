@@ -6,9 +6,7 @@ import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 	"github.com/mlange-42/arche-model/observer"
-	"github.com/mlange-42/arche-model/resource"
 	"github.com/mlange-42/arche/ecs"
-	"github.com/mlange-42/arche/generic"
 	"golang.org/x/image/colornames"
 	"gonum.org/v1/plot"
 	"gonum.org/v1/plot/plotter"
@@ -27,15 +25,14 @@ var defaultColors = []color.Color{
 }
 
 // TimeSeries plot drawer.
-//
-// If the world contains a resource of type [github.com/mlange-42/arche-model/resource.Termination],
-// the model is terminated when the window is closed.
 type TimeSeries struct {
-	Observer observer.Row // Observer providing a data row per update.
-	headers  []string
-	series   []plotter.XYs
-	scale    float64
-	tickRes  generic.Resource[resource.Tick]
+	Observer       observer.Row // Observer providing a data row per update.
+	UpdateInterval int          // Interval for updating the observer, in model ticks. Optional.
+
+	headers []string
+	series  []plotter.XYs
+	scale   float64
+	step    int64
 }
 
 func (s *TimeSeries) append(x float64, values []float64) {
@@ -48,23 +45,20 @@ func (s *TimeSeries) append(x float64, values []float64) {
 func (s *TimeSeries) Initialize(w *ecs.World, win *pixelgl.Window) {
 	s.Observer.Initialize(w)
 
-	s.tickRes = generic.NewResource[resource.Tick](w)
-
 	s.headers = s.Observer.Header()
 	s.series = make([]plotter.XYs, len(s.headers))
 
-	width := 100.0
-	c := vgimg.New(vg.Points(width), vg.Points(width))
-	img := c.Image()
-	s.scale = width / float64(img.Bounds().Dx())
+	s.scale = calcScaleCorrection()
+	s.step = 0
 }
 
 // Update the drawer.
 func (s *TimeSeries) Update(w *ecs.World) {
-	tick := s.tickRes.Get().Tick
-
-	s.Observer.Update(w)
-	s.append(float64(tick), s.Observer.Values(w))
+	if s.UpdateInterval <= 1 || s.step%int64(s.UpdateInterval) == 0 {
+		s.Observer.Update(w)
+		s.append(float64(s.step), s.Observer.Values(w))
+	}
+	s.step++
 }
 
 // Draw the drawer.

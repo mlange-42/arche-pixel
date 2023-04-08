@@ -5,8 +5,9 @@ go 1.20
 require (
 	github.com/faiface/pixel v0.10.0
 	github.com/mazznoer/colorgrad v0.9.1
-	github.com/mlange-42/arche v0.6.1
-	github.com/mlange-42/arche-model v0.0.3
+	github.com/mlange-42/arche v0.6.2
+	github.com/mlange-42/arche-model v0.0.4
+	github.com/stretchr/testify v1.8.1
 	golang.org/x/image v0.5.0
 	gonum.org/v1/plot v0.12.0
 )
@@ -14,6 +15,7 @@ require (
 require (
 	git.sr.ht/~sbinet/gg v0.3.1 // indirect
 	github.com/ajstarks/svgo v0.0.0-20211024235047-1546f124cd8b // indirect
+	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/faiface/glhf v0.0.0-20211013000516-57b20770c369 // indirect
 	github.com/faiface/mainthread v0.0.0-20171120011319-8b78f0a41ae3 // indirect
 	github.com/go-fonts/liberation v0.3.0 // indirect
@@ -26,6 +28,8 @@ require (
 	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect
 	github.com/mazznoer/csscolorparser v0.1.2 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
+	github.com/pmezard/go-difflib v1.0.0 // indirect
 	golang.org/x/exp v0.0.0-20230213192124-5e25df0256eb // indirect
 	golang.org/x/text v0.7.0 // indirect
+	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
