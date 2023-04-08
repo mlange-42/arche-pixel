@@ -12,6 +12,7 @@ import (
 var font = text.NewAtlas(basicfont.Face7x13, text.ASCII)
 
 var preferredTicks = []float64{1, 2, 5, 10}
+var preferredTps = []float64{0, 1, 2, 3, 4, 5, 7, 10, 15, 20, 30, 40, 50, 60, 80, 100, 120, 150, 200, 250, 500, 750, 1000, 2000, 5000, 10000}
 
 func calcScaleCorrection() float64 {
 	width := 100.0
@@ -32,6 +33,25 @@ func calcTicksStep(max float64, desired int) float64 {
 		}
 	}
 	return normalizedStep / stepPower
+}
+
+// Calculate TPS when increasing/decreasing it.
+func calcTps(curr float64, increase bool) float64 {
+	ln := len(preferredTps)
+	if increase {
+		for i := 0; i < ln; i++ {
+			if preferredTps[i] > curr {
+				return preferredTps[i]
+			}
+		}
+		return curr
+	}
+	for i := 1; i < ln; i++ {
+		if preferredTps[i] >= curr {
+			return preferredTps[i-1]
+		}
+	}
+	return 0
 }
 
 type ringBuffer[T any] struct {

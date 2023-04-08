@@ -14,10 +14,13 @@ import (
 	"github.com/mlange-42/arche/generic"
 )
 
-// Controls drawer and input handler.
+// Controls adds UI and keyboard input for controlling the simulation.
+// UI controls are displayed in the bottom right corner of the window.
 //
-// Allows to pause and resume a the simulation via a button or be pressing SPACE.
-// Expects a world resource of type Systems ([github.com/mlange-42/arche-model/model/Systems])
+// Pause and resume the simulation via a button or by pressing SPACE.
+// Manipulate simulation speed (TPS) using buttons or UP/DOWN keys.
+//
+// Expects a world resource of type Systems ([github.com/mlange-42/arche-model/model/Systems]).
 type Controls struct {
 	Scale      float64 // Spatial scaling: cell size in screen pixels. Optional, default 1.
 	drawer     imdraw.IMDraw
@@ -52,31 +55,59 @@ func (c *Controls) Inputs(w *ecs.World, win *pixelgl.Window) {
 	sys := c.systemsRes.Get()
 	if win.JustPressed(pixelgl.KeySpace) {
 		sys.Paused = !sys.Paused
+		return
 	}
+	if win.JustPressed(pixelgl.KeyUp) {
+		sys.Tps = calcTps(sys.Tps, true)
+		return
+	}
+	if win.JustPressed(pixelgl.KeyDown) {
+		sys.Tps = calcTps(sys.Tps, false)
+		return
+	}
+
 	if win.JustPressed(pixelgl.MouseButton1) {
 		width := win.Canvas().Bounds().W()
 		height := win.Canvas().Bounds().H()
-		pause := c.pauseBounds(width, height)
 
 		mouse := win.MousePosition()
-		if pause.Contains(mouse.X, mouse.Y) {
+		if c.pauseBounds(width, height).Contains(mouse.X, mouse.Y) {
 			sys.Paused = !sys.Paused
+		} else if c.upButton(width, height).Contains(mouse.X, mouse.Y) {
+			sys.Tps = calcTps(sys.Tps, true)
+		} else if c.downButton(width, height).Contains(mouse.X, mouse.Y) {
+			sys.Tps = calcTps(sys.Tps, false)
 		}
 	}
 }
 
 // Draw the system
 func (c *Controls) Draw(w *ecs.World, win *pixelgl.Window) {
-	dr := &c.drawer
-
 	width := win.Canvas().Bounds().W()
 	height := win.Canvas().Bounds().H()
 
+	sys := c.systemsRes.Get()
+	text := "Pause"
+	if sys.Paused {
+		text = "Resume"
+	}
+	c.drawButton(c.pauseBounds(width, height), text, win)
+
+	c.drawButton(c.upButton(width, height), "+", win)
+	c.drawButton(c.downButton(width, height), "-", win)
+	c.drawButton(c.tpsButton(width, height), fmt.Sprintf("%.0f TPS", sys.Tps), win)
+}
+
+func (c *Controls) drawButton(b *button, text string, win *pixelgl.Window) {
+	dr := &c.drawer
+
+	dr.Color = color.Black
+	dr.Push(px.V(b.X, b.Y), px.V(b.X+b.W, b.Y+b.H))
+	dr.Rectangle(0)
+	dr.Reset()
+
 	dr.Color = color.White
-
-	pause := c.pauseBounds(width, height)
-
-	dr.Push(px.V(pause.X, pause.Y), px.V(pause.X+pause.W, pause.Y+pause.H))
+	dr.Push(px.V(b.X, b.Y), px.V(b.X+b.W, b.Y+b.H))
 	dr.Rectangle(1)
 	dr.Reset()
 
@@ -84,26 +115,47 @@ func (c *Controls) Draw(w *ecs.World, win *pixelgl.Window) {
 	dr.Clear()
 
 	c.text.Clear()
-
-	sys := c.systemsRes.Get()
-	if sys.Paused {
-		fmt.Fprint(c.text, "Resume")
-	} else {
-		fmt.Fprint(c.text, "Pause")
-	}
+	fmt.Fprint(c.text, text)
 
 	wTxt := c.text.Bounds().W()
 	hTxt := c.text.Bounds().H()
-	cx, cy := pause.Center()
+	cx, cy := b.Center()
 	c.text.Draw(win, px.IM.Scaled(px.V(wTxt/2, hTxt/2), c.Scale).Moved(px.V(math.Floor(cx-wTxt/2), math.Floor(cy-hTxt/2))))
 }
 
-func (c *Controls) pauseBounds(w, h float64) button {
-	return button{
-		w - 65*c.Scale,
-		5,
+func (c *Controls) pauseBounds(w, h float64) *button {
+	return &button{
+		w - 85*c.Scale,
+		5 + 15*c.Scale,
 		60 * c.Scale,
 		30 * c.Scale,
+	}
+}
+
+func (c *Controls) upButton(w, h float64) *button {
+	return &button{
+		w - 25*c.Scale,
+		5 + 30*c.Scale,
+		20 * c.Scale,
+		15 * c.Scale,
+	}
+}
+
+func (c *Controls) downButton(w, h float64) *button {
+	return &button{
+		w - 25*c.Scale,
+		5 + 15*c.Scale,
+		20 * c.Scale,
+		15 * c.Scale,
+	}
+}
+
+func (c *Controls) tpsButton(w, h float64) *button {
+	return &button{
+		w - 85*c.Scale,
+		5,
+		80 * c.Scale,
+		15 * c.Scale,
 	}
 }
 
