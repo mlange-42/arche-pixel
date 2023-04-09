@@ -8,6 +8,7 @@
 * `Drawer` interface has method `Update(w *ecs.World)` (#8)
 * All plots are `Drawer` instead of `UISystem`, and are added to a `Window` (#8)
 * Upgrade to `arche-model` v0.0.4 (#9, #10)
+* Fields of `Bounds` renamed from `Width` and `Height` to `W` and `H` (#15)
 
 ### Features
 
