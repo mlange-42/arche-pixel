@@ -6,12 +6,13 @@ import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 	"github.com/mlange-42/arche-model/observer"
+	"github.com/mlange-42/arche-pixel/window"
 	"github.com/mlange-42/arche/ecs"
 )
 
 // ImageRGB plot drawer.
 type ImageRGB struct {
-	Scale     float64           // Spatial scaling: cell size in screen pixels. Optional, default 1.
+	Scale     float64           // Spatial scaling: cell size in screen pixels. Optional, default auto.
 	Observers []observer.Matrix // Observers for the red, green and blue channel. Elements can be nil.
 	Min       []float64         // Minimum value for channel color mapping. Optional, default [0, 0, 0].
 	Max       []float64         // Maximum value for channel color mapping. Optional, default [1, 1, 1].
@@ -44,9 +45,6 @@ func (i *ImageRGB) Initialize(w *ecs.World, win *pixelgl.Window) {
 		panic("needs an observer for at least one channel")
 	}
 
-	if i.Scale <= 0 {
-		i.Scale = 1
-	}
 	if i.Min == nil {
 		i.Min = []float64{0, 0, 0}
 	}
@@ -98,8 +96,16 @@ func (i *ImageRGB) Draw(w *ecs.World, win *pixelgl.Window) {
 		i.picture.Pix[j] = i.valuesToColor(values[0], values[1], values[2])
 	}
 
+	scale := i.Scale
+	if i.Scale <= 0 {
+		scale = window.Scale(win, i.picture.Rect.W(), i.picture.Rect.H())
+	}
+
 	sprite := pixel.NewSprite(i.picture, i.picture.Bounds())
-	sprite.Draw(win, pixel.IM.Moved(pixel.V(i.picture.Rect.W()/2.0, i.picture.Rect.H()/2.0)).Scaled(pixel.Vec{}, i.Scale))
+	sprite.Draw(win,
+		pixel.IM.Moved(pixel.V(i.picture.Rect.W()/2.0, i.picture.Rect.H()/2.0)).
+			Scaled(pixel.Vec{}, scale),
+	)
 }
 
 func (i *ImageRGB) valuesToColor(r, g, b float64) color.RGBA {

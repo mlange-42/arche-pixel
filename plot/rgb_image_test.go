@@ -24,7 +24,6 @@ func ExampleImageRGB() {
 	// See below for the implementation of the CallbackMatrixObserver.
 	m.AddUISystem((&window.Window{}).
 		With(&plot.ImageRGB{
-			Scale: 4,
 			Observers: []observer.Matrix{
 				&CallbackMatrixObserver{Callback: func(i, j int) float64 { return float64(i) / 240 }},
 				&CallbackMatrixObserver{Callback: func(i, j int) float64 { return math.Sin(0.1 * float64(i)) }},

@@ -8,7 +8,7 @@
 
 *Arche Pixel* provides OpenGL graphics and live plots for the [Arche](https://github.com/mlange-42/arche) Entity Component System (ECS) using the [Pixel](https://github.com/faiface/pixel) game engine.
 
-![Screenshot](https://user-images.githubusercontent.com/44003176/229729236-8b5adabb-19fe-43a9-b2f6-ff7f005cb149.png)
+![Screenshot](https://user-images.githubusercontent.com/44003176/230742745-d7adee93-8c70-4e32-b031-7258185aa2b1.png)
 
 ## Installation
 
