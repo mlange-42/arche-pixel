@@ -15,18 +15,21 @@ import (
 // Drawer interface.
 // Drawers are used by the [Window] to render information from an Arche model.
 type Drawer interface {
-	Initialize(w *ecs.World, win *pixelgl.Window) // Initialize the Drawer.
-	Update(w *ecs.World)                          // Update is called by normal system update.
-	Draw(w *ecs.World, win *pixelgl.Window)       // Draw is called by the UI systems update.
-}
+	// Initialize is called before any other method.
+	// Use it to initialize the Drawer.
+	Initialize(w *ecs.World, win *pixelgl.Window)
 
-// InputHandler interface.
-// InputHandlers are used by the [Window] to handle input events.
-//
-// If a [Drawer] implements the interface, it is registered as InputHandler when added via [Window.With].
-type InputHandler interface {
-	InitializeInputs(w *ecs.World, win *pixelgl.Window) // Initialize the InputHandler.
-	Inputs(w *ecs.World, win *pixelgl.Window)           // Inputs handles input events.
+	// Update is called with normal system updates.
+	// Can be used to update observers.
+	Update(w *ecs.World)
+
+	// UpdateInputs is called on every UI update, i.e. with the frequency of FPS.
+	// Can be used to handle user input of the previous frame update.
+	UpdateInputs(w *ecs.World, win *pixelgl.Window)
+
+	// Draw is called on UI updates, every [Model.DrawInterval] steps.
+	// Do all OpenGL drawing on the window here.
+	Draw(w *ecs.World, win *pixelgl.Window)
 }
 
 // Bounds define a bounding box for a window.
@@ -44,40 +47,24 @@ func B(x, y, w, h int) Bounds {
 
 // Window provides an OpenGL window for drawing.
 // Drawing is done by one or more [Drawer] instances.
-// Further, window bounds and update and draw intervals van be configured.
+// Further, window bounds and update and draw intervals can be configured.
 //
 // If the world contains a resource of type [github.com/mlange-42/arche-model/resource/Termination],
 // the model is terminated when the window is closed.
 type Window struct {
-	Title         string         // Window title. Optional.
-	Bounds        Bounds         // Window bounds (position and size). Optional.
-	Drawers       []Drawer       // Drawers in increasing z order.
-	InputHandlers []InputHandler // InputHandlers for handling input events.
-	DrawInterval  int            // Interval for re-drawing, in UI frames. Optional.
-	window        *pixelgl.Window
-	drawStep      int64
-	isClosed      bool
-	termRes       generic.Resource[resource.Termination]
+	Title        string   // Window title. Optional.
+	Bounds       Bounds   // Window bounds (position and size). Optional.
+	Drawers      []Drawer // Drawers in increasing z order.
+	DrawInterval int      // Interval for re-drawing, in UI frames. Optional.
+	window       *pixelgl.Window
+	drawStep     int64
+	isClosed     bool
+	termRes      generic.Resource[resource.Termination]
 }
 
 // With adds one or more [Drawer] instances to the window.
-//
-// If a [Drawer] implements [InputHandler], it is registered as such.
 func (w *Window) With(drawers ...Drawer) *Window {
 	w.Drawers = append(w.Drawers, drawers...)
-	for _, dr := range drawers {
-		if h, ok := dr.(InputHandler); ok {
-			w.InputHandlers = append(w.InputHandlers, h)
-		}
-	}
-	return w
-}
-
-// WithInputs adds one or more [InputHandler] instances to the window.
-//
-// Note that if a [Drawer] implements [InputHandler], it is registered as such by [Window.With].
-func (w *Window) WithInputs(handlers ...InputHandler) *Window {
-	w.InputHandlers = append(w.InputHandlers, handlers...)
 	return w
 }
 
@@ -120,9 +107,6 @@ func (w *Window) InitializeUI(world *ecs.World) {
 	for _, d := range w.Drawers {
 		d.Initialize(world, w.window)
 	}
-	for _, d := range w.InputHandlers {
-		d.InitializeInputs(world, w.window)
-	}
 
 	w.termRes = generic.NewResource[resource.Termination](world)
 	w.drawStep = 0
@@ -164,8 +148,8 @@ func (w *Window) UpdateUI(world *ecs.World) {
 // PostUpdateUI updates the underlying GL window and input events.
 func (w *Window) PostUpdateUI(world *ecs.World) {
 	w.window.Update()
-	for _, h := range w.InputHandlers {
-		h.Inputs(world, w.window)
+	for _, d := range w.Drawers {
+		d.UpdateInputs(world, w.window)
 	}
 }
 

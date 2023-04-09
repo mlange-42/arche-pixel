@@ -31,6 +31,9 @@ func (d *RectDrawer) Initialize(w *ecs.World, win *pixelgl.Window) {
 // Update the RectDrawer (does nothing).
 func (d *RectDrawer) Update(w *ecs.World) {}
 
+// UpdateInputs handles input events of the previous frame update.
+func (d *RectDrawer) UpdateInputs(w *ecs.World, win *pixelgl.Window) {}
+
 // Draw the RectDrawer's stuff.
 func (d *RectDrawer) Draw(w *ecs.World, win *pixelgl.Window) {
 	// Get a resource from the world.

@@ -30,28 +30,25 @@ type Controls struct {
 
 // Initialize the system
 func (c *Controls) Initialize(w *ecs.World, win *pixelgl.Window) {
+	c.systemsRes = generic.NewResource[model.Systems](w)
+	if !c.systemsRes.Has() {
+		panic("resource of type Systems expected in Controls drawer")
+	}
+
 	if c.Scale <= 0 {
 		c.Scale = 1
 	}
 
 	c.drawer = *imdraw.New(nil)
 	c.text = text.New(px.V(0, 0), font)
-}
 
-// InitializeInputs initializes the InputHandler.
-func (c *Controls) InitializeInputs(w *ecs.World, win *pixelgl.Window) {
-	c.systemsRes = generic.NewResource[model.Systems](w)
-
-	if !c.systemsRes.Has() {
-		panic("resource of type Systems expected in Controls drawer")
-	}
 }
 
 // Update the drawer.
 func (c *Controls) Update(w *ecs.World) {}
 
-// Inputs handles input events.
-func (c *Controls) Inputs(w *ecs.World, win *pixelgl.Window) {
+// UpdateInputs handles input events of the previous frame update.
+func (c *Controls) UpdateInputs(w *ecs.World, win *pixelgl.Window) {
 	sys := c.systemsRes.Get()
 	if win.JustPressed(pixelgl.KeySpace) {
 		sys.Paused = !sys.Paused

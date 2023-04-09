@@ -61,6 +61,9 @@ func (t *TimeSeries) Update(w *ecs.World) {
 	t.step++
 }
 
+// UpdateInputs handles input events of the previous frame update.
+func (t *TimeSeries) UpdateInputs(w *ecs.World, win *pixelgl.Window) {}
+
 // Draw the drawer.
 func (t *TimeSeries) Draw(w *ecs.World, win *pixelgl.Window) {
 	width := win.Canvas().Bounds().W()

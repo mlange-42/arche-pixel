@@ -108,6 +108,9 @@ func (m *Monitor) Update(w *ecs.World) {
 	m.step++
 }
 
+// UpdateInputs handles input events of the previous frame update.
+func (m *Monitor) UpdateInputs(w *ecs.World, win *pixelgl.Window) {}
+
 // Draw the system
 func (m *Monitor) Draw(w *ecs.World, win *pixelgl.Window) {
 	stats := w.Stats()
