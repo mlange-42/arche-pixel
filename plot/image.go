@@ -41,6 +41,9 @@ func (i *Image) Update(w *ecs.World) {
 	i.Observer.Update(w)
 }
 
+// UpdateInputs handles input events of the previous frame update.
+func (i *Image) UpdateInputs(w *ecs.World, win *pixelgl.Window) {}
+
 // Draw the system
 func (i *Image) Draw(w *ecs.World, win *pixelgl.Window) {
 	values := i.Observer.Values(w)

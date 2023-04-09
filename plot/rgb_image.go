@@ -77,6 +77,9 @@ func (i *ImageRGB) Update(w *ecs.World) {
 	}
 }
 
+// UpdateInputs handles input events of the previous frame update.
+func (i *ImageRGB) UpdateInputs(w *ecs.World, win *pixelgl.Window) {}
+
 // Draw the drawer.
 func (i *ImageRGB) Draw(w *ecs.World, win *pixelgl.Window) {
 	cannels := make([][]float64, 3)
