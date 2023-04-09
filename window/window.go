@@ -34,10 +34,10 @@ type Drawer interface {
 
 // Bounds define a bounding box for a window.
 type Bounds struct {
-	X      int
-	Y      int
-	Width  int
-	Height int
+	X int // X position
+	Y int // Y position
+	W int // Width
+	H int // Height
 }
 
 // B created a new Bounds object.
@@ -73,18 +73,18 @@ func (w *Window) Initialize(world *ecs.World) {}
 
 // InitializeUI the window system.
 func (w *Window) InitializeUI(world *ecs.World) {
-	if w.Bounds.Width <= 0 {
-		w.Bounds.Width = 1024
+	if w.Bounds.W <= 0 {
+		w.Bounds.W = 1024
 	}
-	if w.Bounds.Height <= 0 {
-		w.Bounds.Height = 768
+	if w.Bounds.H <= 0 {
+		w.Bounds.H = 768
 	}
 	if w.Title == "" {
 		w.Title = "Arche"
 	}
 	cfg := pixelgl.WindowConfig{
 		Title:     w.Title,
-		Bounds:    pixel.R(0, 0, float64(w.Bounds.Width), float64(w.Bounds.Height)),
+		Bounds:    pixel.R(0, 0, float64(w.Bounds.W), float64(w.Bounds.H)),
 		Position:  pixel.V(float64(w.Bounds.X), float64(w.Bounds.Y)),
 		Resizable: true,
 	}
