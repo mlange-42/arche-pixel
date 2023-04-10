@@ -12,7 +12,6 @@ func Example() {
 
 	// Limit the the simulation speed.
 	m.TPS = 30
-	m.FPS = 0
 
 	// Create a window system with a single drawer.
 	win := (&window.Window{}).
