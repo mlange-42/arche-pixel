@@ -3,7 +3,6 @@ package plot
 import (
 	"math"
 
-	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/text"
 	"golang.org/x/image/font/basicfont"
 	"gonum.org/v1/plot/vg"
@@ -14,12 +13,6 @@ var font = text.NewAtlas(basicfont.Face7x13, text.ASCII)
 
 var preferredTicks = []float64{1, 2, 5, 10}
 var preferredTps = []float64{0, 1, 2, 3, 4, 5, 7, 10, 15, 20, 30, 40, 50, 60, 80, 100, 120, 150, 200, 250, 500, 750, 1000, 2000, 5000, 10000}
-
-// Vec is a 2D vector
-type Vec = pixel.Vec
-
-// V returns a new [Vec]
-func V(x, y float64) Vec { return pixel.V(x, y) }
 
 func calcScaleCorrection() float64 {
 	width := 100.0
