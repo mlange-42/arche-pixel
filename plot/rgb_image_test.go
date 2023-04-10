@@ -18,7 +18,6 @@ func ExampleImageRGB() {
 
 	// Limit the the simulation speed.
 	m.TPS = 30
-	m.FPS = 0
 
 	// Create an RGB image plot.
 	// See below for the implementation of the CallbackMatrixObserver.

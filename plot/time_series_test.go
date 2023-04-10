@@ -17,7 +17,6 @@ func ExampleTimeSeries() {
 
 	// Limit the the simulation speed.
 	m.TPS = 30
-	m.FPS = 0
 
 	// Create a time series plot.
 	// See below for the implementation of the RowObserver.

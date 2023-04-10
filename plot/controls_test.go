@@ -13,7 +13,6 @@ func ExampleControls() {
 
 	// Limit the the simulation speed.
 	m.TPS = 30
-	m.FPS = 0
 
 	// Create a window with a Controls drawer.
 	m.AddUISystem((&window.Window{}).
