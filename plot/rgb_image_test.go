@@ -2,9 +2,7 @@ package plot_test
 
 import (
 	"math"
-	"time"
 
-	"github.com/faiface/pixel/pixelgl"
 	"github.com/mlange-42/arche-model/model"
 	"github.com/mlange-42/arche-model/observer"
 	"github.com/mlange-42/arche-model/system"
@@ -42,9 +40,7 @@ func ExampleImageRGB() {
 	// Run the simulation.
 	// Due to the use of the OpenGL UI system, the model must be run via [github.com/faiface/pixel/pixelgl].
 	// Note that the example will not work in the browser, as there is no proper display device available.
-	pixelgl.Run(m.Run)
-	time.Sleep(3 * time.Second)
-	// Output:
+	// pixelgl.Run(m.Run)
 }
 
 // Example observer, reporting a matrix filled with a callback(i, j).
