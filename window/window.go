@@ -6,6 +6,7 @@ import (
 
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
+	"github.com/go-gl/glfw/v3.3/glfw"
 	"github.com/mlange-42/arche-model/resource"
 	"github.com/mlange-42/arche/ecs"
 	"github.com/mlange-42/arche/generic"
@@ -99,6 +100,9 @@ func (w *Window) InitializeUI(world *ecs.World) {
 			panic(err)
 		}
 	}()
+
+	glfw.WindowHint(glfw.ClientAPI, glfw.OpenGLAPI)
+	glfw.WindowHint(glfw.ContextCreationAPI, glfw.NativeContextAPI)
 
 	var err error
 	w.window, err = pixelgl.NewWindow(cfg)

@@ -4,6 +4,8 @@ go 1.20
 
 require (
 	github.com/faiface/pixel v0.10.0
+	github.com/go-gl/glfw v0.0.0-20210727001814-0db043d8d5be
+	github.com/go-gl/glfw/v3.3/glfw v0.0.0-20210727001814-0db043d8d5be
 	github.com/mazznoer/colorgrad v0.9.1
 	github.com/mlange-42/arche v0.6.2
 	github.com/mlange-42/arche-model v0.0.5
@@ -20,7 +22,6 @@ require (
 	github.com/faiface/mainthread v0.0.0-20171120011319-8b78f0a41ae3 // indirect
 	github.com/go-fonts/liberation v0.3.0 // indirect
 	github.com/go-gl/gl v0.0.0-20210905235341-f7a045908259 // indirect
-	github.com/go-gl/glfw/v3.3/glfw v0.0.0-20210727001814-0db043d8d5be // indirect
 	github.com/go-gl/mathgl v1.0.0 // indirect
 	github.com/go-latex/latex v0.0.0-20210823091927-c0d11ff05a81 // indirect
 	github.com/go-pdf/fpdf v0.6.0 // indirect
