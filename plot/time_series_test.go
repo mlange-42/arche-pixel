@@ -3,6 +3,7 @@ package plot_test
 import (
 	"math/rand"
 
+	"github.com/faiface/pixel/pixelgl"
 	"github.com/mlange-42/arche-model/model"
 	"github.com/mlange-42/arche-model/system"
 	"github.com/mlange-42/arche-pixel/plot"
@@ -32,9 +33,10 @@ func ExampleTimeSeries() {
 
 	// Run the simulation.
 	// Due to the use of the OpenGL UI system, the model must be run via [github.com/faiface/pixel/pixelgl].
-	// Uncomment the next line. It is commented out as the CI has no display device to test the model run.
+	// Note that the example will not work in the browser, as there is no proper display device available.
 
-	// pixelgl.Run(m.Run)
+	pixelgl.Run(m.Run)
+	// Output:
 }
 
 // RowObserver to generate random time series.
