@@ -119,7 +119,7 @@ func (m *Monitor) Draw(w *ecs.World, win *pixelgl.Window) {
 	m.summary.Clear()
 	mem, units := toMemText(stats.Memory)
 	fmt.Fprintf(
-		m.summary, "Tick: %7d  |  Entities: %7d  |  Comp: %3d  |  Arch: %3d  |  Mem: %6.1f %s  |  TPS: %6.1f | TPT: %6.2f ms | Total: %s",
+		m.summary, "Tick: %7d  |  Entities: %7d  |  Comp: %3d  |  Arch: %3d  |  Mem: %6.1f %s  |  TPS: %6.1f | TPT: %6.2f ms | Time: %s",
 		m.step, stats.Entities.Used, stats.ComponentCount, len(stats.Archetypes), mem, units, m.frameTimer.FPS(),
 		float64(m.frameTimer.FrameTime().Microseconds())/1000, time.Since(m.startTime).Round(time.Second),
 	)
