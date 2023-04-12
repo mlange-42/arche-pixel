@@ -43,8 +43,8 @@ jobs:
           go get .
       - name: Run tests
         run: |
-          xvfb-run -a "go test -v ./... -covermode=count -coverprofile=coverage"
-          go tool cover -func=coverage
+          xvfb-run -a go test -v ./... -covermode=count -coverprofile="coverage.out"
+          go tool cover -func="coverage.out"
 
   lint:
     name: Run linters
