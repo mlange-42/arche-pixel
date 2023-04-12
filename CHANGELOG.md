@@ -1,5 +1,11 @@
 # Changelog
 
+## [[v0.0.4]](https://github.com/mlange-42/arche-pixel/compare/v0.0.3...v0.0.4)
+
+### Features
+
+* New drawer `PerfStats` for an overlay with performance stats in a corner of the window (#19)
+
 ## [[v0.0.3]](https://github.com/mlange-42/arche-pixel/compare/v0.0.2...v0.0.3)
 
 ### Breaking changes

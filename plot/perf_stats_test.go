@@ -7,23 +7,17 @@ import (
 	"github.com/mlange-42/arche-pixel/window"
 )
 
-func ExampleControls() {
+func ExamplePerfStats() {
 	// Create a new model.
 	m := model.New()
 
 	// Limit the the simulation speed.
 	m.TPS = 30
 
-	// Create a window with a Controls drawer.
+	// Create a window with a PerfStats drawer.
+	// PerfStats is intended as an overlay, so more drawers can be added before it.
 	m.AddUISystem((&window.Window{}).
-		With(&plot.Controls{Scale: 2}))
-
-	// Controls is intended as an overlay, so more drawers can be added before it.
-	m.AddUISystem((&window.Window{}).
-		With(
-			&plot.Monitor{},
-			&plot.Controls{},
-		))
+		With(&plot.PerfStats{}))
 
 	// Add a termination system that ends the simulation.
 	m.AddSystem(&system.FixedTermination{
