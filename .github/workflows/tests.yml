@@ -43,7 +43,7 @@ jobs:
           go get .
       - name: Run tests
         run: |
-          xvfb-run -a go test -v ./... -covermode=atomic -coverprofile="coverage.out"
+          xvfb-run -a go test -v -p 1 ./... -covermode=atomic -coverprofile="coverage.out"
           go tool cover -func="coverage.out"
 
   lint:
