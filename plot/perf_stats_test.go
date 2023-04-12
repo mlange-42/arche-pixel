@@ -1,7 +1,6 @@
 package plot_test
 
 import (
-	"github.com/faiface/pixel/pixelgl"
 	"github.com/mlange-42/arche-model/model"
 	"github.com/mlange-42/arche-model/system"
 	"github.com/mlange-42/arche-pixel/plot"
@@ -15,7 +14,8 @@ func ExamplePerfStats() {
 	// Limit the the simulation speed.
 	m.TPS = 30
 
-	// Create a window with a Monitor drawer.
+	// Create a window with a PerfStats drawer.
+	// PerfStats is intended as an overlay, so more drawers can be added before it.
 	m.AddUISystem((&window.Window{}).
 		With(&plot.PerfStats{}))
 
@@ -28,6 +28,5 @@ func ExamplePerfStats() {
 	// Due to the use of the OpenGL UI system, the model must be run via [github.com/faiface/pixel/pixelgl].
 	// Uncomment the next line. It is commented out as the CI has no display device to test the model run.
 
-	pixelgl.Run(m.Run)
-	// Output:
+	// pixelgl.Run(m.Run)
 }

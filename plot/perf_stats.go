@@ -68,10 +68,10 @@ func (m *PerfStats) Draw(w *ecs.World, win *pixelgl.Window) {
 	m.summary.Clear()
 	mem, units := toMemText(m.stats.Mem)
 	fmt.Fprintf(
-		m.summary, "Tick: %8d\nEnt.: %8d\nTPS: %9.1f\nTPT: %6.2f ms\nTime: %8s\nMem: %6.1f %s",
+		m.summary, "Tick: %7d\nEnt.: %7d\nTPS: %8.1f\nTPT: %6.2fms\nMem: %6.1f%s\nTime: %7s",
 		m.step, m.stats.Entities, m.frameTimer.FPS(),
-		float64(m.frameTimer.FrameTime().Microseconds())/1000, time.Since(m.startTime).Round(time.Second),
-		mem, units,
+		float64(m.frameTimer.FrameTime().Microseconds())/1000,
+		mem, units, time.Since(m.startTime).Round(time.Second),
 	)
 
 	dr := &m.drawer

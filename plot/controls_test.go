@@ -18,7 +18,7 @@ func ExampleControls() {
 	m.AddUISystem((&window.Window{}).
 		With(&plot.Controls{Scale: 2}))
 
-	// Alternatively, add the Controls in addition to another drawer (e.g. Monitor).
+	// Controls is intended as an overlay, so more drawers can be added before it.
 	m.AddUISystem((&window.Window{}).
 		With(
 			&plot.Monitor{},
