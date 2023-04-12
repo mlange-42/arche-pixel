@@ -101,8 +101,8 @@ func (w *Window) InitializeUI(world *ecs.World) {
 		}
 	}()
 
-	glfw.WindowHint(glfw.ClientAPI, glfw.OpenGLAPI)
-	glfw.WindowHint(glfw.ContextCreationAPI, glfw.NativeContextAPI)
+	glfw.WindowHint(glfw.ClientAPI, glfw.OpenGLESAPI)
+	glfw.WindowHint(glfw.ContextCreationAPI, glfw.EGLContextAPI)
 
 	var err error
 	w.window, err = pixelgl.NewWindow(cfg)
