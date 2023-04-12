@@ -39,13 +39,12 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update -y
-          sudo apt-get install -y libgl1-mesa-dev xorg-dev
+          sudo apt-get install -y libgl1-mesa-dev xorg-dev xvfb
           go get .
       - name: Run tests
         run: |
-          export DISPLAY=:0
-          go test -v ./... -covermode=count -coverprofile="coverage.out"
-          go tool cover -func="coverage.out"
+          xvfb-run -a "go test -v ./... -covermode=count -coverprofile=coverage"
+          go tool cover -func=coverage
 
   lint:
     name: Run linters
