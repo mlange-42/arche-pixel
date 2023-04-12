@@ -1,6 +1,8 @@
 package plot_test
 
 import (
+	"time"
+
 	"github.com/faiface/pixel/pixelgl"
 	"github.com/mlange-42/arche-model/model"
 	"github.com/mlange-42/arche-model/system"
@@ -50,5 +52,6 @@ func ExampleNewMonitorWindow() {
 	// Due to the use of the OpenGL UI system, the model must be run via [github.com/faiface/pixel/pixelgl].
 	// Note that the example will not work in the browser, as there is no proper display device available.
 	pixelgl.Run(m.Run)
+	time.Sleep(10 * time.Second)
 	// Output:
 }
