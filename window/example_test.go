@@ -1,6 +1,9 @@
 package window_test
 
 import (
+	"time"
+
+	"github.com/faiface/pixel/pixelgl"
 	"github.com/mlange-42/arche-model/model"
 	"github.com/mlange-42/arche-model/system"
 	"github.com/mlange-42/arche-pixel/window"
@@ -26,7 +29,8 @@ func Example() {
 
 	// Run the simulation.
 	// Due to the use of the OpenGL UI system, the model must be run via [github.com/faiface/pixel/pixelgl].
-	// Uncomment the next line. It is commented out as the CI has no display device to test the model run.
-
-	//pixelgl.Run(m.Run)
+	// Note that the example will not work in the browser, as there is no proper display device available.
+	pixelgl.Run(m.Run)
+	time.Sleep(10 * time.Second)
+	// Output:
 }
