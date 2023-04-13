@@ -1,10 +1,15 @@
 # Changelog
 
-## [[v0.0.4]](https://github.com/mlange-42/arche-pixel/compare/v0.0.3...v0.0.4)
+## [[v0.1.0]](https://github.com/mlange-42/arche-pixel/compare/v0.0.3...v0.1.0)
 
 ### Features
 
 * New drawer `PerfStats` for an overlay with performance stats in a corner of the window (#19)
+
+### Other
+
+* Upgrade to Arche v0.6.3 and Arche-Model v0.1.0 (#20)
+* Promote to v0.1.0 to reflect increased API stability (#20)
 
 ## [[v0.0.3]](https://github.com/mlange-42/arche-pixel/compare/v0.0.2...v0.0.3)
 
