@@ -1,11 +1,16 @@
 # Changelog
 
+## [[v0.2.0]](https://github.com/mlange-42/arche-pixel/compare/v0.1.0...v0.2.0)
+
+### Features
+
+* New Drawer `Inspector` for inspecting entities (#21)
+
 ## [[v0.1.0]](https://github.com/mlange-42/arche-pixel/compare/v0.0.3...v0.1.0)
 
 ### Features
 
 * New drawer `PerfStats` for an overlay with performance stats in a corner of the window (#19)
-* New Drawer `Inspector` for inspecting entities (#21)
 
 ### Other
 
