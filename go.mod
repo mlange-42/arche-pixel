@@ -5,11 +5,16 @@ go 1.20
 require (
 	github.com/faiface/pixel v0.10.0
 	github.com/mazznoer/colorgrad v0.9.1
-	github.com/mlange-42/arche v0.6.3
-	github.com/mlange-42/arche-model v0.1.0
+	github.com/mlange-42/arche v0.6.4
+	github.com/mlange-42/arche-model v0.1.1
 	github.com/stretchr/testify v1.8.1
 	golang.org/x/image v0.5.0
 	gonum.org/v1/plot v0.12.0
+)
+
+replace (
+	github.com/mlange-42/arche v0.6.4 => ../arche
+	github.com/mlange-42/arche-model v0.1.1 => ../arche-model
 )
 
 require (

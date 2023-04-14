@@ -5,6 +5,7 @@
 ### Features
 
 * New drawer `PerfStats` for an overlay with performance stats in a corner of the window (#19)
+* New Drawer `Inspector` for inspecting entities (#21)
 
 ### Other
 
