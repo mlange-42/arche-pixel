@@ -8,7 +8,20 @@
 
 *Arche Pixel* provides OpenGL graphics and live plots for the [Arche](https://github.com/mlange-42/arche) Entity Component System (ECS) using the [Pixel](https://github.com/faiface/pixel) game engine.
 
-![Screenshot](https://user-images.githubusercontent.com/44003176/230742745-d7adee93-8c70-4e32-b031-7258185aa2b1.png)
+<div align="center" width="100%">
+
+![Screenshot](https://user-images.githubusercontent.com/44003176/232126308-60299642-0490-478d-82a5-48d862da6703.png)  
+*Screenshot showing Arche Pixel features, visualizing an evolutionary forest model.*
+</div>
+
+## Features
+
+* Free 2D drawing using a convenient OpenGL interface.
+* Live time series plots using unified observers.
+* ECS engine monitor for detailed performance statistics.
+* Entity inspector for debugging and inspection.
+* Simulation controls to pause or limit speed interactively.
+* User input handling for interactive simulations.
 
 ## Installation
 

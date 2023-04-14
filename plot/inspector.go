@@ -16,6 +16,7 @@ import (
 // Inspector drawer for inspecting entities.
 //
 // Shows information of the entity indicated by the SelectedEntity resource ([github.com/mlange-42/arche-model/resource.SelectedEntity]).
+// Entity selection is to be done by another system, e.g. by user input.
 //
 // Details can be adjusted using the HideXxx fields.
 // Further, keys F, T, V and N can be used to toggle details during a running simulation.
@@ -36,7 +37,7 @@ func (m *Inspector) Initialize(w *ecs.World, win *pixelgl.Window) {
 	m.text = text.New(px.V(0, 0), font)
 	m.helpText = text.New(px.V(0, 0), font)
 
-	fmt.Fprint(m.helpText, "Toggle [f]ields, [t]ypes, [v]alues of [n]ames")
+	fmt.Fprint(m.helpText, "Toggle [f]ields, [t]ypes, [v]alues or [n]ames")
 }
 
 // Update the drawer.

@@ -4,7 +4,7 @@
 
 ### Features
 
-* New Drawer `Inspector` for inspecting entities (#21)
+* New drawer `Inspector` for inspecting entities (#21)
 
 ## [[v0.1.0]](https://github.com/mlange-42/arche-pixel/compare/v0.0.3...v0.1.0)
 
