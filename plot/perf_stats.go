@@ -27,60 +27,60 @@ type PerfStats struct {
 }
 
 // Initialize the system
-func (m *PerfStats) Initialize(w *ecs.World, win *pixelgl.Window) {
-	if m.SampleInterval <= 0 {
-		m.SampleInterval = time.Second
+func (p *PerfStats) Initialize(w *ecs.World, win *pixelgl.Window) {
+	if p.SampleInterval <= 0 {
+		p.SampleInterval = time.Second
 	}
-	m.lastPlotUpdate = time.Now()
-	m.startTime = m.lastPlotUpdate
+	p.lastPlotUpdate = time.Now()
+	p.startTime = p.lastPlotUpdate
 
-	m.drawer = *imdraw.New(nil)
+	p.drawer = *imdraw.New(nil)
 
-	m.summary = text.New(px.V(0, 0), font)
+	p.summary = text.New(px.V(0, 0), font)
 
-	m.step = 0
+	p.step = 0
 
 	st := w.Stats()
-	m.stats.Entities = st.Entities.Used
-	m.stats.Mem = st.Memory
+	p.stats.Entities = st.Entities.Used
+	p.stats.Mem = st.Memory
 }
 
 // Update the drawer.
-func (m *PerfStats) Update(w *ecs.World) {
+func (p *PerfStats) Update(w *ecs.World) {
 	t := time.Now()
-	m.frameTimer.Update(m.step, t)
+	p.frameTimer.Update(p.step, t)
 
-	if t.Sub(m.lastPlotUpdate) >= m.SampleInterval {
+	if t.Sub(p.lastPlotUpdate) >= p.SampleInterval {
 		st := w.Stats()
-		m.stats.Entities = st.Entities.Used
-		m.stats.Mem = st.Memory
-		m.lastPlotUpdate = t
+		p.stats.Entities = st.Entities.Used
+		p.stats.Mem = st.Memory
+		p.lastPlotUpdate = t
 	}
 
-	m.step++
+	p.step++
 }
 
 // UpdateInputs handles input events of the previous frame update.
-func (m *PerfStats) UpdateInputs(w *ecs.World, win *pixelgl.Window) {}
+func (p *PerfStats) UpdateInputs(w *ecs.World, win *pixelgl.Window) {}
 
 // Draw the system
-func (m *PerfStats) Draw(w *ecs.World, win *pixelgl.Window) {
-	m.summary.Clear()
-	mem, units := toMemText(m.stats.Mem)
+func (p *PerfStats) Draw(w *ecs.World, win *pixelgl.Window) {
+	p.summary.Clear()
+	mem, units := toMemText(p.stats.Mem)
 	fmt.Fprintf(
-		m.summary, "Tick: %7d\nEnt.: %7d\nTPS: %8.1f\nTPT: %6.2fms\nMem: %6.1f%s\nTime: %7s",
-		m.step, m.stats.Entities, m.frameTimer.FPS(),
-		float64(m.frameTimer.FrameTime().Microseconds())/1000,
-		mem, units, time.Since(m.startTime).Round(time.Second),
+		p.summary, "Tick: %7d\nEnt.: %7d\nTPS: %8.1f\nTPT: %6.2fms\nMem: %6.1f%s\nTime: %7s",
+		p.step, p.stats.Entities, p.frameTimer.FPS(),
+		float64(p.frameTimer.FrameTime().Microseconds())/1000,
+		mem, units, time.Since(p.startTime).Round(time.Second),
 	)
 
-	dr := &m.drawer
+	dr := &p.drawer
 	height := win.Canvas().Bounds().H()
 	x0 := 10.0
 	y0 := height - 20.0
 
-	v1 := px.V(x0+m.summary.Bounds().Min.X-5, y0+m.summary.Bounds().Min.Y-5)
-	v2 := px.V(x0+m.summary.Bounds().Max.X+5, y0+m.summary.Bounds().Max.Y+5)
+	v1 := px.V(x0+p.summary.Bounds().Min.X-5, y0+p.summary.Bounds().Min.Y-5)
+	v2 := px.V(x0+p.summary.Bounds().Max.X+5, y0+p.summary.Bounds().Max.Y+5)
 
 	dr.Color = color.Black
 	dr.Push(v1, v2)
@@ -94,7 +94,7 @@ func (m *PerfStats) Draw(w *ecs.World, win *pixelgl.Window) {
 	dr.Reset()
 	dr.Clear()
 
-	m.summary.Draw(win, px.IM.Moved(px.V(x0, y0)))
+	p.summary.Draw(win, px.IM.Moved(px.V(x0, y0)))
 
 }
 
