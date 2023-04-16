@@ -15,9 +15,12 @@ import (
 )
 
 // TimeSeries plot drawer.
+//
+// Creates a line series per column of the observer.
+// Adds one row to the data per update.
 type TimeSeries struct {
 	Observer       observer.Row // Observer providing a data row per update.
-	UpdateInterval int          // Interval for updating the observer, in model ticks. Optional.
+	UpdateInterval int          // Interval for getting data from the the observer, in model ticks. Optional.
 
 	headers []string
 	series  []plotter.XYs

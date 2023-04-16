@@ -16,11 +16,14 @@ import (
 )
 
 // Lines plot drawer.
+//
+// Creates a line series per column of the observer.
+// Replaces the complete data by the table provided by the observer on every update.
+// Particularly useful for live histograms.
 type Lines struct {
-	Observer       observer.Table // Observer providing a data series as lines.
-	X              string         // X column name. Optional. Defaults to row index.
-	Y              []string       // Y column names. Optional. Defaults to all but X column.
-	UpdateInterval int            // Interval for updating the observer, in model ticks. Optional.
+	Observer observer.Table // Observer providing a data series as lines.
+	X        string         // X column name. Optional. Defaults to row index.
+	Y        []string       // Y column names. Optional. Defaults to all but X column.
 
 	xIndex   int
 	yIndices []int
@@ -28,7 +31,6 @@ type Lines struct {
 	headers []string
 	series  []plotter.XYs
 	scale   float64
-	step    int64
 }
 
 // Initialize the drawer.
@@ -38,7 +40,6 @@ func (l *Lines) Initialize(w *ecs.World, win *pixelgl.Window) {
 	l.headers = l.Observer.Header()
 
 	l.scale = calcScaleCorrection()
-	l.step = 0
 
 	if l.X == "" {
 		l.xIndex = -1
@@ -85,23 +86,6 @@ func (l *Lines) Initialize(w *ecs.World, win *pixelgl.Window) {
 // Update the drawer.
 func (l *Lines) Update(w *ecs.World) {
 	l.Observer.Update(w)
-	if l.UpdateInterval <= 1 || l.step%int64(l.UpdateInterval) == 0 {
-		data := l.Observer.Values(w)
-		xi := l.xIndex
-		yis := l.yIndices
-
-		for i, idx := range yis {
-			l.series[i] = l.series[i][:0]
-			for j, row := range data {
-				x := float64(j)
-				if xi >= 0 {
-					x = row[xi]
-				}
-				l.series[i] = append(l.series[i], plotter.XY{X: x, Y: row[idx]})
-			}
-		}
-	}
-	l.step++
 }
 
 // UpdateInputs handles input events of the previous frame update.
@@ -109,6 +93,8 @@ func (l *Lines) UpdateInputs(w *ecs.World, win *pixelgl.Window) {}
 
 // Draw the drawer.
 func (l *Lines) Draw(w *ecs.World, win *pixelgl.Window) {
+	l.updateData(w)
+
 	width := win.Canvas().Bounds().W()
 	height := win.Canvas().Bounds().H()
 
@@ -139,4 +125,21 @@ func (l *Lines) Draw(w *ecs.World, win *pixelgl.Window) {
 
 	sprite := pixel.NewSprite(picture, picture.Bounds())
 	sprite.Draw(win, pixel.IM.Moved(pixel.V(picture.Rect.W()/2.0+5, picture.Rect.H()/2.0+5)))
+}
+
+func (l *Lines) updateData(w *ecs.World) {
+	data := l.Observer.Values(w)
+	xi := l.xIndex
+	yis := l.yIndices
+
+	for i, idx := range yis {
+		l.series[i] = l.series[i][:0]
+		for j, row := range data {
+			x := float64(j)
+			if xi >= 0 {
+				x = row[xi]
+			}
+			l.series[i] = append(l.series[i], plotter.XY{X: x, Y: row[idx]})
+		}
+	}
 }

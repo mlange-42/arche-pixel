@@ -23,8 +23,8 @@ func ExampleLines() {
 	m.AddUISystem((&window.Window{}).
 		With(&plot.Lines{
 			Observer: &TableObserver{},
-			X:        "X",
-			Y:        []string{"A", "B", "C"},
+			X:        "X",                     // Optional, defaults to row index
+			Y:        []string{"A", "B", "C"}, // Optional, defaults to all but X
 		}))
 
 	// Add a termination system that ends the simulation.
