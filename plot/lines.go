@@ -18,8 +18,8 @@ import (
 // Lines plot drawer.
 type Lines struct {
 	Observer       observer.Table // Observer providing a data series as lines.
-	X              string         // X column name. Optional. Default first column.
-	Y              []string       // Y column names. Optional. Default all but X column.
+	X              string         // X column name. Optional. Defaults to row index.
+	Y              []string       // Y column names. Optional. Defaults to all but X column.
 	UpdateInterval int            // Interval for updating the observer, in model ticks. Optional.
 
 	xIndex   int
@@ -41,7 +41,7 @@ func (t *Lines) Initialize(w *ecs.World, win *pixelgl.Window) {
 	t.step = 0
 
 	if t.X == "" {
-		t.xIndex = 0
+		t.xIndex = -1
 	} else {
 		t.xIndex = -1
 		for i, h := range t.headers {
@@ -56,12 +56,10 @@ func (t *Lines) Initialize(w *ecs.World, win *pixelgl.Window) {
 	}
 
 	if len(t.Y) == 0 {
-		t.yIndices = make([]int, len(t.headers)-1)
-		idx := 0
+		t.yIndices = make([]int, 0, len(t.headers))
 		for i := 0; i < len(t.headers); i++ {
 			if i != t.xIndex {
-				t.yIndices[idx] = i
-				idx++
+				t.yIndices = append(t.yIndices, i)
 			}
 		}
 	} else {
@@ -89,13 +87,17 @@ func (t *Lines) Update(w *ecs.World) {
 	t.Observer.Update(w)
 	if t.UpdateInterval <= 1 || t.step%int64(t.UpdateInterval) == 0 {
 		data := t.Observer.Values(w)
-		x := t.xIndex
-		ys := t.yIndices
+		xi := t.xIndex
+		yis := t.yIndices
 
-		for i, idx := range ys {
+		for i, idx := range yis {
 			t.series[i] = t.series[i][:0]
-			for _, row := range data {
-				t.series[i] = append(t.series[i], plotter.XY{X: row[x], Y: row[idx]})
+			for j, row := range data {
+				x := float64(j)
+				if xi >= 0 {
+					x = row[xi]
+				}
+				t.series[i] = append(t.series[i], plotter.XY{X: x, Y: row[idx]})
 			}
 		}
 	}
