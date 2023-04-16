@@ -32,41 +32,41 @@ type Lines struct {
 }
 
 // Initialize the drawer.
-func (t *Lines) Initialize(w *ecs.World, win *pixelgl.Window) {
-	t.Observer.Initialize(w)
+func (l *Lines) Initialize(w *ecs.World, win *pixelgl.Window) {
+	l.Observer.Initialize(w)
 
-	t.headers = t.Observer.Header()
+	l.headers = l.Observer.Header()
 
-	t.scale = calcScaleCorrection()
-	t.step = 0
+	l.scale = calcScaleCorrection()
+	l.step = 0
 
-	if t.X == "" {
-		t.xIndex = -1
+	if l.X == "" {
+		l.xIndex = -1
 	} else {
-		t.xIndex = -1
-		for i, h := range t.headers {
-			if h == t.X {
-				t.xIndex = i
+		l.xIndex = -1
+		for i, h := range l.headers {
+			if h == l.X {
+				l.xIndex = i
 				break
 			}
 		}
-		if t.xIndex < 0 {
-			panic(fmt.Sprintf("x column '%s' not found", t.X))
+		if l.xIndex < 0 {
+			panic(fmt.Sprintf("x column '%s' not found", l.X))
 		}
 	}
 
-	if len(t.Y) == 0 {
-		t.yIndices = make([]int, 0, len(t.headers))
-		for i := 0; i < len(t.headers); i++ {
-			if i != t.xIndex {
-				t.yIndices = append(t.yIndices, i)
+	if len(l.Y) == 0 {
+		l.yIndices = make([]int, 0, len(l.headers))
+		for i := 0; i < len(l.headers); i++ {
+			if i != l.xIndex {
+				l.yIndices = append(l.yIndices, i)
 			}
 		}
 	} else {
-		t.yIndices = make([]int, len(t.Y))
-		for i, y := range t.Y {
+		l.yIndices = make([]int, len(l.Y))
+		for i, y := range l.Y {
 			idx := -1
-			for j, h := range t.headers {
+			for j, h := range l.headers {
 				if h == y {
 					idx = j
 					break
@@ -75,44 +75,44 @@ func (t *Lines) Initialize(w *ecs.World, win *pixelgl.Window) {
 			if idx < 0 {
 				panic(fmt.Sprintf("y column '%s' not found", y))
 			}
-			t.yIndices[i] = idx
+			l.yIndices[i] = idx
 		}
 	}
 
-	t.series = make([]plotter.XYs, len(t.yIndices))
+	l.series = make([]plotter.XYs, len(l.yIndices))
 }
 
 // Update the drawer.
-func (t *Lines) Update(w *ecs.World) {
-	t.Observer.Update(w)
-	if t.UpdateInterval <= 1 || t.step%int64(t.UpdateInterval) == 0 {
-		data := t.Observer.Values(w)
-		xi := t.xIndex
-		yis := t.yIndices
+func (l *Lines) Update(w *ecs.World) {
+	l.Observer.Update(w)
+	if l.UpdateInterval <= 1 || l.step%int64(l.UpdateInterval) == 0 {
+		data := l.Observer.Values(w)
+		xi := l.xIndex
+		yis := l.yIndices
 
 		for i, idx := range yis {
-			t.series[i] = t.series[i][:0]
+			l.series[i] = l.series[i][:0]
 			for j, row := range data {
 				x := float64(j)
 				if xi >= 0 {
 					x = row[xi]
 				}
-				t.series[i] = append(t.series[i], plotter.XY{X: x, Y: row[idx]})
+				l.series[i] = append(l.series[i], plotter.XY{X: x, Y: row[idx]})
 			}
 		}
 	}
-	t.step++
+	l.step++
 }
 
 // UpdateInputs handles input events of the previous frame update.
-func (t *Lines) UpdateInputs(w *ecs.World, win *pixelgl.Window) {}
+func (l *Lines) UpdateInputs(w *ecs.World, win *pixelgl.Window) {}
 
 // Draw the drawer.
-func (t *Lines) Draw(w *ecs.World, win *pixelgl.Window) {
+func (l *Lines) Draw(w *ecs.World, win *pixelgl.Window) {
 	width := win.Canvas().Bounds().W()
 	height := win.Canvas().Bounds().H()
 
-	c := vgimg.New(vg.Points(width*t.scale)-10, vg.Points(height*t.scale)-10)
+	c := vgimg.New(vg.Points(width*l.scale)-10, vg.Points(height*l.scale)-10)
 
 	p := plot.New()
 	p.X.Tick.Label.Font.Size = 12
@@ -120,15 +120,15 @@ func (t *Lines) Draw(w *ecs.World, win *pixelgl.Window) {
 
 	p.Legend = plot.NewLegend()
 
-	for i := 0; i < len(t.series); i++ {
-		idx := t.yIndices[i]
-		lines, err := plotter.NewLine(t.series[i])
+	for i := 0; i < len(l.series); i++ {
+		idx := l.yIndices[i]
+		lines, err := plotter.NewLine(l.series[i])
 		if err != nil {
 			panic(err)
 		}
 		lines.Color = defaultColors[i%len(defaultColors)]
 		p.Add(lines)
-		p.Legend.Add(t.headers[idx], lines)
+		p.Legend.Add(l.headers[idx], lines)
 	}
 
 	win.Clear(color.White)
