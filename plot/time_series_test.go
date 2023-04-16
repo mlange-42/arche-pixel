@@ -35,6 +35,7 @@ func ExampleTimeSeries() {
 	// Uncomment the next line. It is commented out as the CI has no display device to test the model run.
 
 	// pixelgl.Run(m.Run)
+	// Output:
 }
 
 // RowObserver to generate random time series.
