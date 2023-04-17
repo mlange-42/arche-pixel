@@ -5,11 +5,15 @@
 ### Features
 
 * Drawer `plot.Lines` for plotting table observer data, with a line series per column, and a common X column (#22)
-* Drawer `plot.Scatter` for plotting table observer data as scatter plots. Supports multiple observers as well as multiple series per observer (#23)
+* Drawer `plot.Scatter` for plotting table observer data as scatter plots. Supports multiple observers as well as multiple series per observer (#25)
 
 ### Bugfixes
 
 * TimeSeries plot updates observer on every tick, not only every `UpdateInterval` ticks (#22)
+
+### Other
+
+* Plots use mono-spaced font and fixed tick label axis padding to avoid jumping y axis(#26)
 
 ## [[v0.2.0]](https://github.com/mlange-42/arche-pixel/compare/v0.1.0...v0.2.0)
 

@@ -74,18 +74,18 @@ func (m *Monitor) Initialize(w *ecs.World, win *pixelgl.Window) {
 
 	m.scale = calcScaleCorrection()
 
-	m.summary = text.New(px.V(0, 0), font)
+	m.summary = text.New(px.V(0, 0), defaultFont)
 
 	m.timeSeries = newTimeSeries(m.PlotCapacity)
 	for i := 0; i < len(m.timeSeries.Text); i++ {
-		m.timeSeries.Text[i] = text.New(px.V(0, 0), font)
+		m.timeSeries.Text[i] = text.New(px.V(0, 0), defaultFont)
 	}
 	fmt.Fprintf(m.timeSeries.Text[tsEntities], "Entities")
 	fmt.Fprintf(m.timeSeries.Text[tsEntityCap], "Capacity")
 	fmt.Fprintf(m.timeSeries.Text[tsMemory], "Memory")
 	fmt.Fprintf(m.timeSeries.Text[tsTickPerSec], "TPS")
 
-	m.text = text.New(px.V(0, 0), font)
+	m.text = text.New(px.V(0, 0), defaultFont)
 	m.text.Color = color.RGBA{200, 200, 200, 255}
 
 	m.step = 0
@@ -371,7 +371,7 @@ func (a *archetypes) Update(stats *stats.WorldStats) {
 	}
 
 	for i := oldLen; i < newLen; i++ {
-		text := text.New(px.V(0, 0), font)
+		text := text.New(px.V(0, 0), defaultFont)
 		text.Color = color.RGBA{200, 200, 200, 255}
 		arch := &stats.Archetypes[i]
 		sb := strings.Builder{}

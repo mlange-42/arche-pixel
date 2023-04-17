@@ -36,7 +36,7 @@ func (p *PerfStats) Initialize(w *ecs.World, win *pixelgl.Window) {
 
 	p.drawer = *imdraw.New(nil)
 
-	p.summary = text.New(px.V(0, 0), font)
+	p.summary = text.New(px.V(0, 0), defaultFont)
 
 	p.step = 0
 

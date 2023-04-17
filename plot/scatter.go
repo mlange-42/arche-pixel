@@ -105,8 +105,12 @@ func (l *Scatter) Draw(w *ecs.World, win *pixelgl.Window) {
 	p := plot.New()
 	p.X.Tick.Label.Font.Size = 12
 	p.Y.Tick.Label.Font.Size = 12
+	p.Y.Tick.Label.Font.Variant = "Mono"
+	p.X.Tick.Label.Font.Variant = "Mono"
+	p.Y.Tick.Marker = paddedTicks{}
 
 	p.Legend = plot.NewLegend()
+	p.Legend.TextStyle.Font.Variant = "Mono"
 
 	cnt := 0
 	for i := 0; i < len(l.xIndices); i++ {
