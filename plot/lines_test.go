@@ -18,8 +18,8 @@ func ExampleLines() {
 	// Limit the the simulation speed.
 	m.TPS = 30
 
-	// Create a time series plot.
-	// See below for the implementation of the RowObserver.
+	// Create a line plot.
+	// See below for the implementation of the TableObserver.
 	m.AddUISystem((&window.Window{}).
 		With(&plot.Lines{
 			Observer: &TableObserver{},
