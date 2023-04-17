@@ -1,5 +1,15 @@
 # Changelog
 
+## [[v0.3.0]](https://github.com/mlange-42/arche-pixel/compare/v0.2.0...v0.3.0)
+
+### Features
+
+* Drawer `plot.Lines` for plotting table observer data, with a line series per column, and a common X column (#22)
+
+### Bugfixes
+
+* TimeSeries plot updates observer on every tick, not only every `UpdateInterval` ticks (#22)
+
 ## [[v0.2.0]](https://github.com/mlange-42/arche-pixel/compare/v0.1.0...v0.2.0)
 
 ### Features

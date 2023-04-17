@@ -29,4 +29,5 @@ func ExamplePerfStats() {
 	// Uncomment the next line. It is commented out as the CI has no display device to test the model run.
 
 	// pixelgl.Run(m.Run)
+	// Output:
 }

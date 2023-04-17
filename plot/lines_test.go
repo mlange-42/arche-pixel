@@ -10,7 +10,7 @@ import (
 	"github.com/mlange-42/arche/ecs"
 )
 
-func ExampleTimeSeries() {
+func ExampleLines() {
 
 	// Create a new model.
 	m := model.New()
@@ -21,8 +21,10 @@ func ExampleTimeSeries() {
 	// Create a time series plot.
 	// See below for the implementation of the RowObserver.
 	m.AddUISystem((&window.Window{}).
-		With(&plot.TimeSeries{
-			Observer: &RowObserver{},
+		With(&plot.Lines{
+			Observer: &TableObserver{},
+			X:        "X",                     // Optional, defaults to row index
+			Y:        []string{"A", "B", "C"}, // Optional, defaults to all but X
 		}))
 
 	// Add a termination system that ends the simulation.
@@ -38,14 +40,26 @@ func ExampleTimeSeries() {
 	// Output:
 }
 
-// RowObserver to generate random time series.
-type RowObserver struct{}
-
-func (o *RowObserver) Initialize(w *ecs.World) {}
-func (o *RowObserver) Update(w *ecs.World)     {}
-func (o *RowObserver) Header() []string {
-	return []string{"A", "B", "C"}
+// TableObserver to generate random time series.
+type TableObserver struct {
+	data [][]float64
 }
-func (o *RowObserver) Values(w *ecs.World) []float64 {
-	return []float64{rand.Float64(), rand.Float64() + 1, rand.Float64() + 2}
+
+func (o *TableObserver) Initialize(w *ecs.World) {
+	rows := 25
+	o.data = make([][]float64, rows)
+
+	for i := 0; i < rows; i++ {
+		o.data[i] = []float64{float64(i), float64(i) / float64(rows), float64(rows-i) / float64(rows), 0}
+	}
+}
+func (o *TableObserver) Update(w *ecs.World) {}
+func (o *TableObserver) Header() []string {
+	return []string{"X", "A", "B", "C"}
+}
+func (o *TableObserver) Values(w *ecs.World) [][]float64 {
+	for i := 0; i < len(o.data); i++ {
+		o.data[i][3] = rand.Float64()
+	}
+	return o.data
 }

@@ -42,6 +42,7 @@ func ExampleImage() {
 	// Uncomment the next line. It is commented out as the CI has no display device to test the model run.
 
 	// pixelgl.Run(m.Run)
+	// Output:
 }
 
 // Example observer, reporting a matrix with z = sin(0.1*i) + sin(0.2*j).
