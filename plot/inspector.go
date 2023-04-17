@@ -31,46 +31,46 @@ type Inspector struct {
 }
 
 // Initialize the system
-func (m *Inspector) Initialize(w *ecs.World, win *pixelgl.Window) {
-	m.selectedRes = generic.NewResource[resource.SelectedEntity](w)
+func (i *Inspector) Initialize(w *ecs.World, win *pixelgl.Window) {
+	i.selectedRes = generic.NewResource[resource.SelectedEntity](w)
 
-	m.text = text.New(px.V(0, 0), defaultFont)
-	m.helpText = text.New(px.V(0, 0), defaultFont)
+	i.text = text.New(px.V(0, 0), defaultFont)
+	i.helpText = text.New(px.V(0, 0), defaultFont)
 
-	fmt.Fprint(m.helpText, "Toggle [f]ields, [t]ypes, [v]alues or [n]ames")
+	fmt.Fprint(i.helpText, "Toggle [f]ields, [t]ypes, [v]alues or [n]ames")
 }
 
 // Update the drawer.
-func (m *Inspector) Update(w *ecs.World) {}
+func (i *Inspector) Update(w *ecs.World) {}
 
 // UpdateInputs handles input events of the previous frame update.
-func (m *Inspector) UpdateInputs(w *ecs.World, win *pixelgl.Window) {
+func (i *Inspector) UpdateInputs(w *ecs.World, win *pixelgl.Window) {
 	if win.JustPressed(pixelgl.KeyF) {
-		m.HideFields = !m.HideFields
+		i.HideFields = !i.HideFields
 		return
 	}
 	if win.JustPressed(pixelgl.KeyT) {
-		m.HideTypes = !m.HideTypes
+		i.HideTypes = !i.HideTypes
 		return
 	}
 	if win.JustPressed(pixelgl.KeyV) {
-		m.HideValues = !m.HideValues
+		i.HideValues = !i.HideValues
 		return
 	}
 	if win.JustPressed(pixelgl.KeyN) {
-		m.HideNames = !m.HideNames
+		i.HideNames = !i.HideNames
 		return
 	}
 }
 
 // Draw the system
-func (m *Inspector) Draw(w *ecs.World, win *pixelgl.Window) {
-	m.helpText.Draw(win, px.IM.Moved(px.V(10, 10)))
+func (i *Inspector) Draw(w *ecs.World, win *pixelgl.Window) {
+	i.helpText.Draw(win, px.IM.Moved(px.V(10, 10)))
 
-	if !m.selectedRes.Has() {
+	if !i.selectedRes.Has() {
 		return
 	}
-	sel := m.selectedRes.Get().Selected
+	sel := i.selectedRes.Get().Selected
 	if sel.IsZero() {
 		return
 	}
@@ -79,51 +79,51 @@ func (m *Inspector) Draw(w *ecs.World, win *pixelgl.Window) {
 	x0 := 10.0
 	y0 := height - 20.0
 
-	m.text.Clear()
-	fmt.Fprintf(m.text, "Entity %+v\n\n", sel)
+	i.text.Clear()
+	fmt.Fprintf(i.text, "Entity %+v\n\n", sel)
 
 	if !w.Alive(sel) {
-		fmt.Fprint(m.text, "  dead entity")
-		m.text.Draw(win, px.IM.Moved(px.V(x0, y0)))
+		fmt.Fprint(i.text, "  dead entity")
+		i.text.Draw(win, px.IM.Moved(px.V(x0, y0)))
 		return
 	}
 
 	mask := w.Mask(sel)
 	bits := mask.TotalBitsSet()
 
-	for i := 0; i < ecs.MaskTotalBits && bits > 0; i++ {
-		id := ecs.ID(i)
+	for j := 0; j < ecs.MaskTotalBits && bits > 0; j++ {
+		id := ecs.ID(j)
 		if mask.Get(id) {
 			tp, _ := w.ComponentType(id)
 			ptr := w.Get(sel, id)
 			val := reflect.NewAt(tp, ptr).Elem()
 
-			fmt.Fprintf(m.text, "  %s\n", tp.Name())
+			fmt.Fprintf(i.text, "  %s\n", tp.Name())
 
-			if !m.HideFields {
-				for i := 0; i < val.NumField(); i++ {
-					m.printField(m.text, tp, tp.Field(i), val.Field(i))
+			if !i.HideFields {
+				for k := 0; k < val.NumField(); k++ {
+					i.printField(i.text, tp, tp.Field(k), val.Field(k))
 				}
-				fmt.Fprint(m.text, "\n")
+				fmt.Fprint(i.text, "\n")
 			}
 			bits--
 		}
 	}
 
-	m.text.Draw(win, px.IM.Moved(px.V(x0, y0)))
+	i.text.Draw(win, px.IM.Moved(px.V(x0, y0)))
 }
 
-func (m *Inspector) printField(w io.Writer, tp reflect.Type, field reflect.StructField, value reflect.Value) {
+func (i *Inspector) printField(w io.Writer, tp reflect.Type, field reflect.StructField, value reflect.Value) {
 	fmt.Fprintf(w, "    %-20s ", field.Name)
-	if !m.HideTypes {
+	if !i.HideTypes {
 		fmt.Fprintf(w, "    %-16s ", value.Type())
 	}
-	if !m.HideValues {
-		if m.HideNames {
+	if !i.HideValues {
+		if i.HideNames {
 			fmt.Fprintf(w, "= %v", value.Interface())
 		} else {
 			fmt.Fprintf(w, "= %+v", value.Interface())
 		}
 	}
-	fmt.Fprint(m.text, "\n")
+	fmt.Fprint(i.text, "\n")
 }
