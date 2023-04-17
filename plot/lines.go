@@ -24,6 +24,8 @@ type Lines struct {
 	Observer observer.Table // Observer providing a data series for lines.
 	X        string         // X column name. Optional. Defaults to row index.
 	Y        []string       // Y column names. Optional. Defaults to all but X column.
+	YLim     [2]float64     // Y axis limits. Optional, default auto.
+	Labels   Labels         // Labels for plot and axes. Optional.
 
 	xIndex   int
 	yIndices []int
@@ -93,14 +95,14 @@ func (l *Lines) Draw(w *ecs.World, win *pixelgl.Window) {
 	c := vgimg.New(vg.Points(width*l.scale)-10, vg.Points(height*l.scale)-10)
 
 	p := plot.New()
+	setLabels(p, l.Labels)
 
-	p.X.Tick.Label.Font.Size = 12
-	p.X.Tick.Label.Font.Variant = "Mono"
 	p.X.Tick.Marker = removeLastTicks{}
 
-	p.Y.Tick.Label.Font.Size = 12
-	p.Y.Tick.Label.Font.Variant = "Mono"
-	p.Y.Tick.Marker = paddedTicks{}
+	if l.YLim[0] != 0 || l.YLim[1] != 0 {
+		p.Y.Min = l.YLim[0]
+		p.Y.Max = l.YLim[1]
+	}
 
 	p.Legend = plot.NewLegend()
 	p.Legend.TextStyle.Font.Variant = "Mono"

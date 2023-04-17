@@ -21,6 +21,7 @@ import (
 type TimeSeries struct {
 	Observer       observer.Row // Observer providing a data row per update.
 	UpdateInterval int          // Interval for getting data from the the observer, in model ticks. Optional.
+	Labels         Labels       // Labels for plot and axes. Optional.
 
 	headers []string
 	series  []plotter.XYs
@@ -70,14 +71,9 @@ func (t *TimeSeries) Draw(w *ecs.World, win *pixelgl.Window) {
 	c := vgimg.New(vg.Points(width*t.scale)-10, vg.Points(height*t.scale)-10)
 
 	p := plot.New()
+	setLabels(p, t.Labels)
 
-	p.X.Tick.Label.Font.Size = 12
-	p.X.Tick.Label.Font.Variant = "Mono"
 	p.X.Tick.Marker = removeLastTicks{}
-
-	p.Y.Tick.Label.Font.Size = 12
-	p.Y.Tick.Label.Font.Variant = "Mono"
-	p.Y.Tick.Marker = paddedTicks{}
 
 	p.Legend = plot.NewLegend()
 	p.Legend.TextStyle.Font.Variant = "Mono"

@@ -7,6 +7,7 @@
 * Drawer `plot.Lines` for plotting table observer data, with a line series per column, and a common X column (#22)
 * Drawer `plot.Scatter` for plotting table observer data as scatter plots. Supports multiple observers as well as multiple series per observer (#25)
 * Drawer `plot.Bars` for plotting row observer data as bar chart (#27)
+* Plot title, axes labels and axes limits can be configured for plots (optional) (#30)
 
 ### Bugfixes
 
