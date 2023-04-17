@@ -25,6 +25,15 @@ var defaultColors = []color.Color{
 	colornames.Turquoise,
 }
 
+func find[T comparable](sl []T, value T) (int, bool) {
+	for i, v := range sl {
+		if v == value {
+			return i, true
+		}
+	}
+	return -1, false
+}
+
 func calcScaleCorrection() float64 {
 	width := 100.0
 	c := vgimg.New(vg.Points(width), vg.Points(width))

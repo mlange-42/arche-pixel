@@ -21,7 +21,7 @@ import (
 // Replaces the complete data by the table provided by the observer on every update.
 // Particularly useful for live histograms.
 type Lines struct {
-	Observer observer.Table // Observer providing a data series as lines.
+	Observer observer.Table // Observer providing a data series for lines.
 	X        string         // X column name. Optional. Defaults to row index.
 	Y        []string       // Y column names. Optional. Defaults to all but X column.
 
@@ -41,17 +41,12 @@ func (l *Lines) Initialize(w *ecs.World, win *pixelgl.Window) {
 
 	l.scale = calcScaleCorrection()
 
+	var ok bool
 	if l.X == "" {
 		l.xIndex = -1
 	} else {
-		l.xIndex = -1
-		for i, h := range l.headers {
-			if h == l.X {
-				l.xIndex = i
-				break
-			}
-		}
-		if l.xIndex < 0 {
+		l.xIndex, ok = find(l.headers, l.X)
+		if !ok {
 			panic(fmt.Sprintf("x column '%s' not found", l.X))
 		}
 	}
@@ -66,17 +61,10 @@ func (l *Lines) Initialize(w *ecs.World, win *pixelgl.Window) {
 	} else {
 		l.yIndices = make([]int, len(l.Y))
 		for i, y := range l.Y {
-			idx := -1
-			for j, h := range l.headers {
-				if h == y {
-					idx = j
-					break
-				}
-			}
-			if idx < 0 {
+			l.yIndices[i], ok = find(l.headers, y)
+			if !ok {
 				panic(fmt.Sprintf("y column '%s' not found", y))
 			}
-			l.yIndices[i] = idx
 		}
 	}
 
