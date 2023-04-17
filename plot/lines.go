@@ -86,6 +86,10 @@ func (l *Lines) Draw(w *ecs.World, win *pixelgl.Window) {
 	width := win.Canvas().Bounds().W()
 	height := win.Canvas().Bounds().H()
 
+	if width <= 0 || height <= 0 {
+		return
+	}
+
 	c := vgimg.New(vg.Points(width*l.scale)-10, vg.Points(height*l.scale)-10)
 
 	p := plot.New()
