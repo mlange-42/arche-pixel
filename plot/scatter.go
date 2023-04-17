@@ -16,16 +16,19 @@ import (
 )
 
 // Scatter plot drawer.
+//
+// Creates a scatter plot from multiple observers.
+// Supports multiple series per observer. The series in a particular observer must share a common X column.
 type Scatter struct {
 	Observers []observer.Table // Observers providing XY data series.
 	X         []string         // X column name per observer. Optional. Defaults to first column. Empty strings also falls back to the default.
-	Y         []string         // Y column name per observer. Optional. Defaults to second column. Empty strings also falls back to the default.
+	Y         [][]string       // Y column names per observer. Optional. Defaults to second column. Empty strings also falls back to the default.
 
 	xIndices []int
-	yIndices []int
-	labels   []string
+	yIndices [][]int
+	labels   [][]string
 
-	series []plotter.XYs
+	series [][]plotter.XYs
 	scale  float64
 }
 
@@ -40,8 +43,9 @@ func (l *Scatter) Initialize(w *ecs.World, win *pixelgl.Window) {
 	}
 
 	l.xIndices = make([]int, numObs)
-	l.yIndices = make([]int, numObs)
-	l.labels = make([]string, numObs)
+	l.yIndices = make([][]int, numObs)
+	l.labels = make([][]string, numObs)
+	l.series = make([][]plotter.XYs, numObs)
 	var ok bool
 	for i := 0; i < numObs; i++ {
 		obs := l.Observers[i]
@@ -55,19 +59,28 @@ func (l *Scatter) Initialize(w *ecs.World, win *pixelgl.Window) {
 				panic(fmt.Sprintf("x column '%s' not found", l.X[i]))
 			}
 		}
-		if len(l.Y) == 0 || l.Y[i] == "" {
-			l.yIndices[i] = 1
+		if len(l.Y) == 0 || len(l.Y[i]) == 0 {
+			l.yIndices[i] = []int{1}
+			l.labels[i] = []string{header[1]}
+			l.series[i] = make([]plotter.XYs, 1)
 		} else {
-			l.yIndices[i], ok = find(header, l.Y[i])
-			if !ok {
-				panic(fmt.Sprintf("y column '%s' not found", l.Y[i]))
+			numY := len(l.Y[i])
+			l.yIndices[i] = make([]int, numY)
+			l.labels[i] = make([]string, numY)
+			l.series[i] = make([]plotter.XYs, numY)
+			for j, y := range l.Y[i] {
+				idx, ok := find(header, y)
+				if !ok {
+					panic(fmt.Sprintf("y column '%s' not found", y))
+				}
+				l.yIndices[i][j] = idx
+				l.labels[i][j] = header[idx]
 			}
+
 		}
-		l.labels[i] = header[l.yIndices[i]]
 	}
 
 	l.scale = calcScaleCorrection()
-	l.series = make([]plotter.XYs, len(l.yIndices))
 }
 
 // Update the drawer.
@@ -95,14 +108,19 @@ func (l *Scatter) Draw(w *ecs.World, win *pixelgl.Window) {
 
 	p.Legend = plot.NewLegend()
 
-	for i := 0; i < len(l.series); i++ {
-		lines, err := plotter.NewScatter(l.series[i])
-		if err != nil {
-			panic(err)
+	cnt := 0
+	for i := 0; i < len(l.xIndices); i++ {
+		ys := l.yIndices[i]
+		for j := 0; j < len(ys); j++ {
+			lines, err := plotter.NewScatter(l.series[i][j])
+			if err != nil {
+				panic(err)
+			}
+			lines.Color = defaultColors[cnt%len(defaultColors)]
+			p.Add(lines)
+			p.Legend.Add(l.labels[i][j], lines)
+			cnt++
 		}
-		lines.Color = defaultColors[i%len(defaultColors)]
-		p.Add(lines)
-		p.Legend.Add(l.labels[i], lines)
 	}
 
 	win.Clear(color.White)
@@ -117,14 +135,16 @@ func (l *Scatter) Draw(w *ecs.World, win *pixelgl.Window) {
 
 func (l *Scatter) updateData(w *ecs.World) {
 	xis := l.xIndices
-	yis := l.yIndices
 
-	for i, yi := range yis {
-		xi := xis[i]
-		l.series[i] = l.series[i][:0]
+	for i := 0; i < len(xis); i++ {
 		data := l.Observers[i].Values(w)
-		for _, row := range data {
-			l.series[i] = append(l.series[i], plotter.XY{X: row[xi], Y: row[yi]})
+		xi := xis[i]
+		ys := l.yIndices[i]
+		for j := 0; j < len(ys); j++ {
+			l.series[i][j] = l.series[i][j][:0]
+			for _, row := range data {
+				l.series[i][j] = append(l.series[i][j], plotter.XY{X: row[xi], Y: row[ys[j]]})
+			}
 		}
 	}
 }

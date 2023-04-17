@@ -1,7 +1,6 @@
 package plot_test
 
 import (
-	"github.com/faiface/pixel/pixelgl"
 	"github.com/mlange-42/arche-model/model"
 	"github.com/mlange-42/arche-model/observer"
 	"github.com/mlange-42/arche-model/system"
@@ -17,13 +16,18 @@ func ExampleScatter() {
 	// Limit the the simulation speed.
 	m.TPS = 30
 
-	// Create a time series plot.
-	// See below for the implementation of the RowObserver.
+	// Create a scatter plot.
 	m.AddUISystem((&window.Window{}).
 		With(&plot.Scatter{
-			Observers: []observer.Table{&TableObserver{}},
-			X:         []string{"X"},
-			Y:         []string{"C"},
+			Observers: []observer.Table{
+				&TableObserver{}, // One or more observers.
+			},
+			X: []string{
+				"X", // One X column per observer.
+			},
+			Y: [][]string{
+				{"A", "B", "C"}, // One or more Y columns per observer.
+			},
 		}))
 
 	// Add a termination system that ends the simulation.
@@ -35,7 +39,7 @@ func ExampleScatter() {
 	// Due to the use of the OpenGL UI system, the model must be run via [github.com/faiface/pixel/pixelgl].
 	// Uncomment the next line. It is commented out as the CI has no display device to test the model run.
 
-	pixelgl.Run(m.Run)
+	// pixelgl.Run(m.Run)
 
 	// Output:
 }
