@@ -25,6 +25,7 @@ var defaultColors = []color.Color{
 	colornames.Turquoise,
 }
 
+// Get the index of an element in a slice.
 func find[T comparable](sl []T, value T) (int, bool) {
 	for i, v := range sl {
 		if v == value {
@@ -34,6 +35,7 @@ func find[T comparable](sl []T, value T) (int, bool) {
 	return -1, false
 }
 
+// Calculate scale correction for scaled monitors.
 func calcScaleCorrection() float64 {
 	width := 100.0
 	c := vgimg.New(vg.Points(width), vg.Points(width))
@@ -41,6 +43,7 @@ func calcScaleCorrection() float64 {
 	return width / float64(img.Bounds().Dx())
 }
 
+// Calculate the optimal step size for axis ticks.
 func calcTicksStep(max float64, desired int) float64 {
 	steps := float64(desired)
 	approxStep := float64(max) / (steps - 1)
