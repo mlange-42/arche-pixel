@@ -57,10 +57,12 @@ func (b *Bars) Draw(w *ecs.World, win *pixelgl.Window) {
 	c := vgimg.New(vg.Points(width*b.scale)-10, vg.Points(height*b.scale)-10)
 
 	p := plot.New()
+
 	p.X.Tick.Label.Font.Size = 12
+	p.X.Tick.Label.Font.Variant = "Mono"
+
 	p.Y.Tick.Label.Font.Size = 12
 	p.Y.Tick.Label.Font.Variant = "Mono"
-	p.X.Tick.Label.Font.Variant = "Mono"
 	p.Y.Tick.Marker = paddedTicks{}
 
 	bw := 0.5 * (width - 50) / float64(len(b.series))

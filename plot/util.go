@@ -79,6 +79,7 @@ func calcTps(curr float64, increase bool) float64 {
 	return 0
 }
 
+// Left-pads tick labels to avoid jumping Y axis.
 type paddedTicks struct {
 	plot.DefaultTicks
 }
@@ -87,6 +88,25 @@ func (t paddedTicks) Ticks(min, max float64) []plot.Tick {
 	ticks := t.DefaultTicks.Ticks(min, max)
 	for i := 0; i < len(ticks); i++ {
 		ticks[i].Label = fmt.Sprintf("%*s", 10, ticks[i].Label)
+	}
+	return ticks
+}
+
+// Removes the last tick label to avoid jumping X axis.
+type removeLastTicks struct {
+	plot.DefaultTicks
+}
+
+func (t removeLastTicks) Ticks(min, max float64) []plot.Tick {
+	ticks := t.DefaultTicks.Ticks(min, max)
+	for i := 0; i < len(ticks); i++ {
+		tick := &ticks[i]
+		if tick.IsMinor() {
+			continue
+		}
+		if tick.Value > max-(0.05*(max-min)) {
+			tick.Label = ""
+		}
 	}
 	return ticks
 }

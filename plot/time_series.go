@@ -70,10 +70,13 @@ func (t *TimeSeries) Draw(w *ecs.World, win *pixelgl.Window) {
 	c := vgimg.New(vg.Points(width*t.scale)-10, vg.Points(height*t.scale)-10)
 
 	p := plot.New()
+
 	p.X.Tick.Label.Font.Size = 12
+	p.X.Tick.Label.Font.Variant = "Mono"
+	p.X.Tick.Marker = removeLastTicks{}
+
 	p.Y.Tick.Label.Font.Size = 12
 	p.Y.Tick.Label.Font.Variant = "Mono"
-	p.X.Tick.Label.Font.Variant = "Mono"
 	p.Y.Tick.Marker = paddedTicks{}
 
 	p.Legend = plot.NewLegend()
