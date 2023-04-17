@@ -33,74 +33,74 @@ type Scatter struct {
 }
 
 // Initialize the drawer.
-func (l *Scatter) Initialize(w *ecs.World, win *pixelgl.Window) {
-	numObs := len(l.Observers)
-	if len(l.X) != 0 && len(l.X) != numObs {
+func (s *Scatter) Initialize(w *ecs.World, win *pixelgl.Window) {
+	numObs := len(s.Observers)
+	if len(s.X) != 0 && len(s.X) != numObs {
 		panic("length of X not equal to length of Observers")
 	}
-	if len(l.Y) != 0 && len(l.Y) != numObs {
+	if len(s.Y) != 0 && len(s.Y) != numObs {
 		panic("length of Y not equal to length of Observers")
 	}
 
-	l.xIndices = make([]int, numObs)
-	l.yIndices = make([][]int, numObs)
-	l.labels = make([][]string, numObs)
-	l.series = make([][]plotter.XYs, numObs)
+	s.xIndices = make([]int, numObs)
+	s.yIndices = make([][]int, numObs)
+	s.labels = make([][]string, numObs)
+	s.series = make([][]plotter.XYs, numObs)
 	var ok bool
 	for i := 0; i < numObs; i++ {
-		obs := l.Observers[i]
+		obs := s.Observers[i]
 		obs.Initialize(w)
 		header := obs.Header()
-		if len(l.X) == 0 || l.X[i] == "" {
-			l.xIndices[i] = 0
+		if len(s.X) == 0 || s.X[i] == "" {
+			s.xIndices[i] = 0
 		} else {
-			l.xIndices[i], ok = find(header, l.X[i])
+			s.xIndices[i], ok = find(header, s.X[i])
 			if !ok {
-				panic(fmt.Sprintf("x column '%s' not found", l.X[i]))
+				panic(fmt.Sprintf("x column '%s' not found", s.X[i]))
 			}
 		}
-		if len(l.Y) == 0 || len(l.Y[i]) == 0 {
-			l.yIndices[i] = []int{1}
-			l.labels[i] = []string{header[1]}
-			l.series[i] = make([]plotter.XYs, 1)
+		if len(s.Y) == 0 || len(s.Y[i]) == 0 {
+			s.yIndices[i] = []int{1}
+			s.labels[i] = []string{header[1]}
+			s.series[i] = make([]plotter.XYs, 1)
 		} else {
-			numY := len(l.Y[i])
-			l.yIndices[i] = make([]int, numY)
-			l.labels[i] = make([]string, numY)
-			l.series[i] = make([]plotter.XYs, numY)
-			for j, y := range l.Y[i] {
+			numY := len(s.Y[i])
+			s.yIndices[i] = make([]int, numY)
+			s.labels[i] = make([]string, numY)
+			s.series[i] = make([]plotter.XYs, numY)
+			for j, y := range s.Y[i] {
 				idx, ok := find(header, y)
 				if !ok {
 					panic(fmt.Sprintf("y column '%s' not found", y))
 				}
-				l.yIndices[i][j] = idx
-				l.labels[i][j] = header[idx]
+				s.yIndices[i][j] = idx
+				s.labels[i][j] = header[idx]
 			}
 
 		}
 	}
 
-	l.scale = calcScaleCorrection()
+	s.scale = calcScaleCorrection()
 }
 
 // Update the drawer.
-func (l *Scatter) Update(w *ecs.World) {
-	for _, obs := range l.Observers {
+func (s *Scatter) Update(w *ecs.World) {
+	for _, obs := range s.Observers {
 		obs.Update(w)
 	}
 }
 
 // UpdateInputs handles input events of the previous frame update.
-func (l *Scatter) UpdateInputs(w *ecs.World, win *pixelgl.Window) {}
+func (s *Scatter) UpdateInputs(w *ecs.World, win *pixelgl.Window) {}
 
 // Draw the drawer.
-func (l *Scatter) Draw(w *ecs.World, win *pixelgl.Window) {
-	l.updateData(w)
+func (s *Scatter) Draw(w *ecs.World, win *pixelgl.Window) {
+	s.updateData(w)
 
 	width := win.Canvas().Bounds().W()
 	height := win.Canvas().Bounds().H()
 
-	c := vgimg.New(vg.Points(width*l.scale)-10, vg.Points(height*l.scale)-10)
+	c := vgimg.New(vg.Points(width*s.scale)-10, vg.Points(height*s.scale)-10)
 
 	p := plot.New()
 	p.X.Tick.Label.Font.Size = 12
@@ -113,16 +113,16 @@ func (l *Scatter) Draw(w *ecs.World, win *pixelgl.Window) {
 	p.Legend.TextStyle.Font.Variant = "Mono"
 
 	cnt := 0
-	for i := 0; i < len(l.xIndices); i++ {
-		ys := l.yIndices[i]
+	for i := 0; i < len(s.xIndices); i++ {
+		ys := s.yIndices[i]
 		for j := 0; j < len(ys); j++ {
-			lines, err := plotter.NewScatter(l.series[i][j])
+			lines, err := plotter.NewScatter(s.series[i][j])
 			if err != nil {
 				panic(err)
 			}
 			lines.Color = defaultColors[cnt%len(defaultColors)]
 			p.Add(lines)
-			p.Legend.Add(l.labels[i][j], lines)
+			p.Legend.Add(s.labels[i][j], lines)
 			cnt++
 		}
 	}
@@ -137,17 +137,17 @@ func (l *Scatter) Draw(w *ecs.World, win *pixelgl.Window) {
 	sprite.Draw(win, pixel.IM.Moved(pixel.V(picture.Rect.W()/2.0+5, picture.Rect.H()/2.0+5)))
 }
 
-func (l *Scatter) updateData(w *ecs.World) {
-	xis := l.xIndices
+func (s *Scatter) updateData(w *ecs.World) {
+	xis := s.xIndices
 
 	for i := 0; i < len(xis); i++ {
-		data := l.Observers[i].Values(w)
+		data := s.Observers[i].Values(w)
 		xi := xis[i]
-		ys := l.yIndices[i]
+		ys := s.yIndices[i]
 		for j := 0; j < len(ys); j++ {
-			l.series[i][j] = l.series[i][j][:0]
+			s.series[i][j] = s.series[i][j][:0]
 			for _, row := range data {
-				l.series[i][j] = append(l.series[i][j], plotter.XY{X: row[xi], Y: row[ys[j]]})
+				s.series[i][j] = append(s.series[i][j], plotter.XY{X: row[xi], Y: row[ys[j]]})
 			}
 		}
 	}
