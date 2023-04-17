@@ -23,6 +23,9 @@ type Scatter struct {
 	Observers []observer.Table // Observers providing XY data series.
 	X         []string         // X column name per observer. Optional. Defaults to first column. Empty strings also falls back to the default.
 	Y         [][]string       // Y column names per observer. Optional. Defaults to second column. Empty strings also falls back to the default.
+	XLim      [2]float64       // X axis limits. Optional, default auto.
+	YLim      [2]float64       // Y axis limits. Optional, default auto.
+	Labels    Labels           // Labels for plot and axes. Optional.
 
 	xIndices []int
 	yIndices [][]int
@@ -107,14 +110,18 @@ func (s *Scatter) Draw(w *ecs.World, win *pixelgl.Window) {
 	c := vgimg.New(vg.Points(width*s.scale)-10, vg.Points(height*s.scale)-10)
 
 	p := plot.New()
+	setLabels(p, s.Labels)
 
-	p.X.Tick.Label.Font.Size = 12
-	p.X.Tick.Label.Font.Variant = "Mono"
 	p.X.Tick.Marker = removeLastTicks{}
 
-	p.Y.Tick.Label.Font.Size = 12
-	p.Y.Tick.Label.Font.Variant = "Mono"
-	p.Y.Tick.Marker = paddedTicks{}
+	if s.XLim[0] != 0 || s.XLim[1] != 0 {
+		p.X.Min = s.XLim[0]
+		p.X.Max = s.XLim[1]
+	}
+	if s.YLim[0] != 0 || s.YLim[1] != 0 {
+		p.Y.Min = s.YLim[0]
+		p.Y.Max = s.YLim[1]
+	}
 
 	p.Legend = plot.NewLegend()
 	p.Legend.TextStyle.Font.Variant = "Mono"
@@ -123,13 +130,14 @@ func (s *Scatter) Draw(w *ecs.World, win *pixelgl.Window) {
 	for i := 0; i < len(s.xIndices); i++ {
 		ys := s.yIndices[i]
 		for j := 0; j < len(ys); j++ {
-			lines, err := plotter.NewScatter(s.series[i][j])
+			points, err := plotter.NewScatter(s.series[i][j])
 			if err != nil {
 				panic(err)
 			}
-			lines.Color = defaultColors[cnt%len(defaultColors)]
-			p.Add(lines)
-			p.Legend.Add(s.labels[i][j], lines)
+			points.Shape = draw.CircleGlyph{}
+			points.Color = defaultColors[cnt%len(defaultColors)]
+			p.Add(points)
+			p.Legend.Add(s.labels[i][j], points)
 			cnt++
 		}
 	}

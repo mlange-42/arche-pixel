@@ -27,6 +27,13 @@ var defaultColors = []color.Color{
 	colornames.Turquoise,
 }
 
+// Labels for plots.
+type Labels struct {
+	Title string // Plot title
+	X     string // X axis label
+	Y     string // Y axis label
+}
+
 // Get the index of an element in a slice.
 func find[T comparable](sl []T, value T) (int, bool) {
 	for i, v := range sl {
@@ -77,6 +84,28 @@ func calcTps(curr float64, increase bool) float64 {
 		}
 	}
 	return 0
+}
+
+func setLabels(p *plot.Plot, l Labels) {
+	p.Title.Text = l.Title
+	p.Title.TextStyle.Font.Size = 16
+	p.Title.TextStyle.Font.Variant = "Mono"
+
+	p.X.Label.Text = l.X
+	p.X.Label.TextStyle.Font.Size = 14
+	p.X.Label.TextStyle.Font.Variant = "Mono"
+
+	p.X.Tick.Label.Font.Size = 12
+	p.X.Tick.Label.Font.Variant = "Mono"
+
+	p.Y.Label.Text = l.Y
+	p.Y.Label.TextStyle.Font.Size = 14
+	p.Y.Label.TextStyle.Font.Variant = "Mono"
+
+	p.Y.Tick.Label.Font.Size = 12
+	p.Y.Tick.Label.Font.Variant = "Mono"
+
+	p.Y.Tick.Marker = paddedTicks{}
 }
 
 // Left-pads tick labels to avoid jumping Y axis.

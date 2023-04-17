@@ -5,8 +5,10 @@
 ### Features
 
 * Drawer `plot.Lines` for plotting table observer data, with a line series per column, and a common X column (#22)
-* Drawer `plot.Scatter` for plotting table observer data as scatter plots. Supports multiple observers as well as multiple series per observer (#25)
+* Drawer `plot.Scatter` for plotting table observer data as scatter plots. Supports multiple observers and multiple series per observer (#25)
 * Drawer `plot.Bars` for plotting row observer data as bar chart (#27)
+* Plot title, axes labels and axes limits can be configured for plots (optional) (#30)
+* Optional selection of columns in bar and time series plots (#30)
 
 ### Bugfixes
 
@@ -17,6 +19,7 @@
 
 * Plots use mono-spaced font and fixed tick label axis padding, to avoid jumping y axis (#26)
 * Remove the last tick label from the x axis if close to the right margin, to avoid jumping x axis (#29)
+* Scatter plots use solid instead of empty circle (#30)
 
 ## [[v0.2.0]](https://github.com/mlange-42/arche-pixel/compare/v0.1.0...v0.2.0)
 

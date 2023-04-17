@@ -1,6 +1,7 @@
 package plot
 
 import (
+	"fmt"
 	"image/color"
 
 	"github.com/faiface/pixel"
@@ -20,8 +21,11 @@ import (
 // Adds one row to the data per update.
 type TimeSeries struct {
 	Observer       observer.Row // Observer providing a data row per update.
+	Columns        []string     // Columns to show, by name. Optional, default all.
 	UpdateInterval int          // Interval for getting data from the the observer, in model ticks. Optional.
+	Labels         Labels       // Labels for plot and axes. Optional.
 
+	indices []int
 	headers []string
 	series  []plotter.XYs
 	scale   float64
@@ -40,6 +44,23 @@ func (t *TimeSeries) Initialize(w *ecs.World, win *pixelgl.Window) {
 	t.Observer.Initialize(w)
 
 	t.headers = t.Observer.Header()
+
+	if len(t.Columns) == 0 {
+		t.indices = make([]int, len(t.headers))
+		for i := 0; i < len(t.indices); i++ {
+			t.indices[i] = i
+		}
+	} else {
+		t.indices = make([]int, len(t.Columns))
+		var ok bool
+		for i := 0; i < len(t.indices); i++ {
+			t.indices[i], ok = find(t.headers, t.Columns[i])
+			if !ok {
+				panic(fmt.Sprintf("column '%s' not found", t.Columns[i]))
+			}
+		}
+	}
+
 	t.series = make([]plotter.XYs, len(t.headers))
 
 	t.scale = calcScaleCorrection()
@@ -70,26 +91,21 @@ func (t *TimeSeries) Draw(w *ecs.World, win *pixelgl.Window) {
 	c := vgimg.New(vg.Points(width*t.scale)-10, vg.Points(height*t.scale)-10)
 
 	p := plot.New()
+	setLabels(p, t.Labels)
 
-	p.X.Tick.Label.Font.Size = 12
-	p.X.Tick.Label.Font.Variant = "Mono"
 	p.X.Tick.Marker = removeLastTicks{}
-
-	p.Y.Tick.Label.Font.Size = 12
-	p.Y.Tick.Label.Font.Variant = "Mono"
-	p.Y.Tick.Marker = paddedTicks{}
 
 	p.Legend = plot.NewLegend()
 	p.Legend.TextStyle.Font.Variant = "Mono"
 
-	for i := 0; i < len(t.series); i++ {
-		lines, err := plotter.NewLine(t.series[i])
+	for i, idx := range t.indices {
+		lines, err := plotter.NewLine(t.series[idx])
 		if err != nil {
 			panic(err)
 		}
 		lines.Color = defaultColors[i%len(defaultColors)]
 		p.Add(lines)
-		p.Legend.Add(t.headers[i], lines)
+		p.Legend.Add(t.headers[idx], lines)
 	}
 
 	win.Clear(color.White)

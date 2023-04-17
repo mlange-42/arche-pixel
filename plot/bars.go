@@ -1,6 +1,7 @@
 package plot
 
 import (
+	"fmt"
 	"image/color"
 
 	"github.com/faiface/pixel"
@@ -19,7 +20,11 @@ import (
 // Creates a bar per column of the observer.
 type Bars struct {
 	Observer observer.Row // Observer providing a data series for bars.
+	Columns  []string     // Columns to show, by name. Optional, default all.
+	YLim     [2]float64   // Y axis limits. Optional, default auto.
+	Labels   Labels       // Labels for plot and axes. Optional.
 
+	indices []int
 	headers []string
 	series  plotter.Values
 	scale   float64
@@ -29,10 +34,32 @@ type Bars struct {
 func (b *Bars) Initialize(w *ecs.World, win *pixelgl.Window) {
 	b.Observer.Initialize(w)
 
-	b.headers = b.Observer.Header()
-	b.series = make([]float64, len(b.headers))
+	headers := b.Observer.Header()
+
+	if len(b.Columns) == 0 {
+		b.indices = make([]int, len(headers))
+		for i := 0; i < len(b.indices); i++ {
+			b.indices[i] = i
+		}
+	} else {
+		b.indices = make([]int, len(b.Columns))
+		var ok bool
+		for i := 0; i < len(b.indices); i++ {
+			b.indices[i], ok = find(headers, b.Columns[i])
+			if !ok {
+				panic(fmt.Sprintf("column '%s' not found", b.Columns[i]))
+			}
+		}
+	}
+
+	b.series = make([]float64, len(b.indices))
+	b.headers = make([]string, len(b.indices))
+	for i, idx := range b.indices {
+		b.headers[i] = headers[idx]
+	}
 
 	b.scale = calcScaleCorrection()
+
 }
 
 // Update the drawer.
@@ -57,13 +84,12 @@ func (b *Bars) Draw(w *ecs.World, win *pixelgl.Window) {
 	c := vgimg.New(vg.Points(width*b.scale)-10, vg.Points(height*b.scale)-10)
 
 	p := plot.New()
+	setLabels(p, b.Labels)
 
-	p.X.Tick.Label.Font.Size = 12
-	p.X.Tick.Label.Font.Variant = "Mono"
-
-	p.Y.Tick.Label.Font.Size = 12
-	p.Y.Tick.Label.Font.Variant = "Mono"
-	p.Y.Tick.Marker = paddedTicks{}
+	if b.YLim[0] != 0 || b.YLim[1] != 0 {
+		p.Y.Min = b.YLim[0]
+		p.Y.Max = b.YLim[1]
+	}
 
 	bw := 0.5 * (width - 50) / float64(len(b.series))
 	bars, err := plotter.NewBarChart(b.series, vg.Points(bw))
@@ -85,5 +111,9 @@ func (b *Bars) Draw(w *ecs.World, win *pixelgl.Window) {
 }
 
 func (b *Bars) updateData(w *ecs.World) {
-	b.series = b.Observer.Values(w)
+	values := b.Observer.Values(w)
+
+	for i, idx := range b.indices {
+		b.series[i] = values[idx]
+	}
 }

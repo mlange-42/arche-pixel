@@ -7,7 +7,7 @@ import (
 	"github.com/mlange-42/arche-pixel/window"
 )
 
-func ExampleBars() {
+func ExampleLabels() {
 
 	// Create a new model.
 	m := model.New()
@@ -15,11 +15,15 @@ func ExampleBars() {
 	// Limit the the simulation speed.
 	m.TPS = 30
 
-	// Create a time series plot.
+	// Create a time series plot, wit labels.
 	m.AddUISystem((&window.Window{}).
-		With(&plot.Bars{
+		With(&plot.TimeSeries{
 			Observer: &RowObserver{},
-			YLim:     [...]float64{0, 4}, // Optional Y axis limits.
+			Labels: plot.Labels{
+				Title: "Plot example",
+				X:     "X axis label",
+				Y:     "Y axis label",
+			},
 		}))
 
 	// Add a termination system that ends the simulation.
