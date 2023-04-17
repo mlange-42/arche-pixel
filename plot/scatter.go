@@ -130,13 +130,14 @@ func (s *Scatter) Draw(w *ecs.World, win *pixelgl.Window) {
 	for i := 0; i < len(s.xIndices); i++ {
 		ys := s.yIndices[i]
 		for j := 0; j < len(ys); j++ {
-			lines, err := plotter.NewScatter(s.series[i][j])
+			points, err := plotter.NewScatter(s.series[i][j])
 			if err != nil {
 				panic(err)
 			}
-			lines.Color = defaultColors[cnt%len(defaultColors)]
-			p.Add(lines)
-			p.Legend.Add(s.labels[i][j], lines)
+			points.Shape = draw.CircleGlyph{}
+			points.Color = defaultColors[cnt%len(defaultColors)]
+			p.Add(points)
+			p.Legend.Add(s.labels[i][j], points)
 			cnt++
 		}
 	}

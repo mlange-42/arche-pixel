@@ -19,6 +19,7 @@
 
 * Plots use mono-spaced font and fixed tick label axis padding, to avoid jumping y axis (#26)
 * Remove the last tick label from the x axis if close to the right margin, to avoid jumping x axis (#29)
+* Scatter plots use solid instead of empty circle (#30)
 
 ## [[v0.2.0]](https://github.com/mlange-42/arche-pixel/compare/v0.1.0...v0.2.0)
 
