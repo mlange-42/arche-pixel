@@ -50,6 +50,10 @@ func (b *Bars) Draw(w *ecs.World, win *pixelgl.Window) {
 	width := win.Canvas().Bounds().W()
 	height := win.Canvas().Bounds().H()
 
+	if width <= 0 || height <= 0 {
+		return
+	}
+
 	c := vgimg.New(vg.Points(width*b.scale)-10, vg.Points(height*b.scale)-10)
 
 	p := plot.New()

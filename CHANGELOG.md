@@ -11,6 +11,7 @@
 ### Bugfixes
 
 * TimeSeries plot updates observer on every tick, not only every `UpdateInterval` ticks (#22)
+* Plots that use `gonum/plot` don't crash on minimized window (#28)
 
 ### Other
 
