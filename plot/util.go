@@ -1,17 +1,19 @@
 package plot
 
 import (
+	"fmt"
 	"image/color"
 	"math"
 
 	"github.com/faiface/pixel/text"
 	"golang.org/x/image/colornames"
 	"golang.org/x/image/font/basicfont"
+	"gonum.org/v1/plot"
 	"gonum.org/v1/plot/vg"
 	"gonum.org/v1/plot/vg/vgimg"
 )
 
-var font = text.NewAtlas(basicfont.Face7x13, text.ASCII)
+var defaultFont = text.NewAtlas(basicfont.Face7x13, text.ASCII)
 
 var preferredTicks = []float64{1, 2, 5, 10}
 var preferredTps = []float64{0, 1, 2, 3, 4, 5, 7, 10, 15, 20, 30, 40, 50, 60, 80, 100, 120, 150, 200, 250, 500, 750, 1000, 2000, 5000, 10000}
@@ -75,6 +77,18 @@ func calcTps(curr float64, increase bool) float64 {
 		}
 	}
 	return 0
+}
+
+type paddedTicks struct {
+	plot.DefaultTicks
+}
+
+func (t paddedTicks) Ticks(min, max float64) []plot.Tick {
+	ticks := t.DefaultTicks.Ticks(min, max)
+	for i := 0; i < len(ticks); i++ {
+		ticks[i].Label = fmt.Sprintf("%*s", 10, ticks[i].Label)
+	}
+	return ticks
 }
 
 type ringBuffer[T any] struct {

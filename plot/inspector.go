@@ -34,8 +34,8 @@ type Inspector struct {
 func (m *Inspector) Initialize(w *ecs.World, win *pixelgl.Window) {
 	m.selectedRes = generic.NewResource[resource.SelectedEntity](w)
 
-	m.text = text.New(px.V(0, 0), font)
-	m.helpText = text.New(px.V(0, 0), font)
+	m.text = text.New(px.V(0, 0), defaultFont)
+	m.helpText = text.New(px.V(0, 0), defaultFont)
 
 	fmt.Fprint(m.helpText, "Toggle [f]ields, [t]ypes, [v]alues or [n]ames")
 }

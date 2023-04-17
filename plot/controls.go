@@ -40,7 +40,7 @@ func (c *Controls) Initialize(w *ecs.World, win *pixelgl.Window) {
 	}
 
 	c.drawer = *imdraw.New(nil)
-	c.text = text.New(px.V(0, 0), font)
+	c.text = text.New(px.V(0, 0), defaultFont)
 
 }
 

@@ -91,8 +91,12 @@ func (l *Lines) Draw(w *ecs.World, win *pixelgl.Window) {
 	p := plot.New()
 	p.X.Tick.Label.Font.Size = 12
 	p.Y.Tick.Label.Font.Size = 12
+	p.Y.Tick.Label.Font.Variant = "Mono"
+	p.X.Tick.Label.Font.Variant = "Mono"
+	p.Y.Tick.Marker = paddedTicks{}
 
 	p.Legend = plot.NewLegend()
+	p.Legend.TextStyle.Font.Variant = "Mono"
 
 	for i := 0; i < len(l.series); i++ {
 		idx := l.yIndices[i]
