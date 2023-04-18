@@ -28,6 +28,7 @@ type Drawer interface {
 	UpdateInputs(w *ecs.World, win *pixelgl.Window)
 
 	// Draw is called on UI updates, every [Model.DrawInterval] steps.
+	// Draw is not called when the host window is minimized.
 	// Do all OpenGL drawing on the window here.
 	Draw(w *ecs.World, win *pixelgl.Window)
 }
@@ -135,7 +136,7 @@ func (w *Window) UpdateUI(world *ecs.World) {
 		}
 		return
 	}
-	if w.DrawInterval <= 1 || w.drawStep%int64(w.DrawInterval) == 0 {
+	if !w.isMinimized() && (w.DrawInterval <= 1 || w.drawStep%int64(w.DrawInterval) == 0) {
 		w.window.Clear(colornames.Black)
 
 		for _, d := range w.Drawers {
@@ -143,6 +144,11 @@ func (w *Window) UpdateUI(world *ecs.World) {
 		}
 	}
 	w.drawStep++
+}
+
+func (w *Window) isMinimized() bool {
+	b := w.window.Bounds()
+	return b.W() <= 0 || b.H() <= 0
 }
 
 // PostUpdateUI updates the underlying GL window and input events.
