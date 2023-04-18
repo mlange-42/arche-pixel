@@ -32,30 +32,30 @@ type HeatMap struct {
 }
 
 // Initialize the drawer.
-func (s *HeatMap) Initialize(w *ecs.World, win *pixelgl.Window) {
-	s.Observer.Initialize(w)
-	s.scale = calcScaleCorrection()
+func (h *HeatMap) Initialize(w *ecs.World, win *pixelgl.Window) {
+	h.Observer.Initialize(w)
+	h.scale = calcScaleCorrection()
 
-	if s.Min == 0 && s.Max == 0 {
-		s.Max = 1
+	if h.Min == 0 && h.Max == 0 {
+		h.Max = 1
 	}
 }
 
 // Update the drawer.
-func (s *HeatMap) Update(w *ecs.World) {
-	s.Observer.Update(w)
+func (h *HeatMap) Update(w *ecs.World) {
+	h.Observer.Update(w)
 
-	s.data = plotGrid{
-		Grid: s.Observer,
+	h.data = plotGrid{
+		Grid: h.Observer,
 	}
 }
 
 // UpdateInputs handles input events of the previous frame update.
-func (s *HeatMap) UpdateInputs(w *ecs.World, win *pixelgl.Window) {}
+func (h *HeatMap) UpdateInputs(w *ecs.World, win *pixelgl.Window) {}
 
 // Draw the drawer.
-func (s *HeatMap) Draw(w *ecs.World, win *pixelgl.Window) {
-	s.updateData(w)
+func (h *HeatMap) Draw(w *ecs.World, win *pixelgl.Window) {
+	h.updateData(w)
 
 	width := win.Canvas().Bounds().W()
 	height := win.Canvas().Bounds().H()
@@ -64,25 +64,25 @@ func (s *HeatMap) Draw(w *ecs.World, win *pixelgl.Window) {
 		return
 	}
 
-	c := vgimg.New(vg.Points(width*s.scale)-10, vg.Points(height*s.scale)-10)
+	c := vgimg.New(vg.Points(width*h.scale)-10, vg.Points(height*h.scale)-10)
 
 	p := plot.New()
-	setLabels(p, s.Labels)
+	setLabels(p, h.Labels)
 
 	p.X.Tick.Marker = removeLastTicks{}
 
-	cols := s.Palette.Colors()
-	heat := &plotter.HeatMap{
-		GridXYZ:    &s.data,
-		Palette:    s.Palette,
+	cols := h.Palette.Colors()
+	heat := plotter.HeatMap{
+		GridXYZ:    &h.data,
+		Palette:    h.Palette,
 		Rasterized: false,
 		Underflow:  cols[0],
 		Overflow:   cols[len(cols)-1],
-		Min:        s.Min,
-		Max:        s.Max,
+		Min:        h.Min,
+		Max:        h.Max,
 	}
 
-	p.Add(heat)
+	p.Add(&heat)
 
 	win.Clear(color.White)
 	p.Draw(draw.New(c))
@@ -94,6 +94,6 @@ func (s *HeatMap) Draw(w *ecs.World, win *pixelgl.Window) {
 	sprite.Draw(win, pixel.IM.Moved(pixel.V(picture.Rect.W()/2.0+5, picture.Rect.H()/2.0+5)))
 }
 
-func (s *HeatMap) updateData(w *ecs.World) {
-	s.data.Values = s.Observer.Values(w)
+func (h *HeatMap) updateData(w *ecs.World) {
+	h.data.Values = h.Observer.Values(w)
 }
