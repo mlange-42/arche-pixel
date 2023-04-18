@@ -34,6 +34,10 @@ type HeatMap struct {
 // Initialize the drawer.
 func (h *HeatMap) Initialize(w *ecs.World, win *pixelgl.Window) {
 	h.Observer.Initialize(w)
+	h.data = plotGrid{
+		Grid: h.Observer,
+	}
+
 	h.scale = calcScaleCorrection()
 
 	if h.Min == 0 && h.Max == 0 {
@@ -44,10 +48,6 @@ func (h *HeatMap) Initialize(w *ecs.World, win *pixelgl.Window) {
 // Update the drawer.
 func (h *HeatMap) Update(w *ecs.World) {
 	h.Observer.Update(w)
-
-	h.data = plotGrid{
-		Grid: h.Observer,
-	}
 }
 
 // UpdateInputs handles input events of the previous frame update.

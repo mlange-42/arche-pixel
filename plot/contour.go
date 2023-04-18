@@ -20,7 +20,7 @@ import (
 //
 // Plots a grid as a contours.
 // For large grids, this is relatively slow.
-// Consider using [Image] instead.ü
+// Consider using [Image] instead.
 type Contour struct {
 	Observer   observer.Grid   // Observers providing a Grid for contours.
 	Levels     []float64       // Levels for iso lines. Optional.
@@ -35,16 +35,15 @@ type Contour struct {
 // Initialize the drawer.
 func (c *Contour) Initialize(w *ecs.World, win *pixelgl.Window) {
 	c.Observer.Initialize(w)
+	c.data = plotGrid{
+		Grid: c.Observer,
+	}
 	c.scale = calcScaleCorrection()
 }
 
 // Update the drawer.
 func (c *Contour) Update(w *ecs.World) {
 	c.Observer.Update(w)
-
-	c.data = plotGrid{
-		Grid: c.Observer,
-	}
 }
 
 // UpdateInputs handles input events of the previous frame update.
@@ -68,7 +67,6 @@ func (c *Contour) Draw(w *ecs.World, win *pixelgl.Window) {
 
 	p.X.Tick.Marker = removeLastTicks{}
 
-	//contours := plotter.NewContour(&s.data, s.Levels, s.Palette)
 	cols := c.Palette.Colors()
 	min := 0.0
 	max := 1.0

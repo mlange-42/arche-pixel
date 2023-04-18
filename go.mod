@@ -6,11 +6,13 @@ require (
 	github.com/faiface/pixel v0.10.0
 	github.com/mazznoer/colorgrad v0.9.1
 	github.com/mlange-42/arche v0.7.0
-	github.com/mlange-42/arche-model v0.2.1-0.20230418101916-a143644233d8
+	github.com/mlange-42/arche-model v0.2.0
 	github.com/stretchr/testify v1.8.1
 	golang.org/x/image v0.5.0
 	gonum.org/v1/plot v0.12.0
 )
+
+replace github.com/mlange-42/arche-model v0.2.0 => ../arche-model
 
 require (
 	git.sr.ht/~sbinet/gg v0.3.1 // indirect

@@ -3,16 +3,16 @@ package plot_test
 import (
 	"math"
 
-	"github.com/mazznoer/colorgrad"
+	"github.com/faiface/pixel/pixelgl"
 	"github.com/mlange-42/arche-model/model"
+	"github.com/mlange-42/arche-model/observer"
 	"github.com/mlange-42/arche-model/system"
 	"github.com/mlange-42/arche-pixel/plot"
 	"github.com/mlange-42/arche-pixel/window"
 	"github.com/mlange-42/arche/ecs"
 )
 
-func ExampleImage() {
-
+func ExampleField() {
 	// Create a new model.
 	m := model.New()
 
@@ -20,16 +20,13 @@ func ExampleImage() {
 	m.TPS = 30
 	m.FPS = 0
 
-	// Create an image plot.
-	// See below for the implementation of the MatrixObserver.
+	// Create a contour plot.
 	m.AddUISystem(
 		(&window.Window{}).
-			With(&plot.Image{
-				Scale:    4,
-				Observer: &MatrixObserver{},
-				Colors:   colorgrad.Inferno(),
-				Min:      -2,
-				Max:      2,
+			With(&plot.Field{
+				Observer: &observer.LayersToGrid{
+					Observer: &FieldObserver{},
+				},
 			}))
 
 	// Add a termination system that ends the simulation.
@@ -41,35 +38,43 @@ func ExampleImage() {
 	// Due to the use of the OpenGL UI system, the model must be run via [github.com/faiface/pixel/pixelgl].
 	// Uncomment the next line. It is commented out as the CI has no display device to test the model run.
 
-	// pixelgl.Run(m.Run)
+	pixelgl.Run(m.Run)
 
 	// Output:
 }
 
-// Example observer, reporting a matrix with z = sin(0.1*i) + sin(0.2*j).
-type MatrixObserver struct {
+type FieldObserver struct {
 	cols   int
 	rows   int
-	values []float64
+	values [][]float64
 }
 
-func (o *MatrixObserver) Initialize(w *ecs.World) {
-	o.cols = 160
-	o.rows = 120
-	o.values = make([]float64, o.cols*o.rows)
+func (o *FieldObserver) Initialize(w *ecs.World) {
+	o.cols = 60
+	o.rows = 40
+	o.values = make([][]float64, 2)
+	for i := 0; i < len(o.values); i++ {
+		o.values[i] = make([]float64, o.cols*o.rows)
+	}
 }
 
-func (o *MatrixObserver) Update(w *ecs.World) {}
+func (o *FieldObserver) Update(w *ecs.World) {}
 
-func (o *MatrixObserver) Dims() (int, int) {
+func (o *FieldObserver) Dims() (int, int) {
 	return o.cols, o.rows
 }
 
-func (o *MatrixObserver) Values(w *ecs.World) []float64 {
-	for idx := 0; idx < len(o.values); idx++ {
+func (o *FieldObserver) Layers() int {
+	return 2
+}
+
+func (o *FieldObserver) Values(w *ecs.World) [][]float64 {
+	ln := len(o.values[0])
+	for idx := 0; idx < ln; idx++ {
 		i := idx % o.cols
 		j := idx / o.cols
-		o.values[idx] = math.Sin(0.1*float64(i)) + math.Sin(0.2*float64(j))
+		o.values[0][idx] = math.Sin(float64(i))
+		o.values[1][idx] = -math.Sin(float64(j))
 	}
 	return o.values
 }
