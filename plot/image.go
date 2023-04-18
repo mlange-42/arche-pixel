@@ -11,7 +11,11 @@ import (
 	"github.com/mlange-42/arche/ecs"
 )
 
-// Image plot drawer.
+// Image drawer.
+//
+// Draws an image from a Matrix observer.
+// The image is scaled to the canvas extent, with preserved aspect ratio.
+// Does not add plot axes etc.
 type Image struct {
 	Scale    float64            // Spatial scaling: cell size in screen pixels. Optional, default auto.
 	Observer observer.Matrix    // Observer providing 2D matrix or grid data.

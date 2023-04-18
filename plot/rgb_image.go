@@ -10,7 +10,11 @@ import (
 	"github.com/mlange-42/arche/ecs"
 )
 
-// ImageRGB plot drawer.
+// ImageRGB drawer.
+//
+// Draws an image from a Matrix observer per RGB color channel.
+// The image is scaled to the canvas extent, with preserved aspect ratio.
+// Does not add plot axes etc.
 type ImageRGB struct {
 	Scale     float64           // Spatial scaling: cell size in screen pixels. Optional, default auto.
 	Observers []observer.Matrix // Observers for the red, green and blue channel. Elements can be nil.
