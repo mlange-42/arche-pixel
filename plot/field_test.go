@@ -3,7 +3,6 @@ package plot_test
 import (
 	"math"
 
-	"github.com/faiface/pixel/pixelgl"
 	"github.com/mlange-42/arche-model/model"
 	"github.com/mlange-42/arche-model/observer"
 	"github.com/mlange-42/arche-model/system"
@@ -24,9 +23,7 @@ func ExampleField() {
 	m.AddUISystem(
 		(&window.Window{}).
 			With(&plot.Field{
-				Observer: &observer.LayersToGrid{
-					Observer: &FieldObserver{},
-				},
+				Observer: observer.LayersToLayers(&FieldObserver{}, nil, nil),
 			}))
 
 	// Add a termination system that ends the simulation.
@@ -38,7 +35,7 @@ func ExampleField() {
 	// Due to the use of the OpenGL UI system, the model must be run via [github.com/faiface/pixel/pixelgl].
 	// Uncomment the next line. It is commented out as the CI has no display device to test the model run.
 
-	pixelgl.Run(m.Run)
+	// pixelgl.Run(m.Run)
 
 	// Output:
 }

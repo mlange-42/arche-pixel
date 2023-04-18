@@ -21,11 +21,9 @@ func ExampleContour() {
 	m.AddUISystem(
 		(&window.Window{}).
 			With(&plot.Contour{
-				Observer: &observer.MatrixToGrid{
-					Observer: &MatrixObserver{},
-				},
-				Palette: palette.Heat(16, 1),
-				Levels:  []float64{-2, -1.5, -1, -0.5, 0, 0.5, 1, 1.5, 2},
+				Observer: observer.MatrixToGrid(&MatrixObserver{}, nil, nil),
+				Palette:  palette.Heat(16, 1),
+				Levels:   []float64{-2, -1.5, -1, -0.5, 0, 0.5, 1, 1.5, 2},
 			}))
 
 	// Add a termination system that ends the simulation.

@@ -23,11 +23,11 @@ func ExampleImageRGB() {
 	// See below for the implementation of the CallbackMatrixObserver.
 	m.AddUISystem((&window.Window{}).
 		With(&plot.ImageRGB{
-			Observers: []observer.Matrix{
+			Observer: observer.MatrixToLayers(
 				&CallbackMatrixObserver{Callback: func(i, j int) float64 { return float64(i) / 240 }},
 				&CallbackMatrixObserver{Callback: func(i, j int) float64 { return math.Sin(0.1 * float64(i)) }},
 				&CallbackMatrixObserver{Callback: func(i, j int) float64 { return float64(j) / 160 }},
-			},
+			),
 			Min: []float64{0, 0, 0},
 			Max: []float64{1, 1, 1},
 		}))

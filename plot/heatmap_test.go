@@ -21,12 +21,10 @@ func ExampleHeatMap() {
 	m.AddUISystem(
 		(&window.Window{}).
 			With(&plot.HeatMap{
-				Observer: &observer.MatrixToGrid{
-					Observer: &MatrixObserver{},
-				},
-				Palette: palette.Heat(16, 1),
-				Min:     -2,
-				Max:     2,
+				Observer: observer.MatrixToGrid(&MatrixObserver{}, nil, nil),
+				Palette:  palette.Heat(16, 1),
+				Min:      -2,
+				Max:      2,
 			}))
 
 	// Add a termination system that ends the simulation.

@@ -2,13 +2,18 @@
 
 ## [[v0.3.0]](https://github.com/mlange-42/arche-pixel/compare/v0.2.0...v0.3.0)
 
+### Breaking changes
+
+* Drawer `ImageRGB` uses one `MatrixLayers` observers instead of three `Matrix` observers (#31)
+
 ### Features
 
 * Drawer `plot.Lines` for plotting table observer data, with a line series per column, and a common X column (#22)
 * Drawer `plot.Scatter` for plotting table observer data as scatter plots. Supports multiple observers and multiple series per observer (#25)
 * Drawer `plot.Bars` for plotting row observer data as bar chart (#27)
-* Drawer `plot.Contour` for plotting grid data as contours (#32)
-* Drawer `plot.HeatMap` for plotting grid data as heat maps (#32)
+* Drawer `plot.Contour` for plotting grid data as contours (#31)
+* Drawer `plot.HeatMap` for plotting grid data as heat maps (#31)
+* Drawer `plot.Field` for plotting 2D vector fields (#31)
 * Plot title, axes labels and axes limits can be configured for plots (optional) (#30)
 * Optional selection of columns in bar and time series plots (#30)
 

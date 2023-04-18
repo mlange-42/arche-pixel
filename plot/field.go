@@ -21,44 +21,46 @@ import (
 type Field struct {
 	Observer observer.GridLayers // Observers providing field component grids.
 	Labels   Labels              // Labels for plot and axes. Optional.
-	Layers   *[2]int             // Layer indices. Optional, defaults to (0, 1).
+	Layers   []int               // Layer indices. Optional, defaults to (0, 1).
 
 	data  plotField
 	scale float64
 }
 
 // Initialize the drawer.
-func (c *Field) Initialize(w *ecs.World, win *pixelgl.Window) {
-	c.Observer.Initialize(w)
+func (f *Field) Initialize(w *ecs.World, win *pixelgl.Window) {
+	f.Observer.Initialize(w)
 
-	c.data = plotField{
-		GridLayers: c.Observer,
+	f.data = plotField{
+		GridLayers: f.Observer,
 	}
 
-	if c.Layers == nil {
-		c.Layers = &[2]int{0, 1}
+	if f.Layers == nil {
+		f.Layers = []int{0, 1}
+	} else if len(f.Layers) != 2 {
+		panic("field plot Layers must be of length 2")
 	}
-	layers := c.Observer.Layers()
-	for _, l := range c.Layers {
+	layers := f.Observer.Layers()
+	for _, l := range f.Layers {
 		if layers <= l {
 			panic(fmt.Sprintf("layer index %d out of range", l))
 		}
 	}
 
-	c.scale = calcScaleCorrection()
+	f.scale = calcScaleCorrection()
 }
 
 // Update the drawer.
-func (c *Field) Update(w *ecs.World) {
-	c.Observer.Update(w)
+func (f *Field) Update(w *ecs.World) {
+	f.Observer.Update(w)
 }
 
 // UpdateInputs handles input events of the previous frame update.
-func (c *Field) UpdateInputs(w *ecs.World, win *pixelgl.Window) {}
+func (f *Field) UpdateInputs(w *ecs.World, win *pixelgl.Window) {}
 
 // Draw the drawer.
-func (c *Field) Draw(w *ecs.World, win *pixelgl.Window) {
-	c.updateData(w)
+func (f *Field) Draw(w *ecs.World, win *pixelgl.Window) {
+	f.updateData(w)
 
 	width := win.Canvas().Bounds().W()
 	height := win.Canvas().Bounds().H()
@@ -67,14 +69,14 @@ func (c *Field) Draw(w *ecs.World, win *pixelgl.Window) {
 		return
 	}
 
-	canvas := vgimg.New(vg.Points(width*c.scale)-10, vg.Points(height*c.scale)-10)
+	canvas := vgimg.New(vg.Points(width*f.scale)-10, vg.Points(height*f.scale)-10)
 
 	p := plot.New()
-	setLabels(p, c.Labels)
+	setLabels(p, f.Labels)
 
 	p.X.Tick.Marker = removeLastTicks{}
 
-	field := plotter.NewField(&c.data)
+	field := plotter.NewField(&f.data)
 
 	p.Add(field)
 
@@ -88,10 +90,10 @@ func (c *Field) Draw(w *ecs.World, win *pixelgl.Window) {
 	sprite.Draw(win, pixel.IM.Moved(pixel.V(picture.Rect.W()/2.0+5, picture.Rect.H()/2.0+5)))
 }
 
-func (c *Field) updateData(w *ecs.World) {
-	values := c.Observer.Values(w)
-	c.data.XValues = values[c.Layers[0]]
-	c.data.YValues = values[c.Layers[1]]
+func (f *Field) updateData(w *ecs.World) {
+	values := f.Observer.Values(w)
+	f.data.XValues = values[f.Layers[0]]
+	f.data.YValues = values[f.Layers[1]]
 }
 
 type plotField struct {
