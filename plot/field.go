@@ -18,6 +18,8 @@ import (
 // Field plot drawer.
 //
 // Plots a vector field from a GridLayers observer.
+// For large grids, this is relatively slow.
+// Consider using [ImageRGB] instead.
 type Field struct {
 	Observer observer.GridLayers // Observers providing field component grids.
 	Labels   Labels              // Labels for plot and axes. Optional.

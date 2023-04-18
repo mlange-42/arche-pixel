@@ -19,7 +19,7 @@ import (
 type ImageRGB struct {
 	Scale    float64               // Spatial scaling: cell size in screen pixels. Optional, default auto.
 	Observer observer.MatrixLayers // Observer providing data for color channels.
-	Layers   []int                 // Layer indices. Optional, defaults to [0, 1, 2].
+	Layers   []int                 // Layer indices. Optional, defaults to [0, 1, 2]. Use -1 to ignore a channel.
 	Min      []float64             // Minimum value for channel color mapping. Optional, default [0, 0, 0].
 	Max      []float64             // Maximum value for channel color mapping. Optional, default [1, 1, 1].
 	slope    []float64
@@ -39,7 +39,7 @@ func (i *ImageRGB) Initialize(w *ecs.World, win *pixelgl.Window) {
 
 	layers := i.Observer.Layers()
 	for _, l := range i.Layers {
-		if layers <= l {
+		if l >= 0 && layers <= l {
 			panic(fmt.Sprintf("layer index %d out of range", l))
 		}
 	}
@@ -83,7 +83,9 @@ func (i *ImageRGB) Draw(w *ecs.World, win *pixelgl.Window) {
 	values := append([]float64{}, i.Min...)
 	for j := 0; j < i.dataLen; j++ {
 		for i, k := range i.Layers {
-			values[i] = cannels[k][j]
+			if k >= 0 {
+				values[i] = cannels[k][j]
+			}
 		}
 		i.picture.Pix[j] = i.valuesToColor(values[0], values[1], values[2])
 	}

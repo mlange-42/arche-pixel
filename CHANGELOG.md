@@ -4,7 +4,7 @@
 
 ### Breaking changes
 
-* Drawer `ImageRGB` uses one `MatrixLayers` observers instead of three `Matrix` observers (#31)
+* Drawer `plot.ImageRGB` uses one `MatrixLayers` observers instead of three `Matrix` observers (#31)
 
 ### Features
 
@@ -16,6 +16,7 @@
 * Drawer `plot.Field` for plotting 2D vector fields (#31)
 * Plot title, axes labels and axes limits can be configured for plots (optional) (#30)
 * Optional selection of columns in bar and time series plots (#30)
+* Drawers `plot.ImageRGB` and `plot.Field` can freely assign layers to channels (#31)
 
 ### Bugfixes
 
