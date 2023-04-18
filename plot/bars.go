@@ -72,14 +72,10 @@ func (b *Bars) UpdateInputs(w *ecs.World, win *pixelgl.Window) {}
 
 // Draw the drawer.
 func (b *Bars) Draw(w *ecs.World, win *pixelgl.Window) {
-	b.updateData(w)
-
 	width := win.Canvas().Bounds().W()
 	height := win.Canvas().Bounds().H()
 
-	if width <= 0 || height <= 0 {
-		return
-	}
+	b.updateData(w)
 
 	c := vgimg.New(vg.Points(width*b.scale)-10, vg.Points(height*b.scale)-10)
 

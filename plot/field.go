@@ -62,14 +62,10 @@ func (f *Field) UpdateInputs(w *ecs.World, win *pixelgl.Window) {}
 
 // Draw the drawer.
 func (f *Field) Draw(w *ecs.World, win *pixelgl.Window) {
-	f.updateData(w)
-
 	width := win.Canvas().Bounds().W()
 	height := win.Canvas().Bounds().H()
 
-	if width <= 0 || height <= 0 {
-		return
-	}
+	f.updateData(w)
 
 	canvas := vgimg.New(vg.Points(width*f.scale)-10, vg.Points(height*f.scale)-10)
 

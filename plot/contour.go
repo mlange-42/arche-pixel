@@ -51,14 +51,10 @@ func (c *Contour) UpdateInputs(w *ecs.World, win *pixelgl.Window) {}
 
 // Draw the drawer.
 func (c *Contour) Draw(w *ecs.World, win *pixelgl.Window) {
-	c.updateData(w)
-
 	width := win.Canvas().Bounds().W()
 	height := win.Canvas().Bounds().H()
 
-	if width <= 0 || height <= 0 {
-		return
-	}
+	c.updateData(w)
 
 	canvas := vgimg.New(vg.Points(width*c.scale)-10, vg.Points(height*c.scale)-10)
 

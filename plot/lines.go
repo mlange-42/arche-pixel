@@ -83,14 +83,10 @@ func (l *Lines) UpdateInputs(w *ecs.World, win *pixelgl.Window) {}
 
 // Draw the drawer.
 func (l *Lines) Draw(w *ecs.World, win *pixelgl.Window) {
-	l.updateData(w)
-
 	width := win.Canvas().Bounds().W()
 	height := win.Canvas().Bounds().H()
 
-	if width <= 0 || height <= 0 {
-		return
-	}
+	l.updateData(w)
 
 	c := vgimg.New(vg.Points(width*l.scale)-10, vg.Points(height*l.scale)-10)
 

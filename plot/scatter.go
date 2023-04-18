@@ -98,14 +98,10 @@ func (s *Scatter) UpdateInputs(w *ecs.World, win *pixelgl.Window) {}
 
 // Draw the drawer.
 func (s *Scatter) Draw(w *ecs.World, win *pixelgl.Window) {
-	s.updateData(w)
-
 	width := win.Canvas().Bounds().W()
 	height := win.Canvas().Bounds().H()
 
-	if width <= 0 || height <= 0 {
-		return
-	}
+	s.updateData(w)
 
 	c := vgimg.New(vg.Points(width*s.scale)-10, vg.Points(height*s.scale)-10)
 
