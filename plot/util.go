@@ -6,6 +6,7 @@ import (
 	"math"
 
 	"github.com/faiface/pixel/text"
+	"github.com/mlange-42/arche-model/observer"
 	"golang.org/x/image/colornames"
 	"golang.org/x/image/font/basicfont"
 	"gonum.org/v1/plot"
@@ -138,6 +139,16 @@ func (t removeLastTicks) Ticks(min, max float64) []plot.Tick {
 		}
 	}
 	return ticks
+}
+
+type plotGrid struct {
+	observer.Grid
+	Values []float64
+}
+
+func (g *plotGrid) Z(c, r int) float64 {
+	w, _ := g.Dims()
+	return g.Values[r*w+c]
 }
 
 type ringBuffer[T any] struct {

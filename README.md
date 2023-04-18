@@ -17,7 +17,7 @@
 ## Features
 
 * Free 2D drawing using a convenient OpenGL interface.
-* Live plots using unified observers (time series, line, bar and scatter plots).
+* Live plots using unified observers (time series, line, bar, scatter and contour plots).
 * ECS engine monitor for detailed performance statistics.
 * Entity inspector for debugging and inspection.
 * Simulation controls to pause or limit speed interactively.

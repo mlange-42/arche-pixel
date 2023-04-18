@@ -53,8 +53,8 @@ github.com/mazznoer/csscolorparser v0.1.2 h1:/UBHuQg792ePmGFzTQAC9u+XbFr7/HzP/Gj
 github.com/mazznoer/csscolorparser v0.1.2/go.mod h1:Aj22+L/rYN/Y6bj3bYqO3N6g1dtdHtGfQ32xZ5PJQic=
 github.com/mlange-42/arche v0.7.0 h1:66HmSfVQFIYx7PyQtOjmWuGCzBX0fhefYqpDkWpyy6E=
 github.com/mlange-42/arche v0.7.0/go.mod h1:cgOiMHWCbNAb5L5mCihS2yzdk1Zll1IoBJL+3wVm0AM=
-github.com/mlange-42/arche-model v0.2.0 h1:JrGKLIGDMKumsYeddKw9S5RlUk0OOzUQH7GkkZGj1YM=
-github.com/mlange-42/arche-model v0.2.0/go.mod h1:VSOVJBHjw6gQm9B1vOVLsteFtXvZgJmNCOKQoh1jqYc=
+github.com/mlange-42/arche-model v0.2.1-0.20230418144552-c3a825aab39e h1:b/I8XBOCWBz+Fs8eerMMxytxjNSnCEX8xYoIraHqBVw=
+github.com/mlange-42/arche-model v0.2.1-0.20230418144552-c3a825aab39e/go.mod h1:VSOVJBHjw6gQm9B1vOVLsteFtXvZgJmNCOKQoh1jqYc=
 github.com/phpdave11/gofpdf v1.4.2/go.mod h1:zpO6xFn9yxo3YLyMvW8HcKWVdbNqgIfOOp2dXMnm1mY=
 github.com/phpdave11/gofpdi v1.0.12/go.mod h1:vBmVV0Do6hSBHC8uKUQ71JGW+ZGQq74llk/7bXwjDoI=
 github.com/phpdave11/gofpdi v1.0.13/go.mod h1:vBmVV0Do6hSBHC8uKUQ71JGW+ZGQq74llk/7bXwjDoI=
