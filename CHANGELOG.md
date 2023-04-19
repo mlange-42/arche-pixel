@@ -5,6 +5,7 @@
 ### Breaking changes
 
 * Drawer `plot.ImageRGB` uses one `MatrixLayers` observers instead of three `Matrix` observers (#31)
+* Upgrade to `arche-model` v0.3.0 (#33)
 
 ### Features
 
