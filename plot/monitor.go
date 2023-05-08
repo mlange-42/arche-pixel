@@ -26,6 +26,13 @@ const (
 	tsLast
 )
 
+var (
+	colorGreen     = color.RGBA{0, 130, 40, 255}
+	colorDarkGreen = color.RGBA{20, 80, 25, 255}
+	colorCyan      = color.RGBA{0, 100, 120, 255}
+	colorDarkCyan  = color.RGBA{20, 50, 70, 255}
+)
+
 // NewMonitorWindow creates a window with [Monitor] drawer, for immediate use as a system.
 //
 // Also adds [Controls] for pausing/resuming the simulation.
@@ -119,15 +126,15 @@ func (m *Monitor) Draw(w *ecs.World, win *pixelgl.Window) {
 	m.summary.Clear()
 	mem, units := toMemText(stats.Memory)
 	fmt.Fprintf(
-		m.summary, "Tick: %7d  |  Entities: %7d  |  Comp: %3d  |  Arch: %3d  |  Mem: %6.1f %s  |  TPS: %6.1f | TPT: %6.2f ms | Time: %s",
-		m.step, stats.Entities.Used, stats.ComponentCount, len(stats.Archetypes), mem, units, m.frameTimer.FPS(),
+		m.summary, "Tick: %7d  |  Entities: %7d  |  Comp: %3d  |  Nodes: %2d/%2d  |  Mem: %6.1f %s  |  TPS: %6.1f | TPT: %6.2f ms | Time: %s",
+		m.step, stats.Entities.Used, stats.ComponentCount, stats.ActiveNodeCount, len(stats.Nodes), mem, units, m.frameTimer.FPS(),
 		float64(m.frameTimer.FrameTime().Microseconds())/1000, time.Since(m.startTime).Round(time.Second),
 	)
 
-	numArch := len(stats.Archetypes)
+	numNodes := len(m.archetypes.Components)
 	maxCapacity := 0
-	for i := 0; i < numArch; i++ {
-		cap := stats.Archetypes[i].Capacity
+	for i := 0; i < numNodes; i++ {
+		cap := stats.Nodes[m.archetypes.Indices[i]].Capacity
 		if cap > maxCapacity {
 			maxCapacity = cap
 		}
@@ -160,7 +167,7 @@ func (m *Monitor) Draw(w *ecs.World, win *pixelgl.Window) {
 		x0 += math.Ceil(plotWidth + 10)
 	}
 
-	archHeight := math.Ceil((y0 - 10) / float64(numArch+1))
+	archHeight := math.Ceil((y0 - 10) / float64(numNodes+1))
 	if !m.HideArchetypes {
 		if archHeight >= 8 {
 			archWidth := width - x0 - 10
@@ -170,10 +177,11 @@ func (m *Monitor) Draw(w *ecs.World, win *pixelgl.Window) {
 			m.drawArchetypeScales(
 				win, x0, y0-archHeight, archWidth, archHeight, maxCapacity,
 			)
-			for i := 0; i < numArch; i++ {
+			for i := 0; i < numNodes; i++ {
+				idx := m.archetypes.Indices[i]
 				m.drawArchetype(
 					win, x0, y0-float64(i+2)*archHeight, archWidth, archHeight,
-					maxCapacity, &stats.Archetypes[i], m.archetypes.Components[i],
+					maxCapacity, &stats.Nodes[idx], m.archetypes.Components[i],
 				)
 			}
 		} else {
@@ -214,20 +222,26 @@ func (m *Monitor) drawArchetypeScales(win *pixelgl.Window, x, y, w, h float64, m
 	}
 }
 
-func (m *Monitor) drawArchetype(win *pixelgl.Window, x, y, w, h float64, max int, arch *stats.ArchetypeStats, text *text.Text) {
+func (m *Monitor) drawArchetype(win *pixelgl.Window, x, y, w, h float64, max int, node *stats.NodeStats, text *text.Text) {
 	dr := &m.drawer
 
-	cap := float64(arch.Capacity) / float64(max)
-	cnt := float64(arch.Size) / float64(max)
+	cap := float64(node.Capacity) / float64(max)
+	cnt := float64(node.Size) / float64(max)
 
-	//dr.Color = color.RGBA{160, 40, 40, 255}
-	dr.Color = color.RGBA{0, 120, 40, 255}
+	if node.HasRelation {
+		dr.Color = colorCyan
+	} else {
+		dr.Color = colorGreen
+	}
 	dr.Push(px.V(x, y), px.V(x+w*cnt, y+h))
 	dr.Rectangle(0)
 	dr.Reset()
 
-	//dr.Color = color.RGBA{40, 40, 160, 255}
-	dr.Color = color.RGBA{20, 60, 25, 255}
+	if node.HasRelation {
+		dr.Color = colorDarkCyan
+	} else {
+		dr.Color = colorDarkGreen
+	}
 	dr.Push(px.V(x+w*cnt, y), px.V(x+w*cap, y+h))
 	dr.Rectangle(0)
 	dr.Reset()
@@ -241,6 +255,12 @@ func (m *Monitor) drawArchetype(win *pixelgl.Window, x, y, w, h float64, max int
 	dr.Clear()
 
 	text.Draw(win, px.IM.Moved(px.V(x+3, y+3)))
+
+	if node.HasRelation {
+		m.text.Clear()
+		fmt.Fprintf(m.text, "%5d / %5d", node.ActiveArchetypeCount, node.ArchetypeCount)
+		m.text.Draw(win, px.IM.Moved(px.V(x+3, y+3)))
+	}
 }
 
 func (m *Monitor) drawPlot(win *pixelgl.Window, x, y, w, h float64, series ...timeSeriesType) {
@@ -298,10 +318,10 @@ func (m *Monitor) drawPlot(win *pixelgl.Window, x, y, w, h float64, series ...ti
 }
 
 func toMemText(bytes int) (float64, string) {
-	if bytes < 10*1_048_576 {
+	if bytes <= 10*1_024_000 {
 		return float64(bytes) / 1024, "kB"
 	}
-	return float64(bytes) / 1_048_576, "MB"
+	return float64(bytes) / 1_024_000, "MB"
 }
 
 type timeSeries struct {
@@ -360,28 +380,37 @@ func (t *frameTimer) FPS() float64 {
 
 type archetypes struct {
 	Components []*text.Text
+	Indices    []int
 }
 
 func (a *archetypes) Update(stats *stats.WorldStats) {
+	newLen := stats.ActiveNodeCount
 	oldLen := len(a.Components)
-	newLen := len(stats.Archetypes)
 
 	if newLen == oldLen {
 		return
 	}
 
-	for i := oldLen; i < newLen; i++ {
+	a.Components = a.Components[:0]
+	a.Indices = a.Indices[:0]
+
+	numNodes := len(stats.Nodes)
+	for i := 0; i < numNodes; i++ {
+		node := &stats.Nodes[i]
+		if !node.IsActive {
+			continue
+		}
 		text := text.New(px.V(0, 0), defaultFont)
 		text.Color = color.RGBA{200, 200, 200, 255}
-		arch := &stats.Archetypes[i]
 		sb := strings.Builder{}
-		sb.WriteString(fmt.Sprintf("%4d B: ", arch.MemoryPerEntity))
-		types := arch.ComponentTypes
+		sb.WriteString(fmt.Sprintf("              %4d B: ", node.MemoryPerEntity))
+		types := node.ComponentTypes
 		for j := 0; j < len(types); j++ {
 			sb.WriteString(types[j].Name())
 			sb.WriteString(" ")
 		}
 		text.WriteString(sb.String())
 		a.Components = append(a.Components, text)
+		a.Indices = append(a.Indices, i)
 	}
 }
