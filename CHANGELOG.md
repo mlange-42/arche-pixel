@@ -1,5 +1,17 @@
 # Changelog
 
+## [[v0.4.0]](https://github.com/mlange-42/arche-model/compare/v0.3.0...v0.4.0)
+
+### Breaking changes
+
+* Upgrade to Arche 0.8 (#35)
+
+### Features
+
+* `plot.Inspector` can be scrolled using arrow keys or mouse wheel (#36)
+* New `plot.Systems` for inspecting ECS systems (#36)
+* New `plot.Resources` for inspecting ECS resources (#36)
+
 ## [[v0.3.0]](https://github.com/mlange-42/arche-pixel/compare/v0.2.0...v0.3.0)
 
 ### Breaking changes
