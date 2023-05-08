@@ -20,11 +20,13 @@ import (
 //
 // Details can be adjusted using the HideXxx fields.
 // Further, keys F, T, V and N can be used to toggle details during a running simulation.
+// The view can be scrolled using arrow keys or the mouse wheel.
 type Inspector struct {
 	HideFields  bool // Hides components fields.
 	HideTypes   bool // Hides field types.
 	HideValues  bool // Hides field values.
 	HideNames   bool // Hide field names of nested structs.
+	scroll      int
 	selectedRes generic.Resource[resource.SelectedEntity]
 	text        *text.Text
 	helpText    *text.Text
@@ -37,7 +39,7 @@ func (i *Inspector) Initialize(w *ecs.World, win *pixelgl.Window) {
 	i.text = text.New(px.V(0, 0), defaultFont)
 	i.helpText = text.New(px.V(0, 0), defaultFont)
 
-	fmt.Fprint(i.helpText, "Toggle [f]ields, [t]ypes, [v]alues or [n]ames")
+	fmt.Fprint(i.helpText, "Toggle [f]ields, [t]ypes, [v]alues or [n]ames, scroll with arrows or mouse wheel.")
 }
 
 // Update the drawer.
@@ -60,6 +62,23 @@ func (i *Inspector) UpdateInputs(w *ecs.World, win *pixelgl.Window) {
 	if win.JustPressed(pixelgl.KeyN) {
 		i.HideNames = !i.HideNames
 		return
+	}
+	if win.JustPressed(pixelgl.KeyDown) {
+		i.scroll++
+		return
+	}
+	if win.JustPressed(pixelgl.KeyUp) {
+		if i.scroll > 0 {
+			i.scroll--
+		}
+		return
+	}
+	scr := win.MouseScroll()
+	if scr.Y != 0 {
+		i.scroll -= int(scr.Y)
+		if i.scroll < 0 {
+			i.scroll = 0
+		}
 	}
 }
 
@@ -91,6 +110,8 @@ func (i *Inspector) Draw(w *ecs.World, win *pixelgl.Window) {
 	mask := w.Mask(sel)
 	bits := mask.TotalBitsSet()
 
+	scroll := i.scroll
+
 	for j := 0; j < ecs.MaskTotalBits && bits > 0; j++ {
 		id := ecs.ID(j)
 		if mask.Get(id) {
@@ -98,13 +119,25 @@ func (i *Inspector) Draw(w *ecs.World, win *pixelgl.Window) {
 			ptr := w.Get(sel, id)
 			val := reflect.NewAt(tp, ptr).Elem()
 
-			fmt.Fprintf(i.text, "  %s\n", tp.Name())
+			if scroll <= 0 {
+				fmt.Fprintf(i.text, "  %s\n", tp.Name())
+			}
+			scroll--
 
 			if !i.HideFields {
 				for k := 0; k < val.NumField(); k++ {
-					i.printField(i.text, tp, tp.Field(k), val.Field(k))
+					field := tp.Field(k)
+					if field.IsExported() {
+						if scroll <= 0 {
+							i.printField(i.text, tp, field, val.Field(k))
+						}
+						scroll--
+					}
 				}
-				fmt.Fprint(i.text, "\n")
+				if scroll <= 0 {
+					fmt.Fprint(i.text, "\n")
+				}
+				scroll--
 			}
 			bits--
 		}
