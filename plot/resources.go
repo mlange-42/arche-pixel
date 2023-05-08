@@ -16,7 +16,7 @@ import (
 // Lists all resources with their public fields.
 //
 // Details can be adjusted using the HideXxx fields.
-// Further, keys U, F, T, V and N can be used to toggle details during a running simulation.
+// Further, keys F, T, V and N can be used to toggle details during a running simulation.
 // The view can be scrolled using arrow keys or the mouse wheel.
 type Resources struct {
 	HideFields bool // Hides components fields.
