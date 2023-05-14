@@ -11,6 +11,8 @@
 * `plot.Inspector` can be scrolled using arrow keys or mouse wheel (#36)
 * New `plot.Systems` for inspecting ECS systems (#36)
 * New `plot.Resources` for inspecting ECS resources (#36)
+* `plot.Monitor` show number of cached filters (#37)
+* `plot.Monitor` summary line wraps when window is not wide enough (#37)
 
 ## [[v0.3.0]](https://github.com/mlange-42/arche-pixel/compare/v0.2.0...v0.3.0)
 
