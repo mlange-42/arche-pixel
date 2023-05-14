@@ -123,13 +123,29 @@ func (m *Monitor) Draw(w *ecs.World, win *pixelgl.Window) {
 	stats := w.Stats()
 	m.archetypes.Update(stats)
 
+	width := win.Canvas().Bounds().W()
+	height := win.Canvas().Bounds().H()
+
 	m.summary.Clear()
 	mem, units := toMemText(stats.Memory)
+	split := width < 1080
 	fmt.Fprintf(
-		m.summary, "Tick: %7d  |  Entities: %7d  |  Comp: %3d  |  Nodes: %2d/%2d  |  Mem: %6.1f %s  |  TPS: %6.1f | TPT: %6.2f ms | Time: %s",
-		m.step, stats.Entities.Used, stats.ComponentCount, stats.ActiveNodeCount, len(stats.Nodes), mem, units, m.frameTimer.FPS(),
-		float64(m.frameTimer.FrameTime().Microseconds())/1000, time.Since(m.startTime).Round(time.Second),
+		m.summary, "Tick: %8d  |  Ent.: %7d  |  Nodes: %3d/%3d  |  Comp: %3d  |  Cache: %3d",
+		m.step, stats.Entities.Used, stats.ActiveNodeCount, len(stats.Nodes), stats.ComponentCount, stats.CachedFilters,
 	)
+	if split {
+		fmt.Fprintf(
+			m.summary, "\nMem: %6.1f %s  |  TPS: %8.1f  |  TPT: %6.2f ms  |  Time: %s",
+			mem, units, m.frameTimer.FPS(),
+			float64(m.frameTimer.FrameTime().Microseconds())/1000, time.Since(m.startTime).Round(time.Second),
+		)
+	} else {
+		fmt.Fprintf(
+			m.summary, "  |  Mem: %6.1f %s  |  TPS: %6.1f  |  TPT: %6.2f ms  |  Time: %s",
+			mem, units, m.frameTimer.FPS(),
+			float64(m.frameTimer.FrameTime().Microseconds())/1000, time.Since(m.startTime).Round(time.Second),
+		)
+	}
 
 	numNodes := len(m.archetypes.Components)
 	maxCapacity := 0
@@ -140,17 +156,19 @@ func (m *Monitor) Draw(w *ecs.World, win *pixelgl.Window) {
 		}
 	}
 	dr := &m.drawer
-	width := win.Canvas().Bounds().W()
-	height := win.Canvas().Bounds().H()
-	x0 := 10.0
-	y0 := height - 20.0
+	x0 := 6.0
+	y0 := height - 18.0
 
 	m.summary.Draw(win, px.IM.Moved(px.V(x0, y0)))
 	y0 -= 10
 
+	if split {
+		y0 -= 10
+	}
+
 	if !m.HidePlots {
 		plotY0 := y0
-		plotHeight := (height - 60) / 3
+		plotHeight := (y0 - 40) / 3
 		if plotHeight > 150 {
 			plotHeight = 150
 		}
