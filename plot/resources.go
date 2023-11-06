@@ -5,9 +5,9 @@ import (
 	"io"
 	"reflect"
 
-	px "github.com/faiface/pixel"
-	"github.com/faiface/pixel/pixelgl"
-	"github.com/faiface/pixel/text"
+	px "github.com/gopxl/pixel/v2"
+	"github.com/gopxl/pixel/v2/backends/opengl"
+	"github.com/gopxl/pixel/v2/ext/text"
 	"github.com/mlange-42/arche/ecs"
 )
 
@@ -29,7 +29,7 @@ type Resources struct {
 }
 
 // Initialize the system
-func (i *Resources) Initialize(w *ecs.World, win *pixelgl.Window) {
+func (i *Resources) Initialize(w *ecs.World, win *opengl.Window) {
 	i.text = text.New(px.V(0, 0), defaultFont)
 	i.helpText = text.New(px.V(0, 0), defaultFont)
 
@@ -40,28 +40,28 @@ func (i *Resources) Initialize(w *ecs.World, win *pixelgl.Window) {
 func (i *Resources) Update(w *ecs.World) {}
 
 // UpdateInputs handles input events of the previous frame update.
-func (i *Resources) UpdateInputs(w *ecs.World, win *pixelgl.Window) {
-	if win.JustPressed(pixelgl.KeyF) {
+func (i *Resources) UpdateInputs(w *ecs.World, win *opengl.Window) {
+	if win.JustPressed(px.KeyF) {
 		i.HideFields = !i.HideFields
 		return
 	}
-	if win.JustPressed(pixelgl.KeyT) {
+	if win.JustPressed(px.KeyT) {
 		i.HideTypes = !i.HideTypes
 		return
 	}
-	if win.JustPressed(pixelgl.KeyV) {
+	if win.JustPressed(px.KeyV) {
 		i.HideValues = !i.HideValues
 		return
 	}
-	if win.JustPressed(pixelgl.KeyN) {
+	if win.JustPressed(px.KeyN) {
 		i.HideNames = !i.HideNames
 		return
 	}
-	if win.JustPressed(pixelgl.KeyDown) {
+	if win.JustPressed(px.KeyDown) {
 		i.scroll++
 		return
 	}
-	if win.JustPressed(pixelgl.KeyUp) {
+	if win.JustPressed(px.KeyUp) {
 		if i.scroll > 0 {
 			i.scroll--
 		}
@@ -77,7 +77,7 @@ func (i *Resources) UpdateInputs(w *ecs.World, win *pixelgl.Window) {
 }
 
 // Draw the system
-func (i *Resources) Draw(w *ecs.World, win *pixelgl.Window) {
+func (i *Resources) Draw(w *ecs.World, win *opengl.Window) {
 	i.helpText.Draw(win, px.IM.Moved(px.V(10, 10)))
 
 	height := win.Canvas().Bounds().H()

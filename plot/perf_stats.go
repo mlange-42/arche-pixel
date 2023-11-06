@@ -5,10 +5,10 @@ import (
 	"image/color"
 	"time"
 
-	px "github.com/faiface/pixel"
-	"github.com/faiface/pixel/imdraw"
-	"github.com/faiface/pixel/pixelgl"
-	"github.com/faiface/pixel/text"
+	px "github.com/gopxl/pixel/v2"
+	"github.com/gopxl/pixel/v2/backends/opengl"
+	"github.com/gopxl/pixel/v2/ext/imdraw"
+	"github.com/gopxl/pixel/v2/ext/text"
 	"github.com/mlange-42/arche/ecs"
 )
 
@@ -27,7 +27,7 @@ type PerfStats struct {
 }
 
 // Initialize the system
-func (p *PerfStats) Initialize(w *ecs.World, win *pixelgl.Window) {
+func (p *PerfStats) Initialize(w *ecs.World, win *opengl.Window) {
 	if p.SampleInterval <= 0 {
 		p.SampleInterval = time.Second
 	}
@@ -61,10 +61,10 @@ func (p *PerfStats) Update(w *ecs.World) {
 }
 
 // UpdateInputs handles input events of the previous frame update.
-func (p *PerfStats) UpdateInputs(w *ecs.World, win *pixelgl.Window) {}
+func (p *PerfStats) UpdateInputs(w *ecs.World, win *opengl.Window) {}
 
 // Draw the system
-func (p *PerfStats) Draw(w *ecs.World, win *pixelgl.Window) {
+func (p *PerfStats) Draw(w *ecs.World, win *opengl.Window) {
 	p.summary.Clear()
 	mem, units := toMemText(p.stats.Mem)
 	fmt.Fprintf(

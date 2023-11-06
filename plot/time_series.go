@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"image/color"
 
-	"github.com/faiface/pixel"
-	"github.com/faiface/pixel/pixelgl"
+	pixel "github.com/gopxl/pixel/v2"
+	"github.com/gopxl/pixel/v2/backends/opengl"
 	"github.com/mlange-42/arche-model/observer"
 	"github.com/mlange-42/arche/ecs"
 	"gonum.org/v1/plot"
@@ -40,7 +40,7 @@ func (t *TimeSeries) append(x float64, values []float64) {
 }
 
 // Initialize the drawer.
-func (t *TimeSeries) Initialize(w *ecs.World, win *pixelgl.Window) {
+func (t *TimeSeries) Initialize(w *ecs.World, win *opengl.Window) {
 	t.Observer.Initialize(w)
 
 	t.headers = t.Observer.Header()
@@ -77,10 +77,10 @@ func (t *TimeSeries) Update(w *ecs.World) {
 }
 
 // UpdateInputs handles input events of the previous frame update.
-func (t *TimeSeries) UpdateInputs(w *ecs.World, win *pixelgl.Window) {}
+func (t *TimeSeries) UpdateInputs(w *ecs.World, win *opengl.Window) {}
 
 // Draw the drawer.
-func (t *TimeSeries) Draw(w *ecs.World, win *pixelgl.Window) {
+func (t *TimeSeries) Draw(w *ecs.World, win *opengl.Window) {
 	width := win.Canvas().Bounds().W()
 	height := win.Canvas().Bounds().H()
 

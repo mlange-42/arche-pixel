@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"image/color"
 
-	"github.com/faiface/pixel"
-	"github.com/faiface/pixel/pixelgl"
+	pixel "github.com/gopxl/pixel/v2"
+	"github.com/gopxl/pixel/v2/backends/opengl"
 	"github.com/mlange-42/arche-model/observer"
 	"github.com/mlange-42/arche-pixel/window"
 	"github.com/mlange-42/arche/ecs"
@@ -28,7 +28,7 @@ type ImageRGB struct {
 }
 
 // Initialize the drawer.
-func (i *ImageRGB) Initialize(w *ecs.World, win *pixelgl.Window) {
+func (i *ImageRGB) Initialize(w *ecs.World, win *opengl.Window) {
 	i.Observer.Initialize(w)
 
 	if i.Layers == nil {
@@ -74,10 +74,10 @@ func (i *ImageRGB) Update(w *ecs.World) {
 }
 
 // UpdateInputs handles input events of the previous frame update.
-func (i *ImageRGB) UpdateInputs(w *ecs.World, win *pixelgl.Window) {}
+func (i *ImageRGB) UpdateInputs(w *ecs.World, win *opengl.Window) {}
 
 // Draw the drawer.
-func (i *ImageRGB) Draw(w *ecs.World, win *pixelgl.Window) {
+func (i *ImageRGB) Draw(w *ecs.World, win *opengl.Window) {
 	cannels := i.Observer.Values(w)
 
 	values := append([]float64{}, i.Min...)

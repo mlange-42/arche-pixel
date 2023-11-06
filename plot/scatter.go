@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"image/color"
 
-	"github.com/faiface/pixel"
-	"github.com/faiface/pixel/pixelgl"
+	pixel "github.com/gopxl/pixel/v2"
+	"github.com/gopxl/pixel/v2/backends/opengl"
 	"github.com/mlange-42/arche-model/observer"
 	"github.com/mlange-42/arche/ecs"
 	"gonum.org/v1/plot"
@@ -36,7 +36,7 @@ type Scatter struct {
 }
 
 // Initialize the drawer.
-func (s *Scatter) Initialize(w *ecs.World, win *pixelgl.Window) {
+func (s *Scatter) Initialize(w *ecs.World, win *opengl.Window) {
 	numObs := len(s.Observers)
 	if len(s.X) != 0 && len(s.X) != numObs {
 		panic("length of X not equal to length of Observers")
@@ -94,10 +94,10 @@ func (s *Scatter) Update(w *ecs.World) {
 }
 
 // UpdateInputs handles input events of the previous frame update.
-func (s *Scatter) UpdateInputs(w *ecs.World, win *pixelgl.Window) {}
+func (s *Scatter) UpdateInputs(w *ecs.World, win *opengl.Window) {}
 
 // Draw the drawer.
-func (s *Scatter) Draw(w *ecs.World, win *pixelgl.Window) {
+func (s *Scatter) Draw(w *ecs.World, win *opengl.Window) {
 	width := win.Canvas().Bounds().W()
 	height := win.Canvas().Bounds().H()
 

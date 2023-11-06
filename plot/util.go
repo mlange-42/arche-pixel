@@ -5,7 +5,7 @@ import (
 	"image/color"
 	"math"
 
-	"github.com/faiface/pixel/text"
+	"github.com/gopxl/pixel/v2/ext/text"
 	"github.com/mlange-42/arche-model/observer"
 	"golang.org/x/image/colornames"
 	"golang.org/x/image/font/basicfont"

@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"image/color"
 
-	"github.com/faiface/pixel"
-	"github.com/faiface/pixel/pixelgl"
+	pixel "github.com/gopxl/pixel/v2"
+	"github.com/gopxl/pixel/v2/backends/opengl"
 	"github.com/mlange-42/arche-model/observer"
 	"github.com/mlange-42/arche/ecs"
 	"gonum.org/v1/plot"
@@ -31,7 +31,7 @@ type Bars struct {
 }
 
 // Initialize the drawer.
-func (b *Bars) Initialize(w *ecs.World, win *pixelgl.Window) {
+func (b *Bars) Initialize(w *ecs.World, win *opengl.Window) {
 	b.Observer.Initialize(w)
 
 	headers := b.Observer.Header()
@@ -68,10 +68,10 @@ func (b *Bars) Update(w *ecs.World) {
 }
 
 // UpdateInputs handles input events of the previous frame update.
-func (b *Bars) UpdateInputs(w *ecs.World, win *pixelgl.Window) {}
+func (b *Bars) UpdateInputs(w *ecs.World, win *opengl.Window) {}
 
 // Draw the drawer.
-func (b *Bars) Draw(w *ecs.World, win *pixelgl.Window) {
+func (b *Bars) Draw(w *ecs.World, win *opengl.Window) {
 	width := win.Canvas().Bounds().W()
 	height := win.Canvas().Bounds().H()
 

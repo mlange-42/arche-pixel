@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"image/color"
 
-	"github.com/faiface/pixel"
-	"github.com/faiface/pixel/pixelgl"
+	pixel "github.com/gopxl/pixel/v2"
+	"github.com/gopxl/pixel/v2/backends/opengl"
 	"github.com/mlange-42/arche-model/observer"
 	"github.com/mlange-42/arche/ecs"
 	"gonum.org/v1/plot"
@@ -30,7 +30,7 @@ type Field struct {
 }
 
 // Initialize the drawer.
-func (f *Field) Initialize(w *ecs.World, win *pixelgl.Window) {
+func (f *Field) Initialize(w *ecs.World, win *opengl.Window) {
 	f.Observer.Initialize(w)
 
 	f.data = plotField{
@@ -58,10 +58,10 @@ func (f *Field) Update(w *ecs.World) {
 }
 
 // UpdateInputs handles input events of the previous frame update.
-func (f *Field) UpdateInputs(w *ecs.World, win *pixelgl.Window) {}
+func (f *Field) UpdateInputs(w *ecs.World, win *opengl.Window) {}
 
 // Draw the drawer.
-func (f *Field) Draw(w *ecs.World, win *pixelgl.Window) {
+func (f *Field) Draw(w *ecs.World, win *opengl.Window) {
 	width := win.Canvas().Bounds().W()
 	height := win.Canvas().Bounds().H()
 

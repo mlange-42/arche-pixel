@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/faiface/pixel"
-	"github.com/faiface/pixel/pixelgl"
+	pixel "github.com/gopxl/pixel/v2"
+	"github.com/gopxl/pixel/v2/backends/opengl"
 	"github.com/mlange-42/arche-model/resource"
 	"github.com/mlange-42/arche/ecs"
 	"github.com/mlange-42/arche/generic"
@@ -17,7 +17,7 @@ import (
 type Drawer interface {
 	// Initialize is called before any other method.
 	// Use it to initialize the Drawer.
-	Initialize(w *ecs.World, win *pixelgl.Window)
+	Initialize(w *ecs.World, win *opengl.Window)
 
 	// Update is called with normal system updates.
 	// Can be used to update observers.
@@ -25,12 +25,12 @@ type Drawer interface {
 
 	// UpdateInputs is called on every UI update, i.e. with the frequency of FPS.
 	// Can be used to handle user input of the previous frame update.
-	UpdateInputs(w *ecs.World, win *pixelgl.Window)
+	UpdateInputs(w *ecs.World, win *opengl.Window)
 
 	// Draw is called on UI updates, every [Model.DrawInterval] steps.
 	// Draw is not called when the host window is minimized.
 	// Do all OpenGL drawing on the window here.
-	Draw(w *ecs.World, win *pixelgl.Window)
+	Draw(w *ecs.World, win *opengl.Window)
 }
 
 // Bounds define a bounding box for a window.
@@ -57,7 +57,7 @@ type Window struct {
 	Bounds       Bounds   // Window bounds (position and size). Optional.
 	Drawers      []Drawer // Drawers in increasing z order.
 	DrawInterval int      // Interval for re-drawing, in UI frames. Optional.
-	window       *pixelgl.Window
+	window       *opengl.Window
 	drawStep     int64
 	isClosed     bool
 	termRes      generic.Resource[resource.Termination]
@@ -83,7 +83,7 @@ func (w *Window) InitializeUI(world *ecs.World) {
 	if w.Title == "" {
 		w.Title = "Arche"
 	}
-	cfg := pixelgl.WindowConfig{
+	cfg := opengl.WindowConfig{
 		Title:     w.Title,
 		Bounds:    pixel.R(0, 0, float64(w.Bounds.W), float64(w.Bounds.H)),
 		Position:  pixel.V(float64(w.Bounds.X), float64(w.Bounds.Y)),
@@ -94,14 +94,14 @@ func (w *Window) InitializeUI(world *ecs.World) {
 		if err := recover(); err != nil {
 			txt := fmt.Sprint(err)
 			if txt == "mainthread: did not call Run" {
-				log.Fatal("ERROR: when using graphics via the pixel engine, run the model like this:\n    pixelgl.Run(model.Run)")
+				log.Fatal("ERROR: when using graphics via the pixel engine, run the model like this:\n    opengl.Run(model.Run)")
 			}
 			panic(err)
 		}
 	}()
 
 	var err error
-	w.window, err = pixelgl.NewWindow(cfg)
+	w.window, err = opengl.NewWindow(cfg)
 	if err != nil {
 		panic(err)
 	}
