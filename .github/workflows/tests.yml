@@ -94,5 +94,11 @@ jobs:
         run: |
           git status
           git diff
+      - name: Check Git Status
+        run: |
+          go mod why github.com/boombuler/barcode
+          go mod why github.com/phpdave11/gofpdi
+          go mod why github.com/ruudk/golang-pdf417
+          go mod why github.com/stretchr/objx
       - name: Run gorelease
         run: gorelease
