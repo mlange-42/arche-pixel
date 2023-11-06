@@ -87,7 +87,9 @@ jobs:
         run: |
           go get .
           go install golang.org/x/exp/cmd/gorelease@latest
-      - name: check Git status
-        run: git status --porcelain
+      - name: Check Git status
+        run: |
+          git status --porcelain
+          git diff
       - name: Run gorelease
         run: gorelease
