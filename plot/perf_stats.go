@@ -37,6 +37,7 @@ func (p *PerfStats) Initialize(w *ecs.World, win *opengl.Window) {
 	p.drawer = *imdraw.New(nil)
 
 	p.summary = text.New(px.V(0, 0), defaultFont)
+	p.summary.AlignedTo(px.BottomRight)
 
 	p.step = 0
 
@@ -77,10 +78,10 @@ func (p *PerfStats) Draw(w *ecs.World, win *opengl.Window) {
 	dr := &p.drawer
 	height := win.Canvas().Bounds().H()
 	x0 := 10.0
-	y0 := height - 20.0
+	y0 := height - 10.0
 
-	v1 := px.V(x0+p.summary.Bounds().Min.X-5, y0+p.summary.Bounds().Min.Y-5)
-	v2 := px.V(x0+p.summary.Bounds().Max.X+5, y0+p.summary.Bounds().Max.Y+5)
+	v1 := px.V(x0+p.summary.Bounds().Min.X-5, y0+p.summary.Bounds().Min.Y-12)
+	v2 := px.V(x0+p.summary.Bounds().Max.X+5, y0+p.summary.Bounds().Max.Y-8)
 
 	dr.Color = color.Black
 	dr.Push(v1, v2)

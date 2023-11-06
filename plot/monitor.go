@@ -82,6 +82,7 @@ func (m *Monitor) Initialize(w *ecs.World, win *opengl.Window) {
 	m.scale = calcScaleCorrection()
 
 	m.summary = text.New(px.V(0, 0), defaultFont)
+	m.summary.AlignedTo(px.BottomRight)
 
 	m.timeSeries = newTimeSeries(m.PlotCapacity)
 	for i := 0; i < len(m.timeSeries.Text); i++ {
@@ -159,7 +160,7 @@ func (m *Monitor) Draw(w *ecs.World, win *opengl.Window) {
 	x0 := 6.0
 	y0 := height - 18.0
 
-	m.summary.Draw(win, px.IM.Moved(px.V(x0, y0)))
+	m.summary.Draw(win, px.IM.Moved(px.V(x0, y0+10)))
 	y0 -= 10
 
 	if split {
