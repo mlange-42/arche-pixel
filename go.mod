@@ -5,8 +5,8 @@ go 1.20
 require (
 	github.com/gopxl/pixel/v2 v2.1.0
 	github.com/mazznoer/colorgrad v0.9.1
-	github.com/mlange-42/arche v0.8.0
-	github.com/mlange-42/arche-model v0.4.0
+	github.com/mlange-42/arche v0.8.1
+	github.com/mlange-42/arche-model v0.4.1
 	github.com/stretchr/testify v1.8.4
 	golang.org/x/image v0.13.0
 	gonum.org/v1/plot v0.12.0
