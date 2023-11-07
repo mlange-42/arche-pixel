@@ -6,6 +6,10 @@
 
 * Adds a convenience function `window.Run(model)` for running a model on the main thread (#41)
 
+### Bugfixes
+
+* Fix changed text alignment after migration to [gopxl/pixel v2](https://github.com/gopxl/pixel), in plots `Systems`, `Resources` and `Inspector` (#42)
+
 ## [[v0.5.1]](https://github.com/mlange-42/arche-pixel/compare/v0.5.0...v0.5.1)
 
 ### Bugfixes
