@@ -163,4 +163,6 @@ func (w *Window) PostUpdateUI(world *ecs.World) {
 func (w *Window) Finalize(world *ecs.World) {}
 
 // FinalizeUI the window system.
-func (w *Window) FinalizeUI(world *ecs.World) {}
+func (w *Window) FinalizeUI(world *ecs.World) {
+	w.window.Destroy()
+}

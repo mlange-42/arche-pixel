@@ -23,11 +23,13 @@ func ExampleSystems() {
 		Steps: 100,
 	})
 
+	m.Run()
+
 	// Run the simulation.
 	// Due to the use of the OpenGL UI system, the model must be run via [window.Run].
-	// Uncomment the next line. It is commented out as the CI has no display device to test the model run.
+	// Comment out the code line above, and uncomment the next line to run this example stand-alone.
 
-	//opengl.Run(m.Run)
+	// window.Run(m)
 
 	// Output:
 }
