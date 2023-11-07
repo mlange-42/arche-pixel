@@ -1,6 +1,6 @@
 # Changelog
 
-## [[v0.5.2]](https://github.com/mlange-42/arche-pixel/compare/v0.5.1...v0.5.2)
+## [[v0.6.0]](https://github.com/mlange-42/arche-pixel/compare/v0.5.1...v0.6.0)
 
 ### Features
 
