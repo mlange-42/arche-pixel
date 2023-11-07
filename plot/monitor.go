@@ -7,10 +7,10 @@ import (
 	"strings"
 	"time"
 
-	px "github.com/faiface/pixel"
-	"github.com/faiface/pixel/imdraw"
-	"github.com/faiface/pixel/pixelgl"
-	"github.com/faiface/pixel/text"
+	px "github.com/gopxl/pixel/v2"
+	"github.com/gopxl/pixel/v2/backends/opengl"
+	"github.com/gopxl/pixel/v2/ext/imdraw"
+	"github.com/gopxl/pixel/v2/ext/text"
 	"github.com/mlange-42/arche-pixel/window"
 	"github.com/mlange-42/arche/ecs"
 	"github.com/mlange-42/arche/ecs/stats"
@@ -67,7 +67,7 @@ type Monitor struct {
 }
 
 // Initialize the system
-func (m *Monitor) Initialize(w *ecs.World, win *pixelgl.Window) {
+func (m *Monitor) Initialize(w *ecs.World, win *opengl.Window) {
 	if m.PlotCapacity <= 0 {
 		m.PlotCapacity = 300
 	}
@@ -82,6 +82,7 @@ func (m *Monitor) Initialize(w *ecs.World, win *pixelgl.Window) {
 	m.scale = calcScaleCorrection()
 
 	m.summary = text.New(px.V(0, 0), defaultFont)
+	m.summary.AlignedTo(px.BottomRight)
 
 	m.timeSeries = newTimeSeries(m.PlotCapacity)
 	for i := 0; i < len(m.timeSeries.Text); i++ {
@@ -116,10 +117,10 @@ func (m *Monitor) Update(w *ecs.World) {
 }
 
 // UpdateInputs handles input events of the previous frame update.
-func (m *Monitor) UpdateInputs(w *ecs.World, win *pixelgl.Window) {}
+func (m *Monitor) UpdateInputs(w *ecs.World, win *opengl.Window) {}
 
 // Draw the system
-func (m *Monitor) Draw(w *ecs.World, win *pixelgl.Window) {
+func (m *Monitor) Draw(w *ecs.World, win *opengl.Window) {
 	stats := w.Stats()
 	m.archetypes.Update(stats)
 
@@ -159,7 +160,7 @@ func (m *Monitor) Draw(w *ecs.World, win *pixelgl.Window) {
 	x0 := 6.0
 	y0 := height - 18.0
 
-	m.summary.Draw(win, px.IM.Moved(px.V(x0, y0)))
+	m.summary.Draw(win, px.IM.Moved(px.V(x0, y0+10)))
 	y0 -= 10
 
 	if split {
@@ -213,7 +214,7 @@ func (m *Monitor) Draw(w *ecs.World, win *pixelgl.Window) {
 	dr.Clear()
 }
 
-func (m *Monitor) drawArchetypeScales(win *pixelgl.Window, x, y, w, h float64, max int) {
+func (m *Monitor) drawArchetypeScales(win *opengl.Window, x, y, w, h float64, max int) {
 	dr := &m.drawer
 	step := calcTicksStep(float64(max), 8)
 	if step < 1 {
@@ -240,7 +241,7 @@ func (m *Monitor) drawArchetypeScales(win *pixelgl.Window, x, y, w, h float64, m
 	}
 }
 
-func (m *Monitor) drawArchetype(win *pixelgl.Window, x, y, w, h float64, max int, node *stats.NodeStats, text *text.Text) {
+func (m *Monitor) drawArchetype(win *opengl.Window, x, y, w, h float64, max int, node *stats.NodeStats, text *text.Text) {
 	dr := &m.drawer
 
 	cap := float64(node.Capacity) / float64(max)
@@ -281,7 +282,7 @@ func (m *Monitor) drawArchetype(win *pixelgl.Window, x, y, w, h float64, max int
 	}
 }
 
-func (m *Monitor) drawPlot(win *pixelgl.Window, x, y, w, h float64, series ...timeSeriesType) {
+func (m *Monitor) drawPlot(win *opengl.Window, x, y, w, h float64, series ...timeSeriesType) {
 	dr := &m.drawer
 
 	dr.Color = color.RGBA{0, 25, 10, 255}

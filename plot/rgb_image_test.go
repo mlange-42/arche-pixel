@@ -38,10 +38,10 @@ func ExampleImageRGB() {
 	})
 
 	// Run the simulation.
-	// Due to the use of the OpenGL UI system, the model must be run via [github.com/faiface/pixel/pixelgl].
+	// Due to the use of the OpenGL UI system, the model must be run via [github.com/gopxl/pixel/v2/backends/opengl].
 	// Uncomment the next line. It is commented out as the CI has no display device to test the model run.
 
-	// pixelgl.Run(m.Run)
+	// opengl.Run(m.Run)
 
 	// Output:
 }

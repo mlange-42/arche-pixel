@@ -3,9 +3,9 @@ package window_test
 import (
 	"image/color"
 
-	"github.com/faiface/pixel"
-	"github.com/faiface/pixel/imdraw"
-	"github.com/faiface/pixel/pixelgl"
+	pixel "github.com/gopxl/pixel/v2"
+	"github.com/gopxl/pixel/v2/backends/opengl"
+	"github.com/gopxl/pixel/v2/ext/imdraw"
 	"github.com/mlange-42/arche-model/resource"
 	"github.com/mlange-42/arche-pixel/window"
 	"github.com/mlange-42/arche/ecs"
@@ -23,7 +23,7 @@ type RectDrawer struct {
 }
 
 // Initialize the RectDrawer.
-func (d *RectDrawer) Initialize(w *ecs.World, win *pixelgl.Window) {
+func (d *RectDrawer) Initialize(w *ecs.World, win *opengl.Window) {
 	// Create a drawer from the Pixel engine.
 	d.dr = *imdraw.New(nil)
 }
@@ -32,10 +32,10 @@ func (d *RectDrawer) Initialize(w *ecs.World, win *pixelgl.Window) {
 func (d *RectDrawer) Update(w *ecs.World) {}
 
 // UpdateInputs handles input events of the previous frame update.
-func (d *RectDrawer) UpdateInputs(w *ecs.World, win *pixelgl.Window) {}
+func (d *RectDrawer) UpdateInputs(w *ecs.World, win *opengl.Window) {}
 
 // Draw the RectDrawer's stuff.
-func (d *RectDrawer) Draw(w *ecs.World, win *pixelgl.Window) {
+func (d *RectDrawer) Draw(w *ecs.World, win *opengl.Window) {
 	// Get a resource from the world.
 	tick := ecs.GetResource[resource.Tick](w)
 	offset := float64(tick.Tick)

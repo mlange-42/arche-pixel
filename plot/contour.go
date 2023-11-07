@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"image/color"
 
-	"github.com/faiface/pixel"
-	"github.com/faiface/pixel/pixelgl"
+	pixel "github.com/gopxl/pixel/v2"
+	"github.com/gopxl/pixel/v2/backends/opengl"
 	"github.com/mlange-42/arche-model/observer"
 	"github.com/mlange-42/arche/ecs"
 	"gonum.org/v1/plot"
@@ -33,7 +33,7 @@ type Contour struct {
 }
 
 // Initialize the drawer.
-func (c *Contour) Initialize(w *ecs.World, win *pixelgl.Window) {
+func (c *Contour) Initialize(w *ecs.World, win *opengl.Window) {
 	c.Observer.Initialize(w)
 	c.data = plotGrid{
 		Grid: c.Observer,
@@ -47,10 +47,10 @@ func (c *Contour) Update(w *ecs.World) {
 }
 
 // UpdateInputs handles input events of the previous frame update.
-func (c *Contour) UpdateInputs(w *ecs.World, win *pixelgl.Window) {}
+func (c *Contour) UpdateInputs(w *ecs.World, win *opengl.Window) {}
 
 // Draw the drawer.
-func (c *Contour) Draw(w *ecs.World, win *pixelgl.Window) {
+func (c *Contour) Draw(w *ecs.World, win *opengl.Window) {
 	width := win.Canvas().Bounds().W()
 	height := win.Canvas().Bounds().H()
 

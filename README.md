@@ -6,7 +6,7 @@
 [![GitHub](https://img.shields.io/badge/github-repo-blue?logo=github)](https://github.com/mlange-42/arche-pixel)
 [![MIT license](https://img.shields.io/github/license/mlange-42/arche-pixel)](https://github.com/mlange-42/arche-pixel/blob/main/LICENSE)
 
-*Arche Pixel* provides OpenGL graphics and live plots for the [Arche](https://github.com/mlange-42/arche) Entity Component System (ECS) using the [Pixel](https://github.com/faiface/pixel) game engine.
+*Arche Pixel* provides OpenGL graphics and live plots for the [Arche](https://github.com/mlange-42/arche) Entity Component System (ECS) using the [Pixel](https://github.com/gopxl/pixel) game engine.
 
 <div align="center" width="100%">
 

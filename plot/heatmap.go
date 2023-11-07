@@ -3,8 +3,8 @@ package plot
 import (
 	"image/color"
 
-	"github.com/faiface/pixel"
-	"github.com/faiface/pixel/pixelgl"
+	pixel "github.com/gopxl/pixel/v2"
+	"github.com/gopxl/pixel/v2/backends/opengl"
 	"github.com/mlange-42/arche-model/observer"
 	"github.com/mlange-42/arche/ecs"
 	"gonum.org/v1/plot"
@@ -32,7 +32,7 @@ type HeatMap struct {
 }
 
 // Initialize the drawer.
-func (h *HeatMap) Initialize(w *ecs.World, win *pixelgl.Window) {
+func (h *HeatMap) Initialize(w *ecs.World, win *opengl.Window) {
 	h.Observer.Initialize(w)
 	h.data = plotGrid{
 		Grid: h.Observer,
@@ -51,10 +51,10 @@ func (h *HeatMap) Update(w *ecs.World) {
 }
 
 // UpdateInputs handles input events of the previous frame update.
-func (h *HeatMap) UpdateInputs(w *ecs.World, win *pixelgl.Window) {}
+func (h *HeatMap) UpdateInputs(w *ecs.World, win *opengl.Window) {}
 
 // Draw the drawer.
-func (h *HeatMap) Draw(w *ecs.World, win *pixelgl.Window) {
+func (h *HeatMap) Draw(w *ecs.World, win *opengl.Window) {
 	width := win.Canvas().Bounds().W()
 	height := win.Canvas().Bounds().H()
 

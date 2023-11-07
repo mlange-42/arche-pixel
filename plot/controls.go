@@ -5,10 +5,10 @@ import (
 	"image/color"
 	"math"
 
-	px "github.com/faiface/pixel"
-	"github.com/faiface/pixel/imdraw"
-	"github.com/faiface/pixel/pixelgl"
-	"github.com/faiface/pixel/text"
+	px "github.com/gopxl/pixel/v2"
+	"github.com/gopxl/pixel/v2/backends/opengl"
+	"github.com/gopxl/pixel/v2/ext/imdraw"
+	"github.com/gopxl/pixel/v2/ext/text"
 	"github.com/mlange-42/arche-model/model"
 	"github.com/mlange-42/arche/ecs"
 	"github.com/mlange-42/arche/generic"
@@ -29,7 +29,7 @@ type Controls struct {
 }
 
 // Initialize the system
-func (c *Controls) Initialize(w *ecs.World, win *pixelgl.Window) {
+func (c *Controls) Initialize(w *ecs.World, win *opengl.Window) {
 	c.systemsRes = generic.NewResource[model.Systems](w)
 	if !c.systemsRes.Has() {
 		panic("resource of type Systems expected in Controls drawer")
@@ -48,22 +48,22 @@ func (c *Controls) Initialize(w *ecs.World, win *pixelgl.Window) {
 func (c *Controls) Update(w *ecs.World) {}
 
 // UpdateInputs handles input events of the previous frame update.
-func (c *Controls) UpdateInputs(w *ecs.World, win *pixelgl.Window) {
+func (c *Controls) UpdateInputs(w *ecs.World, win *opengl.Window) {
 	sys := c.systemsRes.Get()
-	if win.JustPressed(pixelgl.KeySpace) {
+	if win.JustPressed(px.KeySpace) {
 		sys.Paused = !sys.Paused
 		return
 	}
-	if win.JustPressed(pixelgl.KeyUp) {
+	if win.JustPressed(px.KeyUp) {
 		sys.TPS = calcTps(sys.TPS, true)
 		return
 	}
-	if win.JustPressed(pixelgl.KeyDown) {
+	if win.JustPressed(px.KeyDown) {
 		sys.TPS = calcTps(sys.TPS, false)
 		return
 	}
 
-	if win.JustPressed(pixelgl.MouseButton1) {
+	if win.JustPressed(px.MouseButton1) {
 		width := win.Canvas().Bounds().W()
 		height := win.Canvas().Bounds().H()
 
@@ -79,7 +79,7 @@ func (c *Controls) UpdateInputs(w *ecs.World, win *pixelgl.Window) {
 }
 
 // Draw the system
-func (c *Controls) Draw(w *ecs.World, win *pixelgl.Window) {
+func (c *Controls) Draw(w *ecs.World, win *opengl.Window) {
 	width := win.Canvas().Bounds().W()
 	height := win.Canvas().Bounds().H()
 
@@ -95,7 +95,7 @@ func (c *Controls) Draw(w *ecs.World, win *pixelgl.Window) {
 	c.drawButton(c.tpsButton(width, height), fmt.Sprintf("%.0f TPS", sys.TPS), win)
 }
 
-func (c *Controls) drawButton(b *button, text string, win *pixelgl.Window) {
+func (c *Controls) drawButton(b *button, text string, win *opengl.Window) {
 	dr := &c.drawer
 
 	dr.Color = color.Black
