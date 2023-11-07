@@ -1,6 +1,8 @@
 module github.com/mlange-42/arche-pixel
 
-go 1.20
+go 1.21
+
+toolchain go1.21.3
 
 require (
 	github.com/gopxl/pixel/v2 v2.1.0

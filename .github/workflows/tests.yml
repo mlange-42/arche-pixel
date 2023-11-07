@@ -18,7 +18,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v3
         with:
-          go-version: '1.20.x'
+          go-version: '1.21.x'
       - name: Install dependencies
         run: |
           sudo apt-get update -y
@@ -35,7 +35,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v3
         with:
-          go-version: '1.20.x'
+          go-version: '1.21.x'
       - name: Install dependencies
         run: |
           sudo apt-get update -y
@@ -54,7 +54,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v3
         with:
-          go-version: '1.20.x'
+          go-version: '1.21.x'
       - name: Install dependencies
         run: |
           sudo apt-get update -y
@@ -83,11 +83,10 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v3
         with:
-          go-version: '1.20.x'
+          go-version: '1.21.x'
       - name: Install dependencies
         run: |
           go get .
           go install golang.org/x/exp/cmd/gorelease@latest
-          go mod tidy
       - name: Run gorelease
         run: gorelease
