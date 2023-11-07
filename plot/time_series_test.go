@@ -2,12 +2,14 @@ package plot_test
 
 import (
 	"math/rand"
+	"testing"
 
 	"github.com/mlange-42/arche-model/model"
 	"github.com/mlange-42/arche-model/system"
 	"github.com/mlange-42/arche-pixel/plot"
 	"github.com/mlange-42/arche-pixel/window"
 	"github.com/mlange-42/arche/ecs"
+	"github.com/stretchr/testify/assert"
 )
 
 func ExampleTimeSeries() {
@@ -39,6 +41,36 @@ func ExampleTimeSeries() {
 	// window.Run(m)
 
 	// Output:
+}
+
+func TestTimeSeries_Columns(t *testing.T) {
+	m := model.New()
+	m.TPS = 300
+	m.AddUISystem((&window.Window{}).
+		With(&plot.TimeSeries{
+			Observer: &RowObserver{},
+			Columns:  []string{"A", "C"},
+		}))
+
+	m.AddSystem(&system.FixedTermination{
+		Steps: 100,
+	})
+	m.Run()
+}
+
+func TestTimeSeries_PanicColumns(t *testing.T) {
+	m := model.New()
+	m.TPS = 300
+	m.AddUISystem((&window.Window{}).
+		With(&plot.TimeSeries{
+			Observer: &RowObserver{},
+			Columns:  []string{"A", "F"},
+		}))
+
+	m.AddSystem(&system.FixedTermination{
+		Steps: 100,
+	})
+	assert.Panics(t, m.Run)
 }
 
 // RowObserver to generate random time series.

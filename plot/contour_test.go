@@ -1,6 +1,8 @@
 package plot_test
 
 import (
+	"testing"
+
 	"github.com/mlange-42/arche-model/model"
 	"github.com/mlange-42/arche-model/observer"
 	"github.com/mlange-42/arche-model/system"
@@ -40,4 +42,23 @@ func ExampleContour() {
 	// window.Run(m)
 
 	// Output:
+}
+
+func TestContour_NoLevels(t *testing.T) {
+	m := model.New()
+	m.TPS = 300
+	m.FPS = 0
+
+	m.AddUISystem(
+		(&window.Window{}).
+			With(&plot.Contour{
+				Observer: observer.MatrixToGrid(&MatrixObserver{}, nil, nil),
+				Palette:  palette.Heat(16, 1),
+			}))
+
+	m.AddSystem(&system.FixedTermination{
+		Steps: 100,
+	})
+
+	m.Run()
 }

@@ -2,6 +2,7 @@ package plot_test
 
 import (
 	"math"
+	"testing"
 
 	"github.com/mazznoer/colorgrad"
 	"github.com/mlange-42/arche-model/model"
@@ -46,6 +47,24 @@ func ExampleImage() {
 	// window.Run(m)
 
 	// Output:
+}
+
+func TestImage_LimitsScale(t *testing.T) {
+	m := model.New()
+	m.TPS = 300
+	m.FPS = 0
+	m.AddUISystem(
+		(&window.Window{}).
+			With(&plot.Image{
+				Observer: &MatrixObserver{},
+				Colors:   colorgrad.Inferno(),
+			}))
+
+	m.AddSystem(&system.FixedTermination{
+		Steps: 100,
+	})
+
+	m.Run()
 }
 
 // Example observer, reporting a matrix with z = sin(0.1*i) + sin(0.2*j).
