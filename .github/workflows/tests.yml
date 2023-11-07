@@ -89,16 +89,18 @@ jobs:
       - name: Install dependencies
         run: |
           go get .
-          go install golang.org/x/exp/cmd/gorelease@latest
       - name: Check Git Status
         run: |
           git status
           git diff
-      - name: Check Git Status
+      - name: Check Dependencies
         run: |
           go mod why github.com/boombuler/barcode
           go mod why github.com/phpdave11/gofpdi
           go mod why github.com/ruudk/golang-pdf417
           go mod why github.com/stretchr/objx
+      - name: Install gorelease
+        run: |
+          go install golang.org/x/exp/cmd/gorelease@latest
       - name: Run gorelease
         run: gorelease
