@@ -1,6 +1,7 @@
 # Arche Pixel
 
 [![Test status](https://img.shields.io/github/actions/workflow/status/mlange-42/arche-pixel/tests.yml?branch=main&label=Tests&logo=github)](https://github.com/mlange-42/arche-pixel/actions/workflows/tests.yml)
+[![Coverage Status](https://badge.coveralls.io/repos/github/mlange-42/arche-pixel/badge.svg?branch=main)](https://badge.coveralls.io/github/mlange-42/arche-pixel?branch=main)
 [![Go Report Card](https://goreportcard.com/badge/github.com/mlange-42/arche-pixel)](https://goreportcard.com/report/github.com/mlange-42/arche-pixel)
 [![Go Reference](https://pkg.go.dev/badge/github.com/mlange-42/arche-pixel.svg)](https://pkg.go.dev/github.com/mlange-42/arche-pixel)
 [![GitHub](https://img.shields.io/badge/github-repo-blue?logo=github)](https://github.com/mlange-42/arche-pixel)
