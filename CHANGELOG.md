@@ -1,6 +1,18 @@
 # Changelog
 
-## [[v0.4.0]](https://github.com/mlange-42/arche-model/compare/v0.3.0...v0.4.0)
+## [[v0.5.0]](https://github.com/mlange-42/arche-pixel/compare/v0.4.0...v0.5.0)
+
+### Breaking changes
+
+* Migrate to [gopxl/pixel v2](https://github.com/gopxl/pixel) (#39)
+* Upgrade to Arche 0.9 (#39)
+* Upgrade to Arche-Model 0.5 (#39)
+
+### Infrastructure
+
+* Upgrade to Go 1.21 toolchain (#39)
+
+## [[v0.4.0]](https://github.com/mlange-42/arche-pixel/compare/v0.3.0...v0.4.0)
 
 ### Breaking changes
 
