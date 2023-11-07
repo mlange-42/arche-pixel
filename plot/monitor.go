@@ -34,6 +34,7 @@ var (
 )
 
 // NewMonitorWindow creates a window with [Monitor] drawer, for immediate use as a system.
+// See [Monitor] for details.
 //
 // Also adds [Controls] for pausing/resuming the simulation.
 func NewMonitorWindow(drawInterval int) *window.Window {
@@ -49,6 +50,23 @@ func NewMonitorWindow(drawInterval int) *window.Window {
 }
 
 // Monitor drawer for visualizing world and performance statistics.
+//
+// Symbology:
+//   - Green bars: archetypes without entity relations
+//   - Cyan bars: archetypes with entity relations
+//   - Light green/cyan: currently used
+//   - Dark green/cyan: reserved
+//
+// Top info:
+//   - Tick: current model tick
+//   - Ent: total number of entities
+//   - Nodes: active/total nodes in archetype graph
+//   - Comp: number of component types
+//   - Cache: number of cached filters
+//   - Mem: total memory reserved for entities and components
+//   - TPS: (simulation) ticks per second
+//   - TPT: time per (simulation) tick
+//   - Time: total run time of the simulation
 type Monitor struct {
 	PlotCapacity   int           // Number of values in time series plots. Optional, default 300.
 	SampleInterval time.Duration // Approx. time between measurements for time series plots. Optional, default 1 second.

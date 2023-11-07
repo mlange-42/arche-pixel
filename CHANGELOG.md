@@ -8,7 +8,11 @@
 
 ### Bugfixes
 
-* Fix changed text alignment after migration to [gopxl/pixel v2](https://github.com/gopxl/pixel), in plots `Systems`, `Resources` and `Inspector` (#42)
+* Fixes changed text alignment after migration to [gopxl/pixel v2](https://github.com/gopxl/pixel), in plots `Systems`, `Resources` and `Inspector` (#42)
+
+### Documentation
+
+* Adds explanation for symbology and abbreviations to `plot.Monitor` (#43)
 
 ## [[v0.5.1]](https://github.com/mlange-42/arche-pixel/compare/v0.5.0...v0.5.1)
 
