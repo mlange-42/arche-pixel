@@ -1,6 +1,8 @@
 package plot_test
 
 import (
+	"testing"
+
 	"github.com/mlange-42/arche-model/model"
 	"github.com/mlange-42/arche-model/system"
 	"github.com/mlange-42/arche-pixel/plot"
@@ -32,4 +34,21 @@ func ExampleSystems() {
 	// window.Run(m)
 
 	// Output:
+}
+
+func TestSystems(t *testing.T) {
+	m := model.New()
+	m.TPS = 300
+
+	m.AddUISystem((&window.Window{}).
+		With(&plot.Systems{
+			HideUISystems: true,
+			HideNames:     true,
+		}))
+
+	m.AddSystem(&system.FixedTermination{
+		Steps: 100,
+	})
+
+	m.Run()
 }
