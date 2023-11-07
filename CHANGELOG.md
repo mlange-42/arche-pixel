@@ -1,5 +1,11 @@
 # Changelog
 
+## [[v0.5.1]](https://github.com/mlange-42/arche-pixel/compare/v0.5.0...v0.5.1)
+
+### Bugfixes
+
+* Downgrade indirect dependencies from `gopxl/pixel` to fix `gopxl/mainthread` v2.1.0 crash on window creation (#40)
+
 ## [[v0.5.0]](https://github.com/mlange-42/arche-pixel/compare/v0.4.0...v0.5.0)
 
 ### Breaking changes
