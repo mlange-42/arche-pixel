@@ -33,6 +33,9 @@ func (i *Resources) Initialize(w *ecs.World, win *opengl.Window) {
 	i.text = text.New(px.V(0, 0), defaultFont)
 	i.helpText = text.New(px.V(0, 0), defaultFont)
 
+	i.text.AlignedTo(px.BottomRight)
+	i.helpText.AlignedTo(px.BottomRight)
+
 	fmt.Fprint(i.helpText, "Toggle [f]ields, [t]ypes, [v]alues or [n]ames, scroll with arrows or mouse wheel.")
 }
 
@@ -78,11 +81,11 @@ func (i *Resources) UpdateInputs(w *ecs.World, win *opengl.Window) {
 
 // Draw the system
 func (i *Resources) Draw(w *ecs.World, win *opengl.Window) {
-	i.helpText.Draw(win, px.IM.Moved(px.V(10, 10)))
+	i.helpText.Draw(win, px.IM.Moved(px.V(10, 20)))
 
 	height := win.Canvas().Bounds().H()
 	x0 := 10.0
-	y0 := height - 20.0
+	y0 := height - 10.0
 
 	i.text.Clear()
 	fmt.Fprint(i.text, "Resources\n\n")
