@@ -19,6 +19,7 @@
 
 * Enable full tests with window creation using `xvfb` (#45)
 * Add test coverage report to CI, add coveralls badge (#45)
+* Add more tests for utility functions and different plots configurations (#46)
 
 ## [[v0.5.1]](https://github.com/mlange-42/arche-pixel/compare/v0.5.0...v0.5.1)
 
