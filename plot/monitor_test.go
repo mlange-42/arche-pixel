@@ -24,10 +24,10 @@ func ExampleMonitor() {
 	})
 
 	// Run the simulation.
-	// Due to the use of the OpenGL UI system, the model must be run via [github.com/gopxl/pixel/v2/backends/opengl].
+	// Due to the use of the OpenGL UI system, the model must be run via [window.Run].
 	// Uncomment the next line. It is commented out as the CI has no display device to test the model run.
 
-	// opengl.Run(m.Run)
+	// window.Run(m)
 
 	// Output:
 }
@@ -48,10 +48,10 @@ func ExampleNewMonitorWindow() {
 	})
 
 	// Run the simulation.
-	// Due to the use of the OpenGL UI system, the model must be run via [github.com/gopxl/pixel/v2/backends/opengl].
+	// Due to the use of the OpenGL UI system, the model must be run via [window.Run].
 	// Uncomment the next line. It is commented out as the CI has no display device to test the model run.
 
-	// opengl.Run(m.Run)
+	// window.Run(m)
 
 	// Output:
 }

@@ -1,5 +1,11 @@
 # Changelog
 
+## [[v0.5.2]](https://github.com/mlange-42/arche-pixel/compare/v0.5.1...v0.5.2)
+
+### Features
+
+* Adds a convenience function `window.Run(model)` for running a model on the main thread (#41)
+
 ## [[v0.5.1]](https://github.com/mlange-42/arche-pixel/compare/v0.5.0...v0.5.1)
 
 ### Bugfixes
