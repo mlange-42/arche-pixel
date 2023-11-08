@@ -2,12 +2,14 @@ package plot_test
 
 import (
 	"math/rand"
+	"testing"
 
 	"github.com/mlange-42/arche-model/model"
 	"github.com/mlange-42/arche-model/system"
 	"github.com/mlange-42/arche-pixel/plot"
 	"github.com/mlange-42/arche-pixel/window"
 	"github.com/mlange-42/arche/ecs"
+	"github.com/stretchr/testify/assert"
 )
 
 func ExampleLines() {
@@ -41,6 +43,53 @@ func ExampleLines() {
 	// window.Run(m)
 
 	// Output:
+}
+
+func TestLines(t *testing.T) {
+	m := model.New()
+	m.TPS = 300
+	m.AddUISystem((&window.Window{}).
+		With(&plot.Lines{
+			Observer: &TableObserver{},
+			YLim:     [2]float64{0.5, 0.6},
+		}))
+
+	m.AddSystem(&system.FixedTermination{
+		Steps: 100,
+	})
+
+	m.Run()
+}
+
+func TestLines_PanicX(t *testing.T) {
+	m := model.New()
+	m.AddUISystem((&window.Window{}).
+		With(&plot.Lines{
+			Observer: &TableObserver{},
+			X:        "U",
+		}))
+
+	m.AddSystem(&system.FixedTermination{
+		Steps: 100,
+	})
+
+	assert.Panics(t, m.Run)
+}
+
+func TestLines_PanicY(t *testing.T) {
+	m := model.New()
+	m.AddUISystem((&window.Window{}).
+		With(&plot.Lines{
+			Observer: &TableObserver{},
+			X:        "X",
+			Y:        []string{"A", "B", "U"},
+		}))
+
+	m.AddSystem(&system.FixedTermination{
+		Steps: 100,
+	})
+
+	assert.Panics(t, m.Run)
 }
 
 // TableObserver to generate random time series.

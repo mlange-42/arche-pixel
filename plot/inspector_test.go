@@ -1,6 +1,8 @@
 package plot_test
 
 import (
+	"testing"
+
 	"github.com/mlange-42/arche-model/model"
 	"github.com/mlange-42/arche-model/resource"
 	"github.com/mlange-42/arche-model/system"
@@ -42,4 +44,50 @@ func ExampleInspector() {
 	// window.Run(m)
 
 	// Output:
+}
+
+func TestInspector(t *testing.T) {
+	m := model.New()
+	m.TPS = 300
+
+	posID := ecs.ComponentID[Position](&m.World)
+	velID := ecs.ComponentID[Velocity](&m.World)
+	entity := m.World.NewEntity(posID, velID)
+
+	ecs.AddResource(&m.World, &resource.SelectedEntity{Selected: entity})
+
+	m.AddUISystem((&window.Window{}).
+		With(&plot.Inspector{
+			HideNames: true,
+		}))
+
+	m.AddSystem(&system.FixedTermination{
+		Steps: 100,
+	})
+
+	m.Run()
+}
+
+func TestInspector_DeadEntity(t *testing.T) {
+	m := model.New()
+	m.TPS = 300
+
+	posID := ecs.ComponentID[Position](&m.World)
+	velID := ecs.ComponentID[Velocity](&m.World)
+	entity := m.World.NewEntity(posID, velID)
+
+	ecs.AddResource(&m.World, &resource.SelectedEntity{Selected: entity})
+
+	m.AddUISystem((&window.Window{}).
+		With(&plot.Inspector{
+			HideNames: true,
+		}))
+
+	m.AddSystem(&system.FixedTermination{
+		Steps: 100,
+	})
+
+	m.World.RemoveEntity(entity)
+
+	m.Run()
 }

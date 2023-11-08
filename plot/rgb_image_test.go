@@ -2,6 +2,7 @@ package plot_test
 
 import (
 	"math"
+	"testing"
 
 	"github.com/mlange-42/arche-model/model"
 	"github.com/mlange-42/arche-model/observer"
@@ -9,6 +10,7 @@ import (
 	"github.com/mlange-42/arche-pixel/plot"
 	"github.com/mlange-42/arche-pixel/window"
 	"github.com/mlange-42/arche/ecs"
+	"github.com/stretchr/testify/assert"
 )
 
 func ExampleImageRGB() {
@@ -46,6 +48,95 @@ func ExampleImageRGB() {
 	// window.Run(m)
 
 	// Output:
+}
+
+func TestImageRGB(t *testing.T) {
+	m := model.New()
+	m.TPS = 300
+	m.AddUISystem((&window.Window{}).
+		With(&plot.ImageRGB{
+			Observer: observer.MatrixToLayers(
+				&CallbackMatrixObserver{Callback: func(i, j int) float64 { return float64(i) / 240 }},
+				&CallbackMatrixObserver{Callback: func(i, j int) float64 { return math.Sin(0.1 * float64(i)) }},
+				&CallbackMatrixObserver{Callback: func(i, j int) float64 { return float64(j) / 160 }},
+			),
+		}))
+	m.AddSystem(&system.FixedTermination{
+		Steps: 100,
+	})
+	m.Run()
+}
+
+func TestImageRGB_PanicMin(t *testing.T) {
+	m := model.New()
+	m.TPS = 300
+	m.AddUISystem((&window.Window{}).
+		With(&plot.ImageRGB{
+			Observer: observer.MatrixToLayers(
+				&CallbackMatrixObserver{Callback: func(i, j int) float64 { return float64(i) / 240 }},
+				&CallbackMatrixObserver{Callback: func(i, j int) float64 { return math.Sin(0.1 * float64(i)) }},
+				&CallbackMatrixObserver{Callback: func(i, j int) float64 { return float64(j) / 160 }},
+			),
+			Min: []float64{0, 0},
+		}))
+	m.AddSystem(&system.FixedTermination{
+		Steps: 100,
+	})
+	assert.Panics(t, m.Run)
+}
+
+func TestImageRGB_PanicMax(t *testing.T) {
+	m := model.New()
+	m.TPS = 300
+	m.AddUISystem((&window.Window{}).
+		With(&plot.ImageRGB{
+			Observer: observer.MatrixToLayers(
+				&CallbackMatrixObserver{Callback: func(i, j int) float64 { return float64(i) / 240 }},
+				&CallbackMatrixObserver{Callback: func(i, j int) float64 { return math.Sin(0.1 * float64(i)) }},
+				&CallbackMatrixObserver{Callback: func(i, j int) float64 { return float64(j) / 160 }},
+			),
+			Max: []float64{1, 1},
+		}))
+	m.AddSystem(&system.FixedTermination{
+		Steps: 100,
+	})
+	assert.Panics(t, m.Run)
+}
+
+func TestImageRGB_PanicLayerCount(t *testing.T) {
+	m := model.New()
+	m.TPS = 300
+	m.AddUISystem((&window.Window{}).
+		With(&plot.ImageRGB{
+			Observer: observer.MatrixToLayers(
+				&CallbackMatrixObserver{Callback: func(i, j int) float64 { return float64(i) / 240 }},
+				&CallbackMatrixObserver{Callback: func(i, j int) float64 { return math.Sin(0.1 * float64(i)) }},
+				&CallbackMatrixObserver{Callback: func(i, j int) float64 { return float64(j) / 160 }},
+			),
+			Layers: []int{2, 1, 2, 0},
+		}))
+	m.AddSystem(&system.FixedTermination{
+		Steps: 100,
+	})
+	assert.Panics(t, m.Run)
+}
+
+func TestImageRGB_PanicLayerIndex(t *testing.T) {
+	m := model.New()
+	m.TPS = 300
+	m.AddUISystem((&window.Window{}).
+		With(&plot.ImageRGB{
+			Observer: observer.MatrixToLayers(
+				&CallbackMatrixObserver{Callback: func(i, j int) float64 { return float64(i) / 240 }},
+				&CallbackMatrixObserver{Callback: func(i, j int) float64 { return math.Sin(0.1 * float64(i)) }},
+				&CallbackMatrixObserver{Callback: func(i, j int) float64 { return float64(j) / 160 }},
+			),
+			Layers: []int{0, 1, 3},
+		}))
+	m.AddSystem(&system.FixedTermination{
+		Steps: 100,
+	})
+	assert.Panics(t, m.Run)
 }
 
 // Example observer, reporting a matrix filled with a callback(i, j).
