@@ -1,10 +1,13 @@
 package plot_test
 
 import (
+	"testing"
+
 	"github.com/mlange-42/arche-model/model"
 	"github.com/mlange-42/arche-model/system"
 	"github.com/mlange-42/arche-pixel/plot"
 	"github.com/mlange-42/arche-pixel/window"
+	"github.com/mlange-42/arche/ecs"
 )
 
 func ExampleResources() {
@@ -32,4 +35,22 @@ func ExampleResources() {
 	// window.Run(m)
 
 	// Output:
+}
+
+func TestResources(t *testing.T) {
+	m := model.New()
+
+	_ = ecs.AddResource[Position](&m.World, &Position{})
+	_ = ecs.ResourceID[Velocity](&m.World)
+
+	m.TPS = 30
+
+	m.AddUISystem((&window.Window{}).
+		With(&plot.Resources{}))
+
+	m.AddSystem(&system.FixedTermination{
+		Steps: 10,
+	})
+
+	m.Run()
 }
