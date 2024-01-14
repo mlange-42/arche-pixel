@@ -93,8 +93,8 @@ func (i *Resources) Draw(w *ecs.World, win *opengl.Window) {
 	scroll := i.scroll
 
 	res := w.Resources()
-	for j := 0; j < ecs.MaskTotalBits; j++ {
-		id := ecs.ResID(j)
+	allRes := ecs.ResourceIDs(w)
+	for _, id := range allRes {
 		if !res.Has(id) {
 			continue
 		}
