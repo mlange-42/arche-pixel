@@ -7,7 +7,7 @@ toolchain go1.21.3
 require (
 	github.com/gopxl/pixel/v2 v2.1.0
 	github.com/mazznoer/colorgrad v0.9.1
-	github.com/mlange-42/arche v0.9.1-0.20240114214409-62e421a9ff04
+	github.com/mlange-42/arche v0.9.1-0.20240118110009-5c05233583b6
 	github.com/mlange-42/arche-model v0.5.0
 	github.com/stretchr/testify v1.8.4
 	golang.org/x/image v0.13.0
