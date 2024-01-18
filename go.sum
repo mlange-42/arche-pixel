@@ -42,8 +42,8 @@ github.com/mazznoer/colorgrad v0.9.1 h1:MB80JYVndKWSMEM1beNqnuOowWGhoQc3DXWXkFp6
 github.com/mazznoer/colorgrad v0.9.1/go.mod h1:WX2R9wt9B47+txJZVVpM9LY+LAGIdi4lTI5wIyreDH4=
 github.com/mazznoer/csscolorparser v0.1.2 h1:/UBHuQg792ePmGFzTQAC9u+XbFr7/HzP/Gj70Phyz2A=
 github.com/mazznoer/csscolorparser v0.1.2/go.mod h1:Aj22+L/rYN/Y6bj3bYqO3N6g1dtdHtGfQ32xZ5PJQic=
-github.com/mlange-42/arche v0.9.0 h1:I4hWp1qqWJbhNdd4+IpUcFwLQA/Gi4ZiTmeX0iEIfvA=
-github.com/mlange-42/arche v0.9.0/go.mod h1:Bc4xbLsOifSzotIeXOvIKwsrwgzxyDhH3UIxE7vh1q0=
+github.com/mlange-42/arche v0.9.1-0.20240118110009-5c05233583b6 h1:cWfjYtsUkj0qzXYsXorcVxFbE98ojr4F4OhWWchiuog=
+github.com/mlange-42/arche v0.9.1-0.20240118110009-5c05233583b6/go.mod h1:Bc4xbLsOifSzotIeXOvIKwsrwgzxyDhH3UIxE7vh1q0=
 github.com/mlange-42/arche-model v0.5.0 h1:xDR1sEADfJZbqNXbgBAzpq513LT/6prHY1x6E0/yDBE=
 github.com/mlange-42/arche-model v0.5.0/go.mod h1:j1EsJOoJs931fr2OQLvISaPdXFeCIEXULAYsZiVvdv8=
 github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=

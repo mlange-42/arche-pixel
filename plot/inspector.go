@@ -115,8 +115,8 @@ func (i *Inspector) Draw(w *ecs.World, win *opengl.Window) {
 
 	scroll := i.scroll
 
-	for j := 0; j < ecs.MaskTotalBits && bits > 0; j++ {
-		id := ecs.ID(j)
+	allComp := ecs.ComponentIDs(w)
+	for _, id := range allComp {
 		if mask.Get(id) {
 			tp, _ := w.ComponentType(id)
 			ptr := w.Get(sel, id)
