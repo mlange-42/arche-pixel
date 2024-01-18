@@ -118,21 +118,21 @@ func (i *Inspector) Draw(w *ecs.World, win *opengl.Window) {
 	allComp := ecs.ComponentIDs(w)
 	for _, id := range allComp {
 		if mask.Get(id) {
-			tp, _ := w.ComponentType(id)
+			tp, _ := ecs.ComponentInfo(w, id)
 			ptr := w.Get(sel, id)
-			val := reflect.NewAt(tp, ptr).Elem()
+			val := reflect.NewAt(tp.Type, ptr).Elem()
 
 			if scroll <= 0 {
-				fmt.Fprintf(i.text, "  %s\n", tp.Name())
+				fmt.Fprintf(i.text, "  %s\n", tp.Type.Name())
 			}
 			scroll--
 
 			if !i.HideFields {
 				for k := 0; k < val.NumField(); k++ {
-					field := tp.Field(k)
+					field := tp.Type.Field(k)
 					if field.IsExported() {
 						if scroll <= 0 {
-							i.printField(i.text, tp, field, val.Field(k))
+							i.printField(i.text, tp.Type, field, val.Field(k))
 						}
 						scroll--
 					}
