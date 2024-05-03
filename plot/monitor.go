@@ -259,7 +259,7 @@ func (m *Monitor) drawArchetypeScales(win *opengl.Window, x, y, w, h float64, ma
 	}
 }
 
-func (m *Monitor) drawArchetype(win *opengl.Window, x, y, w, h float64, max int, node *stats.NodeStats, text *text.Text) {
+func (m *Monitor) drawArchetype(win *opengl.Window, x, y, w, h float64, max int, node *stats.Node, text *text.Text) {
 	dr := &m.drawer
 
 	cap := float64(node.Capacity) / float64(max)
@@ -420,7 +420,7 @@ type archetypes struct {
 	Indices    []int
 }
 
-func (a *archetypes) Update(stats *stats.WorldStats) {
+func (a *archetypes) Update(stats *stats.World) {
 	newLen := stats.ActiveNodeCount
 	oldLen := len(a.Components)
 
