@@ -1,5 +1,11 @@
 # Changelog
 
+## [[v0.8.0]](https://github.com/mlange-42/arche-pixel/compare/v0.7.0...v0.8.0)
+
+### Breaking changes
+
+* Upgrade to Arche v0.12.0 (#51)
+
 ## [[v0.7.0]](https://github.com/mlange-42/arche-pixel/compare/v0.6.0...v0.7.0)
 
 ### Breaking changes
