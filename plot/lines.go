@@ -3,6 +3,7 @@ package plot
 import (
 	"fmt"
 	"image/color"
+	"math"
 
 	pixel "github.com/gopxl/pixel/v2"
 	"github.com/gopxl/pixel/v2/backends/opengl"
@@ -135,6 +136,9 @@ func (l *Lines) updateData(w *ecs.World) {
 			x := float64(j)
 			if xi >= 0 {
 				x = row[xi]
+			}
+			if math.IsNaN(row[idx]) {
+				continue
 			}
 			l.series[i] = append(l.series[i], plotter.XY{X: x, Y: row[idx]})
 		}
