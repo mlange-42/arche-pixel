@@ -1,6 +1,7 @@
 package plot_test
 
 import (
+	"math"
 	"math/rand"
 	"testing"
 
@@ -92,6 +93,22 @@ func TestLines_PanicY(t *testing.T) {
 	assert.Panics(t, m.Run)
 }
 
+func TestLinesNaN(t *testing.T) {
+	m := model.New()
+	m.AddUISystem((&window.Window{}).
+		With(&plot.Lines{
+			Observer: &TableObserverNaN{},
+			X:        "X",
+			Y:        []string{"A"},
+		}))
+
+	m.AddSystem(&system.FixedTermination{
+		Steps: 100,
+	})
+
+	m.Run()
+}
+
 // TableObserver to generate random time series.
 type TableObserver struct {
 	data [][]float64
@@ -113,5 +130,30 @@ func (o *TableObserver) Values(w *ecs.World) [][]float64 {
 	for i := 0; i < len(o.data); i++ {
 		o.data[i][3] = rand.Float64()
 	}
+	return o.data
+}
+
+// TableObserver to generate test time series containing NaN.
+type TableObserverNaN struct {
+	data [][]float64
+}
+
+func (o *TableObserverNaN) Initialize(w *ecs.World) {
+	rows := 25
+	o.data = make([][]float64, rows)
+
+	for i := 0; i < rows; i++ {
+		v := 1.0
+		if i < 5 || i > rows-5 {
+			v = math.NaN()
+		}
+		o.data[i] = []float64{float64(i), v}
+	}
+}
+func (o *TableObserverNaN) Update(w *ecs.World) {}
+func (o *TableObserverNaN) Header() []string {
+	return []string{"X", "A"}
+}
+func (o *TableObserverNaN) Values(w *ecs.World) [][]float64 {
 	return o.data
 }

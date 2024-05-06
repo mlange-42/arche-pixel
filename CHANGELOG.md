@@ -1,5 +1,11 @@
 # Changelog
 
+## [[v0.8.1]](https://github.com/mlange-42/arche-pixel/compare/v0.8.0...v0.8.1)
+
+### Features
+
+* Skip NaN values in `Lines` plot, allowing for partial lines (#52)
+
 ## [[v0.8.0]](https://github.com/mlange-42/arche-pixel/compare/v0.7.0...v0.8.0)
 
 ### Breaking changes
