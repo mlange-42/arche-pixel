@@ -50,6 +50,7 @@ func TestTimeSeries_Columns(t *testing.T) {
 		With(&plot.TimeSeries{
 			Observer: &RowObserver{},
 			Columns:  []string{"A", "C"},
+			MaxRows:  50,
 		}))
 
 	m.AddSystem(&system.FixedTermination{
