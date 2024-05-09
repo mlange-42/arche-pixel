@@ -24,6 +24,7 @@ type TimeSeries struct {
 	Columns        []string     // Columns to show, by name. Optional, default all.
 	UpdateInterval int          // Interval for getting data from the the observer, in model ticks. Optional.
 	Labels         Labels       // Labels for plot and axes. Optional.
+	MaxRows        int          // Maximum number of rows to keep. Zero means unlimited. Optional.
 
 	indices []int
 	headers []string
@@ -36,6 +37,9 @@ type TimeSeries struct {
 func (t *TimeSeries) append(x float64, values []float64) {
 	for i := 0; i < len(t.series); i++ {
 		t.series[i] = append(t.series[i], plotter.XY{X: x, Y: values[i]})
+		if t.MaxRows > 0 && len(t.series[i]) > t.MaxRows {
+			t.series[i] = t.series[i][len(t.series[i])-t.MaxRows:]
+		}
 	}
 }
 

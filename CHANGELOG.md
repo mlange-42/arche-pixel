@@ -1,5 +1,11 @@
 # Changelog
 
+## [[v0.9.0]](https://github.com/mlange-42/arche-pixel/compare/v0.8.1...v0.9.0)
+
+### Features
+
+* Allows to limit the number of entries in time series plots (#53)
+
 ## [[v0.8.1]](https://github.com/mlange-42/arche-pixel/compare/v0.8.0...v0.8.1)
 
 ### Features
