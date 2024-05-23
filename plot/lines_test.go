@@ -52,6 +52,7 @@ func TestLines(t *testing.T) {
 	m.AddUISystem((&window.Window{}).
 		With(&plot.Lines{
 			Observer: &TableObserver{},
+			XLim:     [2]float64{0, 30},
 			YLim:     [2]float64{0.5, 0.6},
 		}))
 
