@@ -25,6 +25,7 @@ type Lines struct {
 	Observer observer.Table // Observer providing a data series for lines.
 	X        string         // X column name. Optional. Defaults to row index.
 	Y        []string       // Y column names. Optional. Defaults to all but X column.
+	XLim     [2]float64     // X axis limits. Optional, default auto.
 	YLim     [2]float64     // Y axis limits. Optional, default auto.
 	Labels   Labels         // Labels for plot and axes. Optional.
 
@@ -99,6 +100,11 @@ func (l *Lines) Draw(w *ecs.World, win *opengl.Window) {
 	if l.YLim[0] != 0 || l.YLim[1] != 0 {
 		p.Y.Min = l.YLim[0]
 		p.Y.Max = l.YLim[1]
+	}
+
+	if l.XLim[0] != 0 || l.XLim[1] != 0 {
+		p.X.Min = l.XLim[0]
+		p.Y.Max = l.XLim[1]
 	}
 
 	p.Legend = plot.NewLegend()

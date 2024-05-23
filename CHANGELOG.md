@@ -1,5 +1,11 @@
 # Changelog
 
+## [[unpublished]](https://github.com/mlange-42/arche-pixel/compare/v0.9.0...main)
+
+### Features
+
+* Adds optional property `XLim` to `Lines` plot (#54)
+
 ## [[v0.9.0]](https://github.com/mlange-42/arche-pixel/compare/v0.8.1...v0.9.0)
 
 ### Features
