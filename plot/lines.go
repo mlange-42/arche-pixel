@@ -104,7 +104,7 @@ func (l *Lines) Draw(w *ecs.World, win *opengl.Window) {
 
 	if l.XLim[0] != 0 || l.XLim[1] != 0 {
 		p.X.Min = l.XLim[0]
-		p.Y.Max = l.XLim[1]
+		p.X.Max = l.XLim[1]
 	}
 
 	p.Legend = plot.NewLegend()

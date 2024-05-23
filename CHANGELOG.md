@@ -4,7 +4,7 @@
 
 ### Features
 
-* Adds optional property `XLim` to `Lines` plot (#54)
+* Adds optional property `XLim` to `Lines` plot (#54, #55)
 
 ## [[v0.9.0]](https://github.com/mlange-42/arche-pixel/compare/v0.8.1...v0.9.0)
 
