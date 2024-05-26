@@ -7,9 +7,9 @@ toolchain go1.21.6
 require (
 	github.com/gopxl/pixel/v2 v2.1.0
 	github.com/mazznoer/colorgrad v0.9.1
-	github.com/mlange-42/arche v0.12.0
-	github.com/mlange-42/arche-model v0.7.0
-	github.com/stretchr/testify v1.8.4
+	github.com/mlange-42/arche v0.13.0
+	github.com/mlange-42/arche-model v0.9.0
+	github.com/stretchr/testify v1.9.0
 	golang.org/x/image v0.15.0
 	gonum.org/v1/plot v0.14.0
 )
