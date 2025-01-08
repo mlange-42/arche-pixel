@@ -10,7 +10,6 @@ import (
 	"golang.org/x/image/colornames"
 	"golang.org/x/image/font/basicfont"
 	"gonum.org/v1/plot"
-	"gonum.org/v1/plot/vg"
 	"gonum.org/v1/plot/vg/vgimg"
 )
 
@@ -47,10 +46,7 @@ func find[T comparable](sl []T, value T) (int, bool) {
 
 // Calculate scale correction for scaled monitors.
 func calcScaleCorrection() float64 {
-	width := 100.0
-	c := vgimg.New(vg.Points(width), vg.Points(width))
-	img := c.Image()
-	return width / float64(img.Bounds().Dx())
+	return 72.0 / vgimg.DefaultDPI
 }
 
 // Calculate the optimal step size for axis ticks.
